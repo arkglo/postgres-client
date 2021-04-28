@@ -105,20 +105,27 @@ export default class UserEditView extends Component {
     confirmAlert({
       title: 'Confirm',
       message: 'Are you VERY sure you want to delete yourself?',
-      confirmLabel: 'Yes',
-      cancelLabel: 'No',
-      onConfirm: () => {
-        const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.user.id}`
-        console.log("DELETE: " + apiCall)
-        axios.delete(apiCall).then((response) => {
-          if (response.status !== 200) {
-            return console.error('Failed to remove user.');
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.user.id}`
+            console.log("DELETE: " + apiCall)
+            axios.delete(apiCall).then((response) => {
+              if (response.status !== 200) {
+                return console.error('Failed to remove user.');
+              }
+              console.log('Successfully deleted user.');
+            }).catch((error) => {
+              Error.message(error.response)
+            });
           }
-          console.log('Successfully deleted user.');
-        }).catch((error) => {
-          Error.message(error.response)
-        });
-      },
+        },
+        {
+          label: "No",
+          
+        }
+      ]
     });
   }
 
