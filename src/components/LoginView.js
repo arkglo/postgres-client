@@ -35,7 +35,7 @@ export default class LoginView extends Component {
 			.catch((error) => {
 				var data = error?.response?.data ?? null
 				if (data) {
-					console.error(`${data.function}() - ${data.message}`)
+					console.warn(`${data.function}() - ${data.message}`)
 				}
 				else {
 					console.log(error)

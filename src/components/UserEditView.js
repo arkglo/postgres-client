@@ -33,7 +33,7 @@ export default class UserEditView extends Component {
     const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.user.id}`
     axios.get(apiCall).then((response) => {
       if (response.status !== 200) {
-        return console.error('Failed to get user details.');
+        return console.warn('Failed to get user details.');
       }
 
       // console.log(response.data)
@@ -90,8 +90,7 @@ export default class UserEditView extends Component {
     console.log(apiCall)
     axios.put(apiCall, req).then((response) => {
       if (response.status !== 200) {
-        console.log(response)
-        return console.error('Failed to update user.');
+        return console.warn('Failed to update user.');
       }
       console.log('Updated user details!');
     }).catch((error) => {
@@ -113,7 +112,7 @@ export default class UserEditView extends Component {
             console.log("DELETE: " + apiCall)
             axios.delete(apiCall).then((response) => {
               if (response.status !== 200) {
-                return console.error('Failed to remove user.');
+                return console.warn('Failed to remove user.');
               }
               console.log('Successfully deleted user.');
             }).catch((error) => {

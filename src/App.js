@@ -42,7 +42,7 @@ class App extends Component {
 	handleLogin(response) {
 		console.log(response)
 		if (response.status !== 200) {
-			return console.error('Login failed');
+			return console.warn('Login failed');
 		}
 		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
 		this.setState({
@@ -53,11 +53,10 @@ class App extends Component {
 
 	// Handler for LoginView.
 	handleLogout(response) {
-		if (!response.data.success) {
-			console.log(response.data);
-			// return this.toast.error('Logout failed');
-			console.log('Logout Failed!')
+		if (response.status !== 200) {
+			return console.warn('Logout failed');
 		}
+		console.log('Logged out')
 		this.setState({
 			user: null,
 			mainView: null,

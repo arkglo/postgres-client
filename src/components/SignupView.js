@@ -8,6 +8,8 @@ function initialState() {
 	return {
 		firstName: '',
 		lastName: '',
+		partnerFirstName: '',
+		partnerLastName: '',
 		email: '',
 		password: '',
 		password2: '',
@@ -46,9 +48,13 @@ export default class SignupView extends Component {
 			console.log('Password do not match')
 			return
 		}
+
+
 		axios.post(config.SERVER_URL + config.SERVER_PATH + config.ACCOUNT_ENDPOINT, {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
+			partnerFirstName: this.state.partnerFirstName,
+			partnerLastName: this.state.partnerLastName,
 			email: this.state.email,
 			password: this.state.password,
 		})
@@ -84,13 +90,23 @@ export default class SignupView extends Component {
 					<form className="form">
 
 						<div className="form-group">
-							<label>Fist Name</label>
+							<label>First Name</label>
 							<input className="form-control" type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
 						</div>
 
 						<div className="form-group">
 							<label>Last Name</label>
 							<input className="form-control" type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
+						</div>
+
+						<div className="form-group">
+							<label>Partner First Name</label>
+							<input className="form-control" type="text" name="partnerFirstName" value={this.state.partnerFirstName} onChange={this.handleChange} />
+						</div>
+
+						<div className="form-group">
+							<label>Partner Last Name</label>
+							<input className="form-control" type="text" name="partnerLastName" value={this.state.partnerLastName} onChange={this.handleChange} />
 						</div>
 
 						<div className="form-group">
