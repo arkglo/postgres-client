@@ -5,10 +5,13 @@ import axios from 'axios';
 import './App.css';
 import * as config from './config';
 
-// Our components.
+// Top NavBar component
+import NavBar from "./components/NavBar"
+// Main View Components
 import SignupView from "./components/SignupView";
 import LoginView from "./components/LoginView";
 import UserEditView from "./components/UserEditView";
+import AccountEditView from "./components/AccountEditView";
 
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
@@ -18,7 +21,9 @@ class App extends Component {
 		super(props);
 		this.state = {
 			user: null,
+			account: null,
 			mainView: null,
+			accountId: -1,
 		};
 
 		// Check auth. This is for Remember Me.
@@ -32,10 +37,13 @@ class App extends Component {
 		// Show functions. For navigation and setting state.mainView.
 		this.showSignup = this.showSignup.bind(this);
 		this.showUserEdit = this.showUserEdit.bind(this);
+		this.showAccountEdit = this.showAccountEdit.bind(this);
 
 		// Handlers for child components.
 		this.handleLogin = this.handleLogin.bind(this);
 		this.handleLogout = this.handleLogout.bind(this);
+
+		this.setAccountId = this.setAccountId.bind(this);
 	}
 
 	// Handler for LoginView.
@@ -45,10 +53,17 @@ class App extends Component {
 			return console.warn('Login failed');
 		}
 		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
+		console.log(response.data.data)
 		this.setState({
 			user: response.data.data,
-			mainView: null,
+			mainView: null
 		});
+	}
+
+	setAccountId(thisId) {
+		this.setState({
+			accountId: thisId
+		})
 	}
 
 	// Handler for LoginView.
@@ -60,13 +75,14 @@ class App extends Component {
 		this.setState({
 			user: null,
 			mainView: null,
+			accountId: -1,
 		});
 	}
 
 	// Navigation.
 	showSignup() {
 		this.setState({
-			mainView: (<SignupView/>),
+			mainView: (<SignupView />),
 		});
 	}
 
@@ -82,27 +98,32 @@ class App extends Component {
 		});
 	}
 
+	showAccountEdit() {
+		if (!this.state.user) {
+			// return this.toast.error('Not logged in');
+			return console.log('Not Logged in')
+		}
+		this.setState({
+			mainView: (<AccountEditView
+				accountId={this.state.accountId}
+			/>),
+		});
+	}
+
 	render() {
 		return (
 			<div className="container">
-				<nav className="navbar navbar-default myNav">
-					<span className="navbar-brand">Test</span>
-					<div className="btn-group" role="group">
-						<button type="button" name="signup"
-							className="btn btn-default navbar-btn"
-							onClick={this.showSignup}>
-							Signup
-            </button>
-						<button type="button" name="user_edit"
-							className="btn btn-default navbar-btn"
-							onClick={this.showUserEdit}>
-							User edit
-            </button>
-					</div>
-				</nav>
+				<NavBar
+					showSignup={this.showSignup}
+					showUserEdit={this.showUserEdit}
+					showAccountEdit={this.showAccountEdit}
+					accountId={this.state.accountId}>
+				</NavBar>
+
 				<LoginView
 					handleLogin={this.handleLogin}
 					handleLogout={this.handleLogout}
+					setAccountId={this.setAccountId}
 					user={this.state.user}
 					toast={this.toast}
 				/>

@@ -17,6 +17,13 @@ export default class LoginView extends Component {
 		this.handleLogout = this.handleLogout.bind(this);
 	}
 
+	componentDidMount(){
+		if(this.user && this.user.accounts)
+			this.props.setAccountId(this.props.user.accounts[0].id);
+	}
+
+	//===========================================================================
+	//Functions
 	handleChange(event) {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -58,27 +65,44 @@ export default class LoginView extends Component {
 			});
 	}
 
+	//===========================================================================
+	//Render
 	renderForm() {
 		return (
 			<form className="form-inline">
 				<div className="form-group">
 					<label>Email</label>
-					<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
-				</div>
+					<input className="leftMargin form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
+				</div><p />
 				<div className="form-group">
 					<label>Password</label>
-					<input className="form-control" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
-				</div>
+					<input className="leftMargin form-control" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+				</div><p/>
 				<button type="submit" className="btn btn-primary" onClick={this.handleLogin} >Login</button>
 			</form>
 		);
 	}
 
+	tryThis = (id) => {
+		this.props.setAccountId(id)
+	}
+
 	// User logged in.
 	renderStatus() {
+		const user = this.props.user;
+		const renAccountsData = user.accounts.map((data,idx) => 
+			<li key={idx}><button onClick={this.tryThis.bind(this, data.id)}>Select Account {data.id}</button></li>
+		);
 		return (
 			<div>
-				<span>Welcome {this.props.user.firstName} {this.props.user.lastName}!</span><p/>
+				<span>Welcome {this.props.user.firstName} {this.props.user.lastName}!</span><p />
+				<span>Accounts({this.props.user.accounts.length})</span><p />
+				<span>
+				<ul>
+				{renAccountsData}
+				</ul>
+				</span>
+				<p />
 				<button type="submit"
 					className="btn btn-primary"
 					onClick={this.handleLogout}>
