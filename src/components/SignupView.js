@@ -56,27 +56,20 @@ export default class SignupView extends Component {
 			partnerLastName: this.state.partnerLastName,
 			email: this.state.email,
 			password: this.state.password,
+		}).then((response) => {
+			if (response.status !== 201) {
+        return console.warn('Failed to create account.');
+      }
+			console.log('Created new user!')
+		}).catch((error) => {
+			var data = error?.response?.data ?? null
+			if (data) {
+				console.error(`${data.function}() - ${data.message}`)
+			}
+			else {
+				console.log(error)
+			}
 		})
-			.then((res) => {
-				console.log(res)
-				if (!res.data.success) {
-					console.log(res.data);
-					// return console.error('Failed to create user.');
-					console.log('Failed to create user')
-					return
-				}
-				// console.success('Created new user!');
-				console.log('Created new user!')
-			})
-			.catch((error) => {
-				var data = error?.response?.data ?? null
-				if (data) {
-					console.error(`${data.function}() - ${data.message}`)
-				}
-				else {
-					console.log(error)
-				}
-			})
 	}
 
 	//------------------------------------------------------------
