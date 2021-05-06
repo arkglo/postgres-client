@@ -13,6 +13,7 @@ export const USER_ENDPOINT = "/users"
 const productionTest = false
 
 //Setup Server URL
+console.log(process.env)
 var THIS_SERVER_URL = LOCAL_SERVER_URL
 if(process.env.NODE_ENV === 'production' || productionTest) {
 	THIS_SERVER_URL = HEROKU_SERVER_URL
