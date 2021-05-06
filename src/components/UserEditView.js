@@ -24,13 +24,12 @@ export default class UserEditView extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
-    this.subPath = "users"
   }
 
   componentDidMount(){
     console.log("UserEditView.componentDidMount()")
 
-    axios.get(config.apiPath('user')).then((response) => {
+    axios.get(config.apiPath('user', this.props.user.id)).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to get user details.');
       }
@@ -84,7 +83,7 @@ export default class UserEditView extends Component {
       req.lastName = this.state.lastName
     }
 
-    axios.put(config.apiPath('user'), req).then((response) => {
+    axios.put(config.apiPath('user', this.props.user.id), req).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to update user.');
       }

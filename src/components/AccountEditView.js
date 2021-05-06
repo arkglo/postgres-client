@@ -32,7 +32,6 @@ export default class AccountEditView extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
-    this.subPath = "accounts"
   }
 
   componentDidMount() {
@@ -43,7 +42,6 @@ export default class AccountEditView extends Component {
         return console.warn('Failed to get account details.');
       }
 
-      // console.log(response.data)
       const account = response.data
       this.setState({
         role: account.role,
@@ -53,8 +51,11 @@ export default class AccountEditView extends Component {
         partnerFirstName: account.partnerFirstName,
         partnerLastName: account.partnerLastName,
         eventDate: account.eventDate,
-        websiteLink: account.websiteLink
-      });
+        websiteLink: account.websiteLink,
+        id: account.id,
+        userID: account.userID,
+      })
+      this.setState({account: account})
       if(config.debugLevel > 1) console.log(account)
     }).catch((error) => {
       Error.message(error.response)
@@ -86,17 +87,27 @@ export default class AccountEditView extends Component {
       req.password = this.state.password;
     }
 
-    if (this.state.email !== this.props.account.email && this.state.email.length > 0) {
+    //console.log(this.state) // new
+    //console.log(this.state.account) // old
+    const oldAccount = this.state.account
+
+    if (this.state.email !== oldAccount.email && this.state.email.length > 0) {
       req.email = this.state.email
     }
-    if (this.state.firstName !== this.props.account.firstName && this.state.firstName.length > 0) {
+    if (this.state.firstName !== oldAccount.firstName && this.state.firstName.length > 0) {
       req.firstName = this.state.firstName
     }
-    if (this.state.lastName !== this.props.account.lastName && this.state.lastName.length > 0) {
+    if (this.state.lastName !== oldAccount.lastName && this.state.lastName.length > 0) {
       req.lastName = this.state.lastName
     }
+    req.userID = this.state.userID
 
-    axios.put(config.apiPath('account', this.props.account.id), req).then((response) => {
+    if(config.debugLevel > 1) {
+      console.log('Call Account UPDATE')
+      console.log(req)
+    }
+
+    axios.put(config.apiPath('account', this.props.accountId), req).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to update account.');
       }
@@ -144,7 +155,7 @@ export default class AccountEditView extends Component {
 
             <div className="form-group">
               <label>Role</label>
-              <input className="form-control" type="text" name="email" value={this.state.role} onChange={this.handleChange} />
+              <input className="form-control" type="text" name="role" value={this.state.role} onChange={this.handleChange} />
             </div>
 
             <div className="form-group">

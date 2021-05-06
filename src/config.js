@@ -1,4 +1,4 @@
-export const debugLevel = 1
+export const debugLevel = 2
 
 // Paths
 const LOCAL_SERVER_URL = "http://localhost:8080"
@@ -10,7 +10,7 @@ export const ACCOUNT_ENDPOINT = "/accounts"
 export const USER_ENDPOINT = "/users"
 
 //Override
-const productionTest = true
+const productionTest = false
 
 //Setup Server URL
 var THIS_SERVER_URL = LOCAL_SERVER_URL
