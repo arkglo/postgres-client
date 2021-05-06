@@ -10,7 +10,7 @@ export const ACCOUNT_ENDPOINT = "/accounts"
 export const USER_ENDPOINT = "/users"
 
 //Override
-const productionTest = false
+const productionTest = true
 
 //Setup Server URL
 console.log(process.env)
