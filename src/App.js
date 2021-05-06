@@ -27,7 +27,7 @@ class App extends Component {
 		};
 
 		// Check auth. This is for Remember Me.
-		axios.post(config.SERVER_URL + config.SERVER_PATH + '/users/checkauth').then((response) => {
+		axios.post(config.apiPath('user','checkauth')).then((response) => {
 			if (!response.data.success) {
 				return;
 			}
@@ -48,12 +48,12 @@ class App extends Component {
 
 	// Handler for LoginView.
 	handleLogin(response) {
-		console.log(response)
+		if(config.debugLevel) console.log(response)
 		if (response.status !== 200) {
 			return console.warn('Login failed');
 		}
 		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
-		console.log(response.data.data)
+		if(config.debugLevel > 1) console.log(response.data.data)
 		this.setState({
 			user: response.data.data,
 			mainView: null
@@ -89,7 +89,7 @@ class App extends Component {
 	showUserEdit() {
 		if (!this.state.user) {
 			// return this.toast.error('Not logged in');
-			return console.log('Not Logged in')
+			return console.warn('Not Logged in')
 		}
 		this.setState({
 			mainView: (<UserEditView
@@ -101,7 +101,7 @@ class App extends Component {
 	showAccountEdit() {
 		if (!this.state.user) {
 			// return this.toast.error('Not logged in');
-			return console.log('Not Logged in')
+			return console.warn('Not Logged in')
 		}
 		this.setState({
 			mainView: (<AccountEditView

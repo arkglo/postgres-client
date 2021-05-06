@@ -30,8 +30,7 @@ export default class UserEditView extends Component {
   componentDidMount(){
     console.log("UserEditView.componentDidMount()")
 
-    const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.user.id}`
-    axios.get(apiCall).then((response) => {
+    axios.get(config.apiPath('user')).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to get user details.');
       }
@@ -85,10 +84,7 @@ export default class UserEditView extends Component {
       req.lastName = this.state.lastName
     }
 
-    //console.log(req)
-    const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.user.id}`
-    console.log(apiCall)
-    axios.put(apiCall, req).then((response) => {
+    axios.put(config.apiPath('user'), req).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to update user.');
       }
@@ -108,9 +104,7 @@ export default class UserEditView extends Component {
         {
           label: "Yes",
           onClick: () => {
-            const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.user.id}`
-            console.log("DELETE: " + apiCall)
-            axios.delete(apiCall).then((response) => {
+            axios.delete(config.apiPath('user', this.props.user.id)).then((response) => {
               if (response.status !== 200) {
                 return console.warn('Failed to remove user.');
               }

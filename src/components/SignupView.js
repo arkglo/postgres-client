@@ -49,8 +49,7 @@ export default class SignupView extends Component {
 			return
 		}
 
-
-		axios.post(config.SERVER_URL + config.SERVER_PATH + config.ACCOUNT_ENDPOINT, {
+		axios.post(config.apiPath('account'), {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
 			partnerFirstName: this.state.partnerFirstName,

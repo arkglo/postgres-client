@@ -35,7 +35,8 @@ export default class LoginView extends Component {
 
 	handleLogin(event) {
 		event.preventDefault();  // IMPORTANT.
-		axios.post(config.SERVER_URL + config.SERVER_PATH + config.USER_ENDPOINT + '/login', {
+
+		axios.post(config.apiPath('user','login'), {
 			email: this.state.email,
 			password: this.state.password,
 		}).then(this.props.handleLogin)
@@ -52,7 +53,8 @@ export default class LoginView extends Component {
 
 	handleLogout(event) {
 		event.preventDefault();
-		axios.post(config.SERVER_URL + config.SERVER_PATH + config.USER_ENDPOINT + '/logout')
+		
+		axios.post(config.apiPath('user', 'logout'))
 			.then(this.props.handleLogout)
 			.catch((error) => {
 				var data = error?.response?.data ?? null

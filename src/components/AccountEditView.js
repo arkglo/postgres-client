@@ -38,8 +38,7 @@ export default class AccountEditView extends Component {
   componentDidMount() {
     // console.log(`AccountEditView.componentDidMount(${this.props.accountId})`)
 
-    const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.accountId}`
-    axios.get(apiCall).then((response) => {
+    axios.get(config.apiPath('account',this.props.accountId)).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to get account details.');
       }
@@ -56,7 +55,7 @@ export default class AccountEditView extends Component {
         eventDate: account.eventDate,
         websiteLink: account.websiteLink
       });
-      console.log(account)
+      if(config.debugLevel > 1) console.log(account)
     }).catch((error) => {
       Error.message(error.response)
     });
@@ -97,10 +96,7 @@ export default class AccountEditView extends Component {
       req.lastName = this.state.lastName
     }
 
-    //console.log(req)
-    const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.account.id}`
-    console.log(apiCall)
-    axios.put(apiCall, req).then((response) => {
+    axios.put(config.apiPath('account', this.props.account.id), req).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to update account.');
       }
@@ -120,9 +116,7 @@ export default class AccountEditView extends Component {
         {
           label: "Yes",
           onClick: () => {
-            const apiCall = `${config.SERVER_URL}${config.SERVER_PATH}/${this.subPath}/${this.props.account.id}`
-            console.log("DELETE: " + apiCall)
-            axios.delete(apiCall).then((response) => {
+            axios.delete(config.apiPath('account', this.props.account.id)).then((response) => {
               if (response.status !== 200) {
                 return console.warn('Failed to remove account.');
               }
