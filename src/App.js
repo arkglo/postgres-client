@@ -32,7 +32,7 @@ class App extends Component {
 				return;
 			}
 			this.setState({ user: response.data.user });
-		});
+		}).catch(error => console.log(`checkAuth Error: ${error} - check Productions vs Development Endpoints`));
 
 		// Show functions. For navigation and setting state.mainView.
 		this.showSignup = this.showSignup.bind(this);
@@ -44,6 +44,15 @@ class App extends Component {
 		this.handleLogout = this.handleLogout.bind(this);
 
 		this.setAccountId = this.setAccountId.bind(this);
+	}
+
+	componentDidMount() {
+		if (process.env.NODE_ENV === 'production')
+			document.title =  "TL-PG-CLient"
+		else if (config.productionTest) 
+			document.title =  "[TEST] TL-PG-CLient"
+		else
+			document.title = "[LOCAL] TL-PG-CLient"
 	}
 
 	// Handler for LoginView.
