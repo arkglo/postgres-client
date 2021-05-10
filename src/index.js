@@ -10,6 +10,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import "./animate.min.css"
 import "./toastr.min.css"
 
+require('./lib/keep-alive')
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
