@@ -9,7 +9,7 @@ const interval = 60 * 1000; // interval 60 seconds
 // 	wakeURL = "https://tl-pg-server.herokuapp.com/users"
 // }
 
-const { SERVER_URL, SERVER_PATH } = require('../config')
+const { SERVER_URL, SERVER_PATH, USER_ENDPOINT } = require('../config')
 var wakeURL = SERVER_URL + SERVER_PATH + USER_ENDPOINT
 
 (function wake() {
