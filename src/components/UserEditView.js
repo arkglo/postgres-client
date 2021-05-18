@@ -98,7 +98,7 @@ export default class UserEditView extends Component {
     console.log("------------------- handleRemove()")
     confirmAlert({
       title: 'Confirm',
-      message: 'Are you VERY sure you want to delete yourself?',
+      message: 'Are you VERY sure you want to delete the User?',
       buttons: [
         {
           label: "Yes",

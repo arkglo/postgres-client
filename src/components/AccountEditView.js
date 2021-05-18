@@ -56,6 +56,7 @@ export default class AccountEditView extends Component {
         userID: account.userID,
       })
       this.setState({account: account})
+      this.props.setThemeId(account.themeID)
       if(config.debugLevel > 1) console.log(account)
     }).catch((error) => {
       Error.message(error.response)
@@ -122,7 +123,7 @@ export default class AccountEditView extends Component {
     console.log("------------------- handleRemove()")
     confirmAlert({
       title: 'Confirm',
-      message: 'Are you VERY sure you want to delete yourself?',
+      message: 'Are you VERY sure you want to delete the Account?',
       buttons: [
         {
           label: "Yes",

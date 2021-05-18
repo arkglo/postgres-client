@@ -8,9 +8,10 @@ export const SERVER_PATH = "/api"
 // End Points
 export const ACCOUNT_ENDPOINT = "/accounts"
 export const USER_ENDPOINT = "/users"
+export const THEME_ENDPOINT = "/themes"
 
 //Override
-export const productionTest = true
+export const productionTest = false
 
 //Setup Server URL
 console.log(process.env)
@@ -25,6 +26,7 @@ export const apiPath = (endpoint, extra = null) => {
 	//config.SERVER_URL + config.SERVER_PATH + config.USER_ENDPOINT + '/login'
 	if(endpoint === 'user') endpoint = USER_ENDPOINT
 	else if(endpoint === 'account') endpoint = ACCOUNT_ENDPOINT
+	else if(endpoint === 'theme') endpoint = THEME_ENDPOINT
 
 	let apiCall = SERVER_URL + SERVER_PATH + endpoint
 	if(extra) apiCall += '/' + extra

@@ -18,8 +18,9 @@ export default class LoginView extends Component {
 	}
 
 	componentDidMount(){
-		if(this.user && this.user.accounts)
+		if(this.user && this.user.accounts) {
 			this.props.setAccountId(this.props.user.accounts[0].id);
+		}
 	}
 
 	//===========================================================================
@@ -85,15 +86,13 @@ export default class LoginView extends Component {
 		);
 	}
 
-	tryThis = (id) => {
-		this.props.setAccountId(id)
-	}
+	setAccount = (id) => { this.props.setAccountId(id) }
 
 	// User logged in.
 	renderStatus() {
 		const user = this.props.user;
 		const renAccountsData = user.accounts.map((data,idx) => 
-			<li key={idx}><button onClick={this.tryThis.bind(this, data.id)}>Select Account {data.id}</button></li>
+			<li key={idx}><button onClick={this.setAccount.bind(this, data.id)}>Select Account {data.id}</button></li>
 		);
 		return (
 			<div>

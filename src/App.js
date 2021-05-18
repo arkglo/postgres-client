@@ -12,6 +12,7 @@ import SignupView from "./components/SignupView";
 import LoginView from "./components/LoginView";
 import UserEditView from "./components/UserEditView";
 import AccountEditView from "./components/AccountEditView";
+import ThemeEditView from "./components/ThemeEditView";
 
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
@@ -24,6 +25,7 @@ class App extends Component {
 			account: null,
 			mainView: null,
 			accountId: -1,
+			themeId: -1,
 		};
 
 		// Check auth. This is for Remember Me.
@@ -38,12 +40,14 @@ class App extends Component {
 		this.showSignup = this.showSignup.bind(this);
 		this.showUserEdit = this.showUserEdit.bind(this);
 		this.showAccountEdit = this.showAccountEdit.bind(this);
+		this.showThemeEdit = this.showThemeEdit.bind(this);
 
 		// Handlers for child components.
 		this.handleLogin = this.handleLogin.bind(this);
 		this.handleLogout = this.handleLogout.bind(this);
 
 		this.setAccountId = this.setAccountId.bind(this);
+		this.setThemeId = this.setThemeId.bind(this);
 	}
 
 	componentDidMount() {
@@ -69,11 +73,8 @@ class App extends Component {
 		});
 	}
 
-	setAccountId(thisId) {
-		this.setState({
-			accountId: thisId
-		})
-	}
+	setAccountId(thisId) { this.setState({ accountId: thisId }) }
+	setThemeId(thisId) { this.setState({ themeId: thisId }) }
 
 	// Handler for LoginView.
 	handleLogout(response) {
@@ -85,6 +86,7 @@ class App extends Component {
 			user: null,
 			mainView: null,
 			accountId: -1,
+			themeId: -1,
 		});
 	}
 
@@ -103,6 +105,7 @@ class App extends Component {
 		this.setState({
 			mainView: (<UserEditView
 				user={this.state.user}
+				themeId={this.state.themeId}
 			/>),
 		});
 	}
@@ -115,6 +118,19 @@ class App extends Component {
 		this.setState({
 			mainView: (<AccountEditView
 				accountId={this.state.accountId}
+				setThemeId={this.setThemeId}
+			/>),
+		});
+	}
+
+	showThemeEdit() {
+		if (!this.state.user) {
+			// return this.toast.error('Not logged in');
+			return console.warn('Not Logged in')
+		}
+		this.setState({
+			mainView: (<ThemeEditView
+				themeId={this.state.themeId}
 			/>),
 		});
 	}
@@ -126,7 +142,9 @@ class App extends Component {
 					showSignup={this.showSignup}
 					showUserEdit={this.showUserEdit}
 					showAccountEdit={this.showAccountEdit}
-					accountId={this.state.accountId}>
+					showThemeEdit={this.showThemeEdit}
+					accountId={this.state.accountId}
+					themeId={this.state.themeId}>
 				</NavBar>
 
 				<LoginView

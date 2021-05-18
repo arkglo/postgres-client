@@ -8,7 +8,8 @@ export default class NavBar extends Component {
 	}
 
 	render() {
-		const accountLabel = (this.props.accountId===-1)?"":<span className='navbar-brand'>Account: {this.props.accountId}</span>
+		const accountLabel = (this.props.accountId === -1) ? "" : `(${this.props.accountId})`
+		const themeLabel = (this.props.themeId === -1) ? "" : `(${this.props.themeId})`
 		return (
 			<nav className="navbar navbar-default myNav">
 				<span className="navbar-brand">Test</span>
@@ -25,11 +26,16 @@ export default class NavBar extends Component {
 						</button>
 					<button type="button" name="account_edit"
 						className="btn btn-default navbar-btn"
-						disabled={this.props.accountId===-1}
+						disabled={this.props.accountId === -1}
 						onClick={this.props.showAccountEdit}>
-						Account edit
+						Account {accountLabel} edit
 						</button>
-						{accountLabel}
+					<button type="button" name="theme_edit"
+						className="btn btn-default navbar-btn"
+						disabled={this.props.themeId === -1}
+						onClick={this.props.showThemeEdit}>
+						Theme {themeLabel} edit
+						</button>
 				</div>
 			</nav>
 		);
