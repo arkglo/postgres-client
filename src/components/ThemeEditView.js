@@ -77,15 +77,21 @@ export default class AccountEditView extends Component {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.type === 'color' ? target.name.split('-')[1] : target.name;
-    console.log("chnage: " + value+ ", name: " + name)
+    console.log("Change: " + name + ", new Value: " + value)
     this.setState({
       [name]: value
     });
   }
 
   check(key, req, oldData) {
-    if (this.state[key] !== oldData[key] && this.state[key].length > 0) {
-      req[key] = this.state[key]
+    const value = this.state[key];
+    let length = typeof(value === 'boolean') ? 1 : value.length
+
+    //console.log(`check: ${key}, this.state: ${value}, ${typeof(value)}:${length}, oldData: ${oldData[key]}`)
+
+    if (value !== oldData[key] && length > 0) {
+      console.log(`check ${key} updated - new value: ${value}`)
+      req[key] = value
     }
   }
 
@@ -125,9 +131,16 @@ export default class AccountEditView extends Component {
 
     req.id = this.state.id
 
+    const count = Object.keys(req).length;
     if(config.debugLevel > 1) {
       console.log('Call Theme UPDATE')
+      console.log(`Number to update: ${count}`)
       console.log(req)
+    }
+
+    if(count <= 1) {
+      console.log("Nothing to update, skip calling api")
+      return;
     }
 
     axios.put(config.apiPath('theme', this.props.themeId), req).then((response) => {
@@ -175,7 +188,7 @@ export default class AccountEditView extends Component {
   addDiv = (divType, field, state = undefined) => {
     let thisValue = this.state[field]
     if(divType === "text" && thisValue === null) thisValue = ""
-    //console.log(`${divType} ${field}: [${thisValue}]`)
+    console.log(`${divType} ${field}: [${thisValue}]`)
 
     let disabledState = false
     if(state !== undefined) {
@@ -187,7 +200,7 @@ export default class AccountEditView extends Component {
 
     switch(divType) {
       case "checkbox":
-        typeField=<input style={{width: '34px'}} className="form-control" type={divType} name={field} defaultChecked={thisValue} onChange={this.handleChange} />
+        typeField=<input style={{width: '34px'}} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
         break
       case "text":
         typeField = <input className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
@@ -205,7 +218,7 @@ export default class AccountEditView extends Component {
         break
     }
 
-    // console.log(typeField)
+    //console.log(typeField)
     return (
       <div className="form-group">
         <label>{this.capitalize(field)}</label>

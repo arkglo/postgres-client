@@ -13,6 +13,8 @@ export const THEME_ENDPOINT = "/themes"
 //Override
 export const productionTest = false
 
+if(debugLevel) console.log(`productionTest: ${productionTest}, NODE_ENV: ${process.env.NODE_ENV}`)
+
 //Setup Server URL
 console.log(process.env)
 var THIS_SERVER_URL = LOCAL_SERVER_URL
