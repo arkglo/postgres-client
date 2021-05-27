@@ -108,6 +108,7 @@ export default class UserEditView extends Component {
                 return console.warn('Failed to remove user.');
               }
               console.log('Successfully deleted user.');
+              this.props.handleLogout()
             }).catch((error) => {
               Error.message(error.response)
             });

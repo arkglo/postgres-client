@@ -29,7 +29,7 @@ class App extends Component {
 		};
 
 		// Check auth. This is for Remember Me.
-		axios.post(config.apiPath('user','checkauth')).then((response) => {
+		axios.post(config.apiPath('user', 'checkauth')).then((response) => {
 			if (!response.data.success) {
 				return;
 			}
@@ -52,33 +52,40 @@ class App extends Component {
 
 	componentDidMount() {
 		if (process.env.NODE_ENV === 'production')
-			document.title =  "TL-PG-CLient"
-		else if (config.productionTest) 
-			document.title =  "[TEST] TL-PG-CLient"
+			document.title = "TL-PG-CLient"
+		else if (config.productionTest)
+			document.title = "[TEST] TL-PG-CLient"
 		else
 			document.title = "[LOCAL] TL-PG-CLient"
 	}
 
 	// Handler for LoginView.
 	handleLogin(response) {
-		if(config.debugLevel) console.log(response)
+		if (config.debugLevel) console.log(response)
 		if (response.status !== 200) {
 			return console.warn('Login failed');
 		}
 		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
-		if(config.debugLevel > 1) console.log(response.data.data)
+		if (config.debugLevel > 1) console.log(response.data.data)
 		this.setState({
 			user: response.data.data,
 			mainView: null
 		});
 	}
 
-	setAccountId(thisId) { this.setState({ accountId: thisId }) }
+	setAccountId(thisId) {
+		this.setState({ accountId: thisId })
+		if (thisId === -1) {
+			this.setThemeId(-1)
+		}
+	}
 	setThemeId(thisId) { this.setState({ themeId: thisId }) }
 
 	// Handler for LoginView.
 	handleLogout(response) {
-		if (response.status !== 200) {
+		console.log("here 1: ")
+		console.log(response)
+		if ((response !== null && response !== undefined) && response.status !== 200) {
 			return console.warn('Logout failed');
 		}
 		console.log('Logged out')
@@ -93,7 +100,9 @@ class App extends Component {
 	// Navigation.
 	showSignup() {
 		this.setState({
-			mainView: (<SignupView />),
+			mainView: (<SignupView
+				handleLogout={this.handleLogout}
+			/>),
 		});
 	}
 
@@ -106,6 +115,7 @@ class App extends Component {
 			mainView: (<UserEditView
 				user={this.state.user}
 				themeId={this.state.themeId}
+				handleLogout={this.handleLogout}
 			/>),
 		});
 	}
@@ -119,6 +129,7 @@ class App extends Component {
 			mainView: (<AccountEditView
 				accountId={this.state.accountId}
 				setThemeId={this.setThemeId}
+				handleLogout={this.handleLogout}
 			/>),
 		});
 	}
@@ -130,6 +141,7 @@ class App extends Component {
 		}
 		this.setState({
 			mainView: (<ThemeEditView
+				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 			/>),
 		});
@@ -154,6 +166,7 @@ class App extends Component {
 					user={this.state.user}
 					toast={this.toast}
 				/>
+
 				{ this.state.mainView}
 			</div>
 		);

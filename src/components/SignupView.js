@@ -58,9 +58,10 @@ export default class SignupView extends Component {
 			password: this.state.password,
 		}).then((response) => {
 			if (response.status !== 201) {
-        return console.warn('Failed to create account.');
-      }
+				return console.warn('Failed to create account.');
+			}
 			console.log('Created new user!')
+			this.props.handleLogout()
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
 			if (data) {
@@ -116,7 +117,7 @@ export default class SignupView extends Component {
 							<input className="form-control" type="password" name="password2" value={this.state.password2} onChange={this.handleChange} />
 						</div>
 
-						<button type="submit" className="btn btn-primary" onClick={this.handleSubmit} >Sign up</button>
+						<button type="submit" className="btn btn-success" onClick={this.handleSubmit} >Sign up</button>
 					</form>
 				</div>
 			</div>

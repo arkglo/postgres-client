@@ -8,8 +8,8 @@ export default class NavBar extends Component {
 	}
 
 	render() {
-		const accountLabel = (this.props.accountId === -1) ? "" : `(${this.props.accountId})`
-		const themeLabel = (this.props.themeId === -1) ? "" : `(${this.props.themeId})`
+		const accountLabel = (this.props.accountId === -1) ? "" : `(accountId:${this.props.accountId})`
+		const themeLabel = (this.props.themeId === -1) ? "" : `(themeId:${this.props.themeId})`
 		return (
 			<nav className="navbar navbar-default myNav">
 				<span className="navbar-brand">Test</span>

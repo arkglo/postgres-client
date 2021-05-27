@@ -32,7 +32,7 @@ export default class AccountEditView extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
-  }
+  }//constructor
 
   componentDidMount() {
     // console.log(`AccountEditView.componentDidMount(${this.props.accountId})`)
@@ -128,11 +128,12 @@ export default class AccountEditView extends Component {
         {
           label: "Yes",
           onClick: () => {
-            axios.delete(config.apiPath('account', this.props.account.id)).then((response) => {
+            axios.delete(config.apiPath('account', this.props.accountId)).then((response) => {
               if (response.status !== 200) {
                 return console.warn('Failed to remove account.');
               }
               console.log('Successfully deleted account.');
+              this.props.handleLogout()
             }).catch((error) => {
               Error.message(error.response)
             });
@@ -149,7 +150,8 @@ export default class AccountEditView extends Component {
   render() {
     return (
       <div className="panel panel-default">
-        <div className="panel-heading">Account Edit (<i>{this.props.accountId}</i>)</div>
+        <div className="panel-heading">Account Edit (<i>{this.props.accountId}</i>)<br/>
+					<code>{config.apiPath('account', this.props.accountId)}</code></div>
         <div className="panel-body">
 
           <form className="form">
