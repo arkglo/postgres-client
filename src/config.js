@@ -11,7 +11,7 @@ export const USER_ENDPOINT = "/users"
 export const THEME_ENDPOINT = "/themes"
 
 //Override
-export const productionTest = false
+export const productionTest = true
 
 if(debugLevel) console.log(`productionTest: ${productionTest}, NODE_ENV: ${process.env.NODE_ENV}`)
 
