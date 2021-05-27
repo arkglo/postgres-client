@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'production' || config.productionTest) {
 	try {
 		// const wakeHandler = 
 		setInterval(() => {
-			//console.log(`wake: ${wakeURL}`)
+			console.log(`wake: ${wakeURL}`)
 			fetch(wakeURL).then((res) => {
 				console.log(`response-ok: ${res.ok}, status: ${res.status}`)
 			}).catch((err) => {
@@ -28,6 +28,6 @@ if (process.env.NODE_ENV === 'production' || config.productionTest) {
 	} catch (err) {
 		console.error('Error occured: retrying...' + err);
 		//clearInterval(wakeHandler); // if you uncomment wakeHandler is unknown
-		return setTimeout(() => wake(), 10000);
+		return setTimeout(() => wake(), 60000);
 	};
 })();
