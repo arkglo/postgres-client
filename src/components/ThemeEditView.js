@@ -1,7 +1,8 @@
 // For editing one user's details. Can edit password as well.
 import React, { Component } from 'react';
 import axios from 'axios';
-import * as config from '../config';
+import * as config from '../config/config';
+import { apiPath } from '../lib/apiPath'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -46,7 +47,7 @@ export default class ThemeEditView extends Component {
 		console.log(`ThemeEditView.componentDidMount(${this.props.themeId})`)
 
 		//Get All themes
-		axios.get(config.apiPath('theme')).then((response) => {
+		axios.get(apiPath('theme')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
 			}
@@ -55,7 +56,7 @@ export default class ThemeEditView extends Component {
 			//Get just the theme we want
 			if (this.props.themeId == null) return;
 
-			return axios.get(config.apiPath('theme', this.props.themeId))
+			return axios.get(apiPath('theme', this.props.themeId))
 		}).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
@@ -182,7 +183,7 @@ export default class ThemeEditView extends Component {
 			return;
 		}
 
-		axios.post(config.apiPath('theme'), req).then((response) => {
+		axios.post(apiPath('theme'), req).then((response) => {
 			if (response.status !== 201) {
 				return console.warn('Failed to create theme.');
 			}
@@ -216,7 +217,7 @@ export default class ThemeEditView extends Component {
 			return;
 		}
 
-		axios.put(config.apiPath('theme', this.props.themeId), req).then((response) => {
+		axios.put(apiPath('theme', this.props.themeId), req).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to update theme.');
 			}
@@ -236,7 +237,7 @@ export default class ThemeEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						axios.delete(config.apiPath('theme', this.props.themeId)).then((response) => {
+						axios.delete(apiPath('theme', this.props.themeId)).then((response) => {
 							if (response.status !== 200) {
 								return console.warn('Failed to remove theme.');
 							}
@@ -331,7 +332,7 @@ export default class ThemeEditView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading">Theme Edit (<i>{this.props.themeId}</i>)<br/>
-					<code>{config.apiPath('theme', this.props.themeId)}</code></div>
+					<code>{apiPath('theme', this.props.themeId)}</code></div>
 					<div className="panel-body">
 
 						<form className="form">
@@ -358,7 +359,7 @@ export default class ThemeEditView extends Component {
 				</div>
 				<div className="panel panel-default">
 					<div className="panel-heading">All Available Themes (<i>{allThemesLength}</i>)<br/>
-					<code>{config.apiPath('theme')}</code>
+					<code>{apiPath('theme')}</code>
 					</div>
 					<div className="panel-body">{themeList}
 					</div>

@@ -11,7 +11,7 @@ export const USER_ENDPOINT = "/users"
 export const THEME_ENDPOINT = "/themes"
 
 //Override
-export const productionTest = true
+export const productionTest = false
 
 if(debugLevel) console.log(`productionTest: ${productionTest}, NODE_ENV: ${process.env.NODE_ENV}`)
 
@@ -22,16 +22,3 @@ if(process.env.NODE_ENV === 'production' || productionTest) {
 	THIS_SERVER_URL = HEROKU_SERVER_URL
 }
 export const SERVER_URL = THIS_SERVER_URL
-
-
-export const apiPath = (endpoint, extra = null) => {
-	//config.SERVER_URL + config.SERVER_PATH + config.USER_ENDPOINT + '/login'
-	if(endpoint === 'user') endpoint = USER_ENDPOINT
-	else if(endpoint === 'account') endpoint = ACCOUNT_ENDPOINT
-	else if(endpoint === 'theme') endpoint = THEME_ENDPOINT
-
-	let apiCall = SERVER_URL + SERVER_PATH + endpoint
-	if(extra) apiCall += '/' + extra
-	if(debugLevel) console.log(`apiPath: [${apiCall}]`)
-	return apiCall;
-}

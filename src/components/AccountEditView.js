@@ -1,7 +1,8 @@
 // For editing one user's details. Can edit password as well.
 import React, { Component } from 'react';
 import axios from 'axios';
-import * as config from '../config';
+import * as config from '../config/config';
+import { apiPath } from '../lib/apiPath'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -37,7 +38,7 @@ export default class AccountEditView extends Component {
   componentDidMount() {
     // console.log(`AccountEditView.componentDidMount(${this.props.accountId})`)
 
-    axios.get(config.apiPath('account',this.props.accountId)).then((response) => {
+    axios.get(apiPath('account',this.props.accountId)).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to get account details.');
       }
@@ -108,7 +109,7 @@ export default class AccountEditView extends Component {
       console.log(req)
     }
 
-    axios.put(config.apiPath('account', this.props.accountId), req).then((response) => {
+    axios.put(apiPath('account', this.props.accountId), req).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to update account.');
       }
@@ -128,7 +129,7 @@ export default class AccountEditView extends Component {
         {
           label: "Yes",
           onClick: () => {
-            axios.delete(config.apiPath('account', this.props.accountId)).then((response) => {
+            axios.delete(apiPath('account', this.props.accountId)).then((response) => {
               if (response.status !== 200) {
                 return console.warn('Failed to remove account.');
               }
@@ -151,7 +152,7 @@ export default class AccountEditView extends Component {
     return (
       <div className="panel panel-default">
         <div className="panel-heading">Account Edit (<i>{this.props.accountId}</i>)<br/>
-					<code>{config.apiPath('account', this.props.accountId)}</code></div>
+					<code>{apiPath('account', this.props.accountId)}</code></div>
         <div className="panel-body">
 
           <form className="form">

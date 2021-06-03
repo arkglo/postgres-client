@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import axios from 'axios';
 
-import * as config from '../config';
+import { apiPath } from '../lib/apiPath'
 
 import Error from './error';
 
@@ -27,7 +27,7 @@ export default class LoginView extends Component {
 			this.props.setAccountId(this.props.user.accounts[0].id);
 		}
 
-		axios.get(config.apiPath('user')).then((response) => {
+		axios.get(apiPath('user')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get user details.');
 			}
@@ -57,7 +57,7 @@ export default class LoginView extends Component {
 	handleLogin(event) {
 		event.preventDefault();  // IMPORTANT.
 
-		axios.post(config.apiPath('user', 'login'), {
+		axios.post(apiPath('user', 'login'), {
 			email: this.state.email,
 			password: this.state.password,
 		}).then(this.props.handleLogin)
@@ -75,7 +75,7 @@ export default class LoginView extends Component {
 	handleLogout(event) {
 		event.preventDefault();
 
-		axios.post(config.apiPath('user', 'logout'))
+		axios.post(apiPath('user', 'logout'))
 			.then(this.props.handleLogout)
 			.catch((error) => {
 				var data = error?.response?.data ?? null
@@ -125,7 +125,7 @@ export default class LoginView extends Component {
 			<div>
 				<span>Welcome {this.props.user.firstName} {this.props.user.lastName}!</span><p />
 				<span>Accounts (count: {this.props.user.accounts.length})</span><br/>
-					<code>{config.apiPath('user', this.props.user.id)}</code><p/>
+					<code>{apiPath('user', this.props.user.id)}</code><p/>
 					{(user.accounts == null || user.accounts.length === 0)?<i>No Account Registered for User</i>:''}
 				<span>
 					<ul>
@@ -156,7 +156,7 @@ export default class LoginView extends Component {
 		return (
 			<div>
 				<label>Users</label><br/>
-				<code>{config.apiPath('user')}</code>
+				<code>{apiPath('user')}</code>
 				<ul>
 					{renUserData}
 				</ul>

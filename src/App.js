@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-//import logo from './logo.svg';
-import './App.css';
-import * as config from './config';
+import * as config from './config/config';
+import { apiPath } from './lib/apiPath'
 
 // Top NavBar component
 import NavBar from "./components/NavBar"
@@ -17,6 +16,8 @@ import ThemeEditView from "./components/ThemeEditView";
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
 
+// console.log("APP")
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -29,7 +30,7 @@ class App extends Component {
 		};
 
 		// Check auth. This is for Remember Me.
-		axios.post(config.apiPath('user', 'checkauth')).then((response) => {
+		axios.post(apiPath('user', 'checkauth')).then((response) => {
 			if (!response.data.success) {
 				return;
 			}

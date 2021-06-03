@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import * as config from '../config';
+import { apiPath } from '../lib/apiPath'
 
 //------------------------------------------------------------
 function initialState() {
@@ -49,7 +49,7 @@ export default class SignupView extends Component {
 			return
 		}
 
-		axios.post(config.apiPath('account'), {
+		axios.post(apiPath('account'), {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
 			partnerFirstName: this.state.partnerFirstName,

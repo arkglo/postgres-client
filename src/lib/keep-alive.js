@@ -1,4 +1,4 @@
-import * as config from '../config';
+import * as config from '../config/config';
 
 // keepAlive.js
 const fetch = require('node-fetch');
