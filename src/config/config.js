@@ -9,6 +9,7 @@ export const SERVER_PATH = "/api"
 export const ACCOUNT_ENDPOINT = "/accounts"
 export const USER_ENDPOINT = "/users"
 export const THEME_ENDPOINT = "/themes"
+export const SERVICES_ENDPOINT = "/services"
 
 //Override
 export const productionTest = false

@@ -12,6 +12,7 @@ import LoginView from "./components/LoginView";
 import UserEditView from "./components/UserEditView";
 import AccountEditView from "./components/AccountEditView";
 import ThemeEditView from "./components/ThemeEditView";
+import Services from "./components/Services";
 
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
@@ -27,6 +28,7 @@ class App extends Component {
 			mainView: null,
 			accountId: -1,
 			themeId: -1,
+			viewType: ''
 		};
 
 		// Check auth. This is for Remember Me.
@@ -42,10 +44,12 @@ class App extends Component {
 		this.showUserEdit = this.showUserEdit.bind(this);
 		this.showAccountEdit = this.showAccountEdit.bind(this);
 		this.showThemeEdit = this.showThemeEdit.bind(this);
+		this.showServices = this.showServices.bind(this);
 
 		// Handlers for child components.
 		this.handleLogin = this.handleLogin.bind(this);
 		this.handleLogout = this.handleLogout.bind(this);
+		this.handleReset = this.handleReset.bind(this);
 
 		this.setAccountId = this.setAccountId.bind(this);
 		this.setThemeId = this.setThemeId.bind(this);
@@ -95,6 +99,19 @@ class App extends Component {
 			mainView: null,
 			accountId: -1,
 			themeId: -1,
+			viewType: ''
+		});
+	}
+
+	// Handler for LoginView.
+	handleReset() {
+		console.log('Reset')
+		this.setState({
+			user: null,
+			mainView: null,
+			accountId: -1,
+			themeId: -1,
+			viewType: ''
 		});
 	}
 
@@ -104,6 +121,7 @@ class App extends Component {
 			mainView: (<SignupView
 				handleLogout={this.handleLogout}
 			/>),
+			viewType: 'SignupView',
 		});
 	}
 
@@ -118,6 +136,7 @@ class App extends Component {
 				themeId={this.state.themeId}
 				handleLogout={this.handleLogout}
 			/>),
+			viewType: 'UserEditView',
 		});
 	}
 
@@ -132,6 +151,7 @@ class App extends Component {
 				setThemeId={this.setThemeId}
 				handleLogout={this.handleLogout}
 			/>),
+			viewType: 'AccountEditView',
 		});
 	}
 
@@ -145,28 +165,45 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 			/>),
+			viewType: 'ThemeEditView',
+		});
+	}
+
+	loginViewRender() {
+		return(<LoginView
+			handleLogin={this.handleLogin}
+			handleLogout={this.handleLogout}
+			setAccountId={this.setAccountId}
+			user={this.state.user}
+			toast={this.toast}
+		/>)
+	}
+	
+	showServices() {
+		this.setState({
+			mainView: (<Services />),
+			viewType: 'Services',
 		});
 	}
 
 	render() {
+		const loginView = this.state.viewType === "Services" ? null : this.loginViewRender()
+
 		return (
 			<div className="container">
 				<NavBar
+					handleReset={this.handleReset}
 					showSignup={this.showSignup}
 					showUserEdit={this.showUserEdit}
 					showAccountEdit={this.showAccountEdit}
 					showThemeEdit={this.showThemeEdit}
+					showServices={this.showServices}
 					accountId={this.state.accountId}
-					themeId={this.state.themeId}>
+					themeId={this.state.themeId}
+					viewType={this.state.viewType}>
 				</NavBar>
 
-				<LoginView
-					handleLogin={this.handleLogin}
-					handleLogout={this.handleLogout}
-					setAccountId={this.setAccountId}
-					user={this.state.user}
-					toast={this.toast}
-				/>
+				{loginView}
 
 				{ this.state.mainView}
 			</div>

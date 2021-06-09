@@ -13,7 +13,13 @@ export default class NavBar extends Component {
 		return (
 			<nav className="navbar navbar-default myNav">
 				<span className="navbar-brand">Test</span>
+				<span className="navbar-text">({this.props.viewType})</span>
 				<div className="btn-group" role="group">
+					<button type="button" name="reset"
+						className="btn btn-default navbar-btn"
+						onClick={this.props.handleReset}>
+						Reset
+						</button>
 					<button type="button" name="signup"
 						className="btn btn-default navbar-btn"
 						onClick={this.props.showSignup}>
@@ -35,6 +41,11 @@ export default class NavBar extends Component {
 						disabled={this.props.themeId === -1}
 						onClick={this.props.showThemeEdit}>
 						Theme {themeLabel} edit
+						</button>
+					<button type="button" name="services_edit"
+						className="btn btn-default navbar-btn"
+						onClick={this.props.showServices}>
+						Sevices
 						</button>
 				</div>
 			</nav>
