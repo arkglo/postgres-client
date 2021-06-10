@@ -12,9 +12,16 @@ export const THEME_ENDPOINT = "/themes"
 export const SERVICES_ENDPOINT = "/services"
 
 //Override
-export const productionTest = true
+export let productionTest = true
+if(window.location.hostname === 'localhost') {
+	//Actually running locally - full dev
+	productionTest = false
+}
 
-if(debugLevel) console.log(`productionTest: ${productionTest}, NODE_ENV: ${process.env.NODE_ENV}`)
+if(debugLevel) {
+	console.log(`productionTest: ${productionTest}, NODE_ENV: ${process.env.NODE_ENV}`)
+	console.log(`Runnign from : ${window.location.href}`)
+}
 
 //Setup Server URL
 console.log(process.env)

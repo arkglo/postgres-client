@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import { apiPath } from '../lib/apiPath'
 
+import Error from './error';
+
 //------------------------------------------------------------
 function initialState() {
 	return {
