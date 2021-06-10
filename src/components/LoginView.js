@@ -13,6 +13,7 @@ export default class LoginView extends Component {
 			lastName: '<last name>',
 			email: 'test@email.com',
 			password: 'password',
+			accountId: this.props.accountId,
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleLogin = this.handleLogin.bind(this);
@@ -26,6 +27,11 @@ export default class LoginView extends Component {
 		if (this.user && this.user.accounts) {
 			this.props.setAccountId(this.props.user.accounts[0].id);
 		}
+		this.getUsers()
+	}
+
+	getUsers() {
+		console.log("LoginView.getUsers()")
 
 		axios.get(apiPath('user')).then((response) => {
 			if (response.status !== 200) {

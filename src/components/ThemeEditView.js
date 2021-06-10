@@ -41,10 +41,17 @@ export default class ThemeEditView extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleRemove = this.handleRemove.bind(this);
+		this.handleCreateTheme = this.handleCreateTheme.bind(this);
+
 	}
 
 	componentDidMount() {
 		console.log(`ThemeEditView.componentDidMount(${this.props.themeId})`)
+		this.getThemes()
+	}
+
+	getThemes() {
+		console.log("ThemeEditView.getThemes()")
 
 		//Get All themes
 		axios.get(apiPath('theme')).then((response) => {
@@ -254,6 +261,79 @@ export default class ThemeEditView extends Component {
 		});
 	}
 
+
+	createTheme(theme) {
+		console.log("ThemeEditView.createTheme()")
+
+		axios.post(apiPath('theme'), theme).then((response) => {
+			if (response.status !== 201) {
+				return console.warn('Failed to create theme.');
+			}
+			console.log(`Created account [${theme.names}]!`)
+		}).catch((error) => {
+			var data = error?.response?.data ?? null
+			if (data) {
+				console.error(`${data.function}() - ${data.message}`)
+			}
+			else {
+				console.log(error)
+			}
+		})
+	}
+
+	//------------------------------------------------------------
+	handleCreateTheme(event) {
+		event.preventDefault();  // IMPORTANT.
+		console.log(`handleCreateTheme: ${event.target.id}`)
+		// console.log(event)
+		switch (event.target.id) {
+			case 'TestTheme-1':
+				this.createTheme({
+					accountID: this.props.accountId,
+					colour1: "#5678D4",
+					colour2: "#D4B256",
+					font: "TestFont",
+					imageUrl: "test_image.jpg",
+					names: "TestNames",
+					byLine: "TestByLine",
+					message: "TestMessage"
+				})
+				break;
+			case 'TestTheme-2':
+				this.createTheme({
+					accountID: this.props.accountId,
+					colour1: "#f6ae13",
+					colour2: "#2e3484",
+					font: "TestFont2",
+					imageUrl: "test_image2.jpg",
+					names: "TestNames2",
+					byLine: "TestByLine2",
+					message: "TestMessage2"
+				})
+				break;
+			case 'TestTheme-3':
+				this.createTheme({
+					accountID: this.props.accountId,
+					colour1: "#646464",
+					colour2: "#000000",
+					font: "TestFont3",
+					imageUrl: "test_image3.jpg",
+					names: "TestNames3",
+					byLine: "TestByLine3",
+					message: "TestMessage3",
+					ceremonyEnabled: true,
+					ceremonyMessage: "ceremonyMessage3",
+					ceremonyDateTime: "2021-03-17T13:37:16.991Z"
+				})
+				break;
+			default:
+				console.log("Unknown");
+				break;
+		}
+		// const that = this.props.
+		// setTimeout(() => { this.props.handleReset() }, 500)
+	}
+
 	capitalize = (s) => {
 		if (typeof s !== 'string') return s //''
 		return s.charAt(0).toUpperCase() + s.slice(1)
@@ -331,8 +411,8 @@ export default class ThemeEditView extends Component {
 		return (
 			<>
 				<div className="panel panel-default">
-					<div className="panel-heading">Theme Edit (<i>{this.props.themeId}</i>)<br/>
-					<code>{apiPath('theme', this.props.themeId)}</code></div>
+					<div className="panel-heading">Theme Edit (<i>{this.props.themeId}</i>)<br />
+						<code>{apiPath('theme', this.props.themeId, false)}</code></div>
 					<div className="panel-body">
 
 						<form className="form">
@@ -358,10 +438,18 @@ export default class ThemeEditView extends Component {
 					</div>
 				</div>
 				<div className="panel panel-default">
-					<div className="panel-heading">All Available Themes (<i>{allThemesLength}</i>)<br/>
-					<code>{apiPath('theme')}</code>
+					<div className="panel-heading">All Available Themes (<i>{allThemesLength}</i>)<br />
+						<code>{apiPath('theme', null, false)}</code>
 					</div>
 					<div className="panel-body">{themeList}
+					</div>
+				</div>
+				<div className="panel panel-default">
+					<div className="panel-heading">PreConfigured Theme data</div>
+					<div className="panel-body">
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
 					</div>
 				</div>
 			</>

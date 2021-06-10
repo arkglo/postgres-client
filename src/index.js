@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import "./css/animate.min.css"
 import "./css/toastr.min.css"
 
-require('./lib/keep-alive')
+// require('./lib/keep-alive') // sends a get request every X seconds to keep server active 
 
 // console.log("INDEX")
 

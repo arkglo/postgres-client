@@ -120,6 +120,7 @@ class App extends Component {
 		this.setState({
 			mainView: (<SignupView
 				handleLogout={this.handleLogout}
+				handleReset={this.handleReset}
 			/>),
 			viewType: 'SignupView',
 		});
