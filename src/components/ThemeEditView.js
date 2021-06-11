@@ -12,6 +12,7 @@ import Error from './error';
 export default class ThemeEditView extends Component {
 	constructor(props) {
 		super(props);
+		console.log(`ThemeEditView.constructor()`)
 		this.state = {
 			"id": 1,
 			"colour1": '',
@@ -31,18 +32,13 @@ export default class ThemeEditView extends Component {
 			allThemes: null
 		};
 
-		// "createdAt": "2021-05-12T12:50:53.521Z",
-		// "updatedAt": "2021-05-12T12:50:53.521Z"
-
 		// console.log("Props:")
 		// console.log(props)
-
 		this.handleCreate = this.handleCreate.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleRemove = this.handleRemove.bind(this);
 		this.handleCreateTheme = this.handleCreateTheme.bind(this);
-
 	}
 
 	componentDidMount() {
@@ -51,7 +47,7 @@ export default class ThemeEditView extends Component {
 	}
 
 	getThemes() {
-		console.log("ThemeEditView.getThemes()")
+		console.log(`ThemeEditView.getThemes(${this.props.themeId})`)
 
 		//Get All themes
 		axios.get(apiPath('theme')).then((response) => {
@@ -84,7 +80,7 @@ export default class ThemeEditView extends Component {
 				ceremonyDateTime: theme.ceremonyDateTime,
 				receptionEnabled: theme.receptionEnabled,
 				receptionMessage: theme.receptionMessage,
-				receptionDateTime: theme.receptionDateTime,
+				receptionDateTime: theme.receptionDateTime
 			})
 			this.setState({ theme: theme })
 			if (config.debugLevel > 1) console.log(theme)
@@ -97,7 +93,7 @@ export default class ThemeEditView extends Component {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.type === 'color' ? target.name.split('-')[1] : target.name;
-		//console.log("Change: " + name + ", new Value: " + value)
+		// console.log("Change: " + name + ", new Value: " + value)
 		this.setState({
 			[name]: value
 		});
@@ -117,11 +113,7 @@ export default class ThemeEditView extends Component {
 
 	createChangeReqObject() {
 		// only add new fields if changed and valid
-
-		//console.log(this.state) // new
 		const oldTheme = this.state.theme
-		//console.log(oldTheme) // new
-
 		var req = {}
 		this.check("colour1", req, oldTheme)
 		this.check("colour2", req, oldTheme)
@@ -142,6 +134,12 @@ export default class ThemeEditView extends Component {
 		return req
 	}// createChangeReqObject
 
+	checkThemeExists(name) {
+		//checks if there is already a them with the same theme.names === name
+		// return -1 if not found, otherwise return the index
+		return this.state.allThemes.findIndex(theme => theme.names === name)
+	}
+
 	setTheme = (id) => {
 		console.log(`setTheme to ${id}`)
 		console.log(this.state.allThemes)
@@ -152,6 +150,7 @@ export default class ThemeEditView extends Component {
 			const newTheme = this.state.allThemes[newThemeIndex]
 			console.log(newTheme)
 
+			// console.log(`this.state.accountId ${this.props.accountId}`)
 			this.setState({
 				id: newTheme.id,
 				colour1: newTheme.colour1,
@@ -168,6 +167,7 @@ export default class ThemeEditView extends Component {
 				receptionMessage: newTheme.receptionMessage,
 				receptionDateTime: newTheme.receptionDateTime,
 			})
+			this.props.updateToThisThemeId(newTheme.id)
 		}
 	}
 
@@ -282,13 +282,15 @@ export default class ThemeEditView extends Component {
 	}
 
 	//------------------------------------------------------------
+	//Allow basic creation of some test content
 	handleCreateTheme(event) {
 		event.preventDefault();  // IMPORTANT.
 		console.log(`handleCreateTheme: ${event.target.id}`)
 		// console.log(event)
+		let thisTheme = {}
 		switch (event.target.id) {
 			case 'TestTheme-1':
-				this.createTheme({
+				thisTheme = {
 					accountID: this.props.accountId,
 					colour1: "#5678D4",
 					colour2: "#D4B256",
@@ -297,10 +299,10 @@ export default class ThemeEditView extends Component {
 					names: "TestNames",
 					byLine: "TestByLine",
 					message: "TestMessage"
-				})
+				}
 				break;
 			case 'TestTheme-2':
-				this.createTheme({
+				thisTheme = {
 					accountID: this.props.accountId,
 					colour1: "#f6ae13",
 					colour2: "#2e3484",
@@ -309,10 +311,10 @@ export default class ThemeEditView extends Component {
 					names: "TestNames2",
 					byLine: "TestByLine2",
 					message: "TestMessage2"
-				})
+				}
 				break;
 			case 'TestTheme-3':
-				this.createTheme({
+				thisTheme = {
 					accountID: this.props.accountId,
 					colour1: "#646464",
 					colour2: "#000000",
@@ -324,14 +326,19 @@ export default class ThemeEditView extends Component {
 					ceremonyEnabled: true,
 					ceremonyMessage: "ceremonyMessage3",
 					ceremonyDateTime: "2021-03-17T13:37:16.991Z"
-				})
+				}
 				break;
 			default:
 				console.log("Unknown");
-				break;
+				return;
 		}
-		// const that = this.props.
-		// setTimeout(() => { this.props.handleReset() }, 500)
+
+		if(this.checkThemeExists(thisTheme.names) === -1){
+			this.createTheme(thisTheme)
+		}
+		else {
+			console.log(`Theme (${thisTheme.names}) already exists - skipping calling create`)
+		}
 	}
 
 	capitalize = (s) => {
@@ -382,10 +389,9 @@ export default class ThemeEditView extends Component {
 	}
 
 	render() {
-		console.log("%cThemeEditView - render()", 'color: yellow')
+		console.log(`%cThemeEditView - render(themeId ${this.props.themeId})`, 'color: yellow')
 
 		var buttons
-		//console.log(`themeId: ${this.props.themeId}`)
 		if (this.props.themeId == null) {
 			buttons = <div className="btn-group">
 				<button className="btn btn-success" onClick={this.handleCreate} >Create</button>
@@ -441,7 +447,9 @@ export default class ThemeEditView extends Component {
 					<div className="panel-heading">All Available Themes (<i>{allThemesLength}</i>)<br />
 						<code>{apiPath('theme', null, false)}</code>
 					</div>
-					<div className="panel-body">{themeList}
+					<div className="panel-body">
+						Update Account({this.props.accountId}) to use a pre-existing theme:<p/>
+						{themeList}
 					</div>
 				</div>
 				<div className="panel panel-default">

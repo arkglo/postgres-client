@@ -162,7 +162,8 @@ export default class LoginView extends Component {
 		return (
 			<div>
 				<label>Users</label><br/>
-				<code>{apiPath('user')}</code>
+				<code>{apiPath('user')}</code><br/>
+				Available users:
 				<ul>
 					{renUserData}
 				</ul>
@@ -174,18 +175,19 @@ export default class LoginView extends Component {
 	render() {
 		console.log("%cLoginView - render()", 'color: yellow')
 
-		var view;
+		let view, showUsers = <div></div>;
 		if (this.props.user) {
 			view = this.renderStatus();
 		} else {
 			view = this.renderForm();
+			showUsers = <div className="panel-body">{this.renderUsers()}</div>
 		}
 
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">User</div>
 				<div className="panel-body">{view}</div>
-				<div className="panel-body">{this.renderUsers()}</div>
+				{showUsers}
 			</div>
 		);
 	}

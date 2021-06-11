@@ -14,6 +14,8 @@ import AccountEditView from "./components/AccountEditView";
 import ThemeEditView from "./components/ThemeEditView";
 import Services from "./components/Services";
 
+import Error from './components/error';
+
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
 
@@ -53,6 +55,7 @@ class App extends Component {
 
 		this.setAccountId = this.setAccountId.bind(this);
 		this.setThemeId = this.setThemeId.bind(this);
+		this.updateToThisThemeId = this.updateToThisThemeId.bind(this)
 	}
 
 	componentDidMount() {
@@ -79,12 +82,27 @@ class App extends Component {
 	}
 
 	setAccountId(thisId) {
+		console.log(`setAccountId(${thisId})`)
 		this.setState({ accountId: thisId })
 		if (thisId === -1) {
 			this.setThemeId(-1)
 		}
 	}
 	setThemeId(thisId) { this.setState({ themeId: thisId }) }
+
+	updateToThisThemeId(thisId) {
+		console.log(`updateToThisThemeId - accountId: ${this.state.accountId}, theme: ${thisId})`)
+		axios.put(apiPath('account', this.state.accountId), { themeID: thisId }).then((response) => {
+      if (response.status !== 200) {
+        return console.warn('Failed to update account.');
+      }
+			this.setThemeId(thisId)
+			this.showThemeEdit()
+      console.log('Updated account details!');
+    }).catch((error) => {
+      Error.message(error.response)
+    });
+	}
 
 	// Handler for LoginView.
 	handleLogout(response) {
@@ -126,6 +144,7 @@ class App extends Component {
 		});
 	}
 
+	// User Edit
 	showUserEdit() {
 		if (!this.state.user) {
 			// return this.toast.error('Not logged in');
@@ -141,6 +160,7 @@ class App extends Component {
 		});
 	}
 
+	// Account Edit
 	showAccountEdit() {
 		if (!this.state.user) {
 			// return this.toast.error('Not logged in');
@@ -156,6 +176,7 @@ class App extends Component {
 		});
 	}
 
+	// Theme Edit
 	showThemeEdit() {
 		if (!this.state.user) {
 			// return this.toast.error('Not logged in');
@@ -165,6 +186,7 @@ class App extends Component {
 			mainView: (<ThemeEditView
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
+				updateToThisThemeId={this.updateToThisThemeId}
 			/>),
 			viewType: 'ThemeEditView',
 		});
