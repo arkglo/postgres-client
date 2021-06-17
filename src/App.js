@@ -30,16 +30,10 @@ class App extends Component {
 			mainView: null,
 			accountId: -1,
 			themeId: -1,
-			viewType: ''
+			viewType: 'checkAuth',
+			admin: false,
+			authenticated: false,
 		};
-
-		// Check auth. This is for Remember Me.
-		axios.post(apiPath('user', 'checkauth')).then((response) => {
-			if (!response.data.success) {
-				return;
-			}
-			this.setState({ user: response.data.user });
-		}).catch(error => console.log(`checkAuth Error: ${error} - check Productions vs Development Endpoints`));
 
 		// Show functions. For navigation and setting state.mainView.
 		this.showSignup = this.showSignup.bind(this);
@@ -59,12 +53,40 @@ class App extends Component {
 	}
 
 	componentDidMount() {
+		console.log(`App.componentDidMount()`)
+
 		if (process.env.NODE_ENV === 'production')
 			document.title = "TL-PG-CLient"
 		else if (config.productionTest)
 			document.title = "[TEST] TL-PG-CLient"
 		else
 			document.title = "[LOCAL] TL-PG-CLient"
+
+		this.checkAuth()
+	}
+
+	checkAuth() {
+		// Check auth. This is for Remember Me.
+		axios.get(apiPath('GET','user', 'checkauth')).then((response) => {
+			// if(config.debugLevel > 1) console.log(response.data.data)
+			console.log(response)
+			if (response.status === 200) {
+				console.log(`checkAuth - %cSucceeded`, 'color:lightgreen')
+				const admin = response.data.data?.role ? (response.data.data?.role === 'admin') : false
+				// console.log(`admin: ${admin}`)
+				this.setState({ 
+					user: response.data.data,
+					admin: admin,
+					authenticated: true
+				});
+			}
+			this.setState({ viewType: '' })
+		}).catch(error => {
+			console.log(`checkAuth: ${error}`)
+			// console.log(`  • Check Production vs Development Endpoints`)
+			this.setState({ viewType: '' })
+			return;
+		});
 	}
 
 	// Handler for LoginView.
@@ -75,10 +97,15 @@ class App extends Component {
 		}
 		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
 		if (config.debugLevel > 1) console.log(response.data.data)
+		const admin = response.data.data?.role ? (response.data.data?.role === 'admin') : false
+		console.log(`admin: ${admin}`)
 		this.setState({
 			user: response.data.data,
-			mainView: null
+			mainView: null,
+			admin: admin,
+			authenticated: true
 		});
+		this.setState({ viewType: '' })
 	}
 
 	setAccountId(thisId) {
@@ -92,7 +119,7 @@ class App extends Component {
 
 	updateToThisThemeId(thisId) {
 		console.log(`updateToThisThemeId - accountId: ${this.state.accountId}, theme: ${thisId})`)
-		axios.put(apiPath('account', this.state.accountId), { themeID: thisId }).then((response) => {
+		axios.put(apiPath('PUT','account', this.state.accountId), { themeID: thisId }).then((response) => {
       if (response.status !== 200) {
         return console.warn('Failed to update account.');
       }
@@ -104,36 +131,42 @@ class App extends Component {
     });
 	}
 
-	// Handler for LoginView.
+	//Set the state viewType after 500ms, allows other state handling to complete
+	resetViewType(viewType = '') {
+		setTimeout(() => { this.setState({viewType: viewType }) }, 500)
+	}
+
+	//Reset state to default
+	resetState() {
+		this.setState({
+			user: null,
+			mainView: null,
+			accountId: -1,
+			themeId: -1,
+			viewType: 'checkAuth',
+			admin: false,
+			authenticated: false
+		});
+	}
+
+	// Handler for Logout
 	handleLogout(response) {
-		console.log("here 1: ")
-		console.log(response)
 		if ((response !== null && response !== undefined) && response.status !== 200) {
 			return console.warn('Logout failed');
 		}
 		console.log('Logged out')
-		this.setState({
-			user: null,
-			mainView: null,
-			accountId: -1,
-			themeId: -1,
-			viewType: ''
-		});
+		this.resetState()
+		this.resetViewType()
 	}
 
-	// Handler for LoginView.
+	// Handler for Reset
 	handleReset() {
 		console.log('Reset')
-		this.setState({
-			user: null,
-			mainView: null,
-			accountId: -1,
-			themeId: -1,
-			viewType: ''
-		});
+		this.resetState()
+		this.resetViewType()
 	}
 
-	// Navigation.
+	// Navigation
 	showSignup() {
 		this.setState({
 			mainView: (<SignupView
@@ -199,6 +232,8 @@ class App extends Component {
 			setAccountId={this.setAccountId}
 			user={this.state.user}
 			toast={this.toast}
+			authenticated={this.state.authenticated}
+			viewType={this.state.viewType}
 		/>)
 	}
 	
@@ -210,7 +245,12 @@ class App extends Component {
 	}
 
 	render() {
-		const loginView = this.state.viewType === "Services" ? null : this.loginViewRender()
+		console.log(`%cApp - render('${this.state.viewType}')`, 'color: yellow')
+		let loginView = null;
+		const validLoginView = ['', 'SignupView', 'UserEditView', 'AccountEditView', 'ThemeEditView']
+		if(validLoginView.includes(this.state.viewType)) {
+			loginView = this.loginViewRender()
+		}
 
 		return (
 			<div className="container">
@@ -223,7 +263,8 @@ class App extends Component {
 					showServices={this.showServices}
 					accountId={this.state.accountId}
 					themeId={this.state.themeId}
-					viewType={this.state.viewType}>
+					viewType={this.state.viewType}
+					admin={this.state.admin}>
 				</NavBar>
 
 				{loginView}

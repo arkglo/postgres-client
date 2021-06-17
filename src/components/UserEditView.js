@@ -29,7 +29,7 @@ export default class UserEditView extends Component {
 	componentDidMount(){
 		console.log("UserEditView.componentDidMount()")
 
-		axios.get(apiPath('user', this.props.user.id)).then((response) => {
+		axios.get(apiPath('GET','user', this.props.user.id)).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get user details.');
 			}
@@ -83,7 +83,7 @@ export default class UserEditView extends Component {
 			req.lastName = this.state.lastName
 		}
 
-		axios.put(apiPath('user', this.props.user.id), req).then((response) => {
+		axios.put(apiPath('PUT','user', this.props.user.id), req).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to update user.');
 			}
@@ -103,7 +103,7 @@ export default class UserEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						axios.delete(apiPath('user', this.props.user.id)).then((response) => {
+						axios.delete(apiPath('DELETE','user', this.props.user.id)).then((response) => {
 							if (response.status !== 200) {
 								return console.warn('Failed to remove user.');
 							}

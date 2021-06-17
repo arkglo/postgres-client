@@ -10,9 +10,10 @@ export default class NavBar extends Component {
 	render() {
 		const accountLabel = (this.props.accountId === -1) ? "" : `(accountId:${this.props.accountId})`
 		const themeLabel = (this.props.themeId === -1) ? "" : `(themeId:${this.props.themeId})`
+		const title = this.props.admin ? <span style={{color:'red'}} title='Admin User'>Test</span> : 'Test'
 		return (
 			<nav className="navbar navbar-default myNav">
-				<span className="navbar-brand">Test</span>
+				<span className="navbar-brand">{title}</span>
 				<span className="navbar-text">({this.props.viewType})</span>
 				<div className="btn-group" role="group">
 					<button type="button" name="reset"

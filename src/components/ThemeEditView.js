@@ -50,7 +50,7 @@ export default class ThemeEditView extends Component {
 		console.log(`ThemeEditView.getThemes(${this.props.themeId})`)
 
 		//Get All themes
-		axios.get(apiPath('theme')).then((response) => {
+		axios.get(apiPath('GET','theme')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
 			}
@@ -59,7 +59,7 @@ export default class ThemeEditView extends Component {
 			//Get just the theme we want
 			if (this.props.themeId == null) return;
 
-			return axios.get(apiPath('theme', this.props.themeId))
+			return axios.get(apiPath('GET','theme', this.props.themeId))
 		}).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
@@ -190,7 +190,7 @@ export default class ThemeEditView extends Component {
 			return;
 		}
 
-		axios.post(apiPath('theme'), req).then((response) => {
+		axios.post(apiPath('POST','theme'), req).then((response) => {
 			if (response.status !== 201) {
 				return console.warn('Failed to create theme.');
 			}
@@ -224,7 +224,7 @@ export default class ThemeEditView extends Component {
 			return;
 		}
 
-		axios.put(apiPath('theme', this.props.themeId), req).then((response) => {
+		axios.put(apiPath('PUT','theme', this.props.themeId), req).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to update theme.');
 			}
@@ -244,7 +244,7 @@ export default class ThemeEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						axios.delete(apiPath('theme', this.props.themeId)).then((response) => {
+						axios.delete(apiPath('DELETE','theme', this.props.themeId)).then((response) => {
 							if (response.status !== 200) {
 								return console.warn('Failed to remove theme.');
 							}
@@ -265,7 +265,7 @@ export default class ThemeEditView extends Component {
 	createTheme(theme) {
 		console.log("ThemeEditView.createTheme()")
 
-		axios.post(apiPath('theme'), theme).then((response) => {
+		axios.post(apiPath('POST','theme'), theme).then((response) => {
 			if (response.status !== 201) {
 				return console.warn('Failed to create theme.');
 			}
@@ -418,7 +418,7 @@ export default class ThemeEditView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading">Theme Edit (<i>{this.props.themeId}</i>)<br />
-						<code>{apiPath('theme', this.props.themeId, false)}</code></div>
+						<code>{apiPath('GET', 'theme', this.props.themeId, false)}</code></div>
 					<div className="panel-body">
 
 						<form className="form">
@@ -445,7 +445,7 @@ export default class ThemeEditView extends Component {
 				</div>
 				<div className="panel panel-default">
 					<div className="panel-heading">All Available Themes (<i>{allThemesLength}</i>)<br />
-						<code>{apiPath('theme', null, false)}</code>
+						<code>{apiPath('GET', 'theme', null, false)}</code>
 					</div>
 					<div className="panel-body">
 						Update Account({this.props.accountId}) to use a pre-existing theme:<p/>

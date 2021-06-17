@@ -50,7 +50,7 @@ export default class SignupView extends Component {
 			return
 		}
 
-		axios.post(apiPath('account'), {
+		axios.post(apiPath('POST','account'), {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
 			partnerFirstName: this.state.partnerFirstName,
@@ -75,7 +75,7 @@ export default class SignupView extends Component {
 	}
 
 	createAccount(account) {
-		axios.post(apiPath('account'), account).then((response) => {
+		axios.post(apiPath('POST','account'), account).then((response) => {
 			if (response.status !== 201) {
 				return console.warn('Failed to create account.');
 			}

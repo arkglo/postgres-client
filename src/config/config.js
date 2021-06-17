@@ -19,8 +19,10 @@ if(window.location.hostname === 'localhost') {
 }
 
 if(debugLevel) {
+	console.clear()
+	console.log(`debugLevel: ${debugLevel}`)
 	console.log(`productionTest: ${productionTest}, NODE_ENV: ${process.env.NODE_ENV}`)
-	console.log(`Runnign from : ${window.location.href}`)
+	console.log(`Running from : ${window.location.href}`)
 }
 
 //Setup Server URL

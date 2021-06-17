@@ -1,6 +1,6 @@
 import * as config from '../config/config';
 
-export const apiPath = (endpoint, extra = null, debug = true) => {
+export const apiPath = (type, endpoint, extra = null, debug = true) => {
 	//config.SERVER_URL + config.SERVER_PATH + config.USER_ENDPOINT + '/login'
 	if (endpoint === 'user') endpoint = config.USER_ENDPOINT
 	else if (endpoint === 'account') endpoint = config.ACCOUNT_ENDPOINT
@@ -9,10 +9,6 @@ export const apiPath = (endpoint, extra = null, debug = true) => {
 
 	let apiCall = config.SERVER_URL + config.SERVER_PATH + endpoint
 	if (extra) apiCall += '/' + extra
-	if (config.debugLevel && debug) console.log(`apiPath: [${apiCall}]`)
+	if (config.debugLevel && debug) console.log(`apiPath: %c${type} %c[${apiCall}]`, 'font-weight: bold; color: white', '')
 	return apiCall;
 }
-
-
-
-

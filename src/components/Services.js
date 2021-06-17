@@ -29,7 +29,7 @@ export default class Services extends Component {
 	getServices() {
 		console.log("Services.getServices()")
 
-		axios.get(apiPath('services')).then((response) => {
+		axios.get(apiPath('GET','services')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get user details.');
 			}
@@ -46,7 +46,7 @@ export default class Services extends Component {
 	}
 
 	createService(title, price) {
-		axios.post(apiPath('services'), {
+		axios.post(apiPath('POST','services'), {
 			title: title,
 			price: price
 		}).then((response) => {
@@ -98,7 +98,7 @@ export default class Services extends Component {
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">Services ({allServicesLength})</div>
-				<code>{apiPath('services')}</code>
+				<code>{apiPath('GET', 'services')}</code>
 
 				<div className="panel-body">
 					{servicesList}
