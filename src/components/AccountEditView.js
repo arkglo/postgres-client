@@ -73,9 +73,15 @@ export default class AccountEditView extends Component {
     });
   }
 
-  handleSubmit(event) {
+  updateReq(req, key) {
+    if(this.state[key] !== this.state.account[key] && this.state[key].length > 0) {
+      req[key] = this.state[key]
+    }
+  }
+
+  handleSubmit(event) { //Perfomr Account Update
     event.preventDefault();  // IMPORTANT.
-    console.log("------------------- handleSubmit()")
+    console.log("------------------- handleSubmit() Update")
     var req = {}
 
     // only add new fields if changed and valid
@@ -89,19 +95,17 @@ export default class AccountEditView extends Component {
       req.password = this.state.password;
     }
 
-    //console.log(this.state) // new
-    //console.log(this.state.account) // old
+    console.log(this.state) // new
+    console.log(this.state.account) // old
     const oldAccount = this.state.account
 
-    if (this.state.email !== oldAccount.email && this.state.email.length > 0) {
-      req.email = this.state.email
-    }
-    if (this.state.firstName !== oldAccount.firstName && this.state.firstName.length > 0) {
-      req.firstName = this.state.firstName
-    }
-    if (this.state.lastName !== oldAccount.lastName && this.state.lastName.length > 0) {
-      req.lastName = this.state.lastName
-    }
+    this.updateReq(req, 'email')
+    this.updateReq(req, 'firstName')
+    this.updateReq(req, 'lastName')
+    this.updateReq(req, 'partnerFirstName')
+    this.updateReq(req, 'partnerLastName')
+    this.updateReq(req, 'eventDate')
+    this.updateReq(req, 'websiteLink')
     req.userID = this.state.userID
 
     if(config.debugLevel > 1) {

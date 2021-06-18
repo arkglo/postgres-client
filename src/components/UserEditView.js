@@ -122,6 +122,8 @@ export default class UserEditView extends Component {
 		});
 	}
 
+
+	//TODO: add admin tick box
 	render() {
 		return (
 			<div className="panel panel-default">
