@@ -413,12 +413,27 @@ export default class ThemeEditView extends Component {
 			)
 		}
 
+		//Create theme (admin only)
+		let createTheme = null
+		if(this.props.admin) {
+			createTheme = <div className="panel panel-default">
+					<div className="panel-heading">PreConfigured Theme data</div>
+					<div className="panel-body">
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
+					</div>
+				</div>
+		}
+
 		//Now render
 		return (
 			<>
 				<div className="panel panel-default">
-					<div className="panel-heading">Theme Edit (<i>{this.props.themeId}</i>)<br />
-						<code>{apiPath('GET', 'theme', this.props.themeId, false)}</code></div>
+					<div className="panel-heading">Theme Edit (<i>themeID: {this.props.themeId}</i>)<br/>
+						<code>{apiPath('GET', 'theme', this.props.themeId, false)}</code><br/>
+						<code>{apiPath('GET', '/accounts/theme', this.props.accountId, false)}</code>
+					</div>
 					<div className="panel-body">
 
 						<form className="form">
@@ -452,14 +467,7 @@ export default class ThemeEditView extends Component {
 						{themeList}
 					</div>
 				</div>
-				<div className="panel panel-default">
-					<div className="panel-heading">PreConfigured Theme data</div>
-					<div className="panel-body">
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
-					</div>
-				</div>
+				{createTheme}
 			</>
 		);
 	}

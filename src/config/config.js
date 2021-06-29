@@ -10,6 +10,7 @@ export const ACCOUNT_ENDPOINT = "/accounts"
 export const USER_ENDPOINT = "/users"
 export const THEME_ENDPOINT = "/themes"
 export const SERVICES_ENDPOINT = "/services"
+export const MYGIFTS_ENDPOINT = "/myGifts"
 
 //Override
 export let productionTest = true

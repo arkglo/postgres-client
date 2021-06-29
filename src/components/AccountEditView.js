@@ -36,7 +36,7 @@ export default class AccountEditView extends Component {
   }//constructor
 
   componentDidMount() {
-    // console.log(`AccountEditView.componentDidMount(${this.props.accountId})`)
+    console.log(`AccountEditView.componentDidMount(${this.props.accountId})`)
 
     axios.get(apiPath('GET','account',this.props.accountId)).then((response) => {
       if (response.status !== 200) {
@@ -57,9 +57,11 @@ export default class AccountEditView extends Component {
         userID: account.userID,
       })
       this.setState({account: account})
-      this.props.setThemeId(account.themeID)
+      this.props.setThemeID(account.themeID)
+      this.props.setMyGiftsID(account.myGiftsID)
       if(config.debugLevel > 1) console.log(account)
     }).catch((error) => {
+      console.log(error)
       Error.message(error.response)
     });
   }
@@ -97,7 +99,6 @@ export default class AccountEditView extends Component {
 
     console.log(this.state) // new
     console.log(this.state.account) // old
-    const oldAccount = this.state.account
 
     this.updateReq(req, 'email')
     this.updateReq(req, 'firstName')
@@ -155,7 +156,7 @@ export default class AccountEditView extends Component {
   render() {
     return (
       <div className="panel panel-default">
-        <div className="panel-heading">Account Edit (<i>{this.props.accountId}</i>)<br/>
+        <div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br/>
 					<code>{apiPath('GET', 'account', this.props.accountId)}</code></div>
         <div className="panel-body">
 

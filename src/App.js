@@ -12,6 +12,7 @@ import LoginView from "./components/LoginView";
 import UserEditView from "./components/UserEditView";
 import AccountEditView from "./components/AccountEditView";
 import ThemeEditView from "./components/ThemeEditView";
+import MyGiftsView from "./components/MyGiftsView";
 import Services from "./components/Services";
 
 import Error from './components/error';
@@ -30,6 +31,7 @@ class App extends Component {
 			mainView: null,
 			accountId: -1,
 			themeId: -1,
+			myGiftsId: -1,
 			viewType: 'checkAuth',
 			admin: false,
 			authenticated: false,
@@ -40,6 +42,7 @@ class App extends Component {
 		this.showUserEdit = this.showUserEdit.bind(this);
 		this.showAccountEdit = this.showAccountEdit.bind(this);
 		this.showThemeEdit = this.showThemeEdit.bind(this);
+		this.showMyGiftsEdit = this.showMyGiftsEdit.bind(this);
 		this.showServices = this.showServices.bind(this);
 
 		// Handlers for child components.
@@ -48,7 +51,8 @@ class App extends Component {
 		this.handleReset = this.handleReset.bind(this);
 
 		this.setAccountId = this.setAccountId.bind(this);
-		this.setThemeId = this.setThemeId.bind(this);
+		this.setThemeID = this.setThemeID.bind(this);
+		this.setMyGiftsID = this.setMyGiftsID.bind(this);
 		this.updateToThisThemeId = this.updateToThisThemeId.bind(this)
 	}
 
@@ -112,10 +116,12 @@ class App extends Component {
 		console.log(`setAccountId(${thisId})`)
 		this.setState({ accountId: thisId })
 		if (thisId === -1) {
-			this.setThemeId(-1)
+			this.setThemeID(-1)
+			this.setMyGiftsID(-1)
 		}
 	}
-	setThemeId(thisId) { this.setState({ themeId: thisId }) }
+	setThemeID(thisId) { this.setState({ themeId: thisId }) }
+	setMyGiftsID(thisId) { this.setState({ myGiftsId: thisId }) }
 
 	updateToThisThemeId(thisId) {
 		console.log(`updateToThisThemeId - accountId: ${this.state.accountId}, theme: ${thisId})`)
@@ -123,7 +129,7 @@ class App extends Component {
       if (response.status !== 200) {
         return console.warn('Failed to update account.');
       }
-			this.setThemeId(thisId)
+			this.setThemeID(thisId)
 			this.showThemeEdit()
       console.log('Updated account details!');
     }).catch((error) => {
@@ -143,6 +149,7 @@ class App extends Component {
 			mainView: null,
 			accountId: -1,
 			themeId: -1,
+			myGiftsId: -1,
 			viewType: 'checkAuth',
 			admin: false,
 			authenticated: false
@@ -202,7 +209,8 @@ class App extends Component {
 		this.setState({
 			mainView: (<AccountEditView
 				accountId={this.state.accountId}
-				setThemeId={this.setThemeId}
+				setThemeID={this.setThemeID}
+				setMyGiftsID={this.setMyGiftsID}
 				handleLogout={this.handleLogout}
 			/>),
 			viewType: 'AccountEditView',
@@ -220,8 +228,27 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 				updateToThisThemeId={this.updateToThisThemeId}
+				admin={this.state.admin}
 			/>),
 			viewType: 'ThemeEditView',
+		});
+	}
+
+	
+	// myGifts Edit
+	showMyGiftsEdit() {
+		if (!this.state.user) {
+			// return this.toast.error('Not logged in');
+			return console.warn('Not Logged in')
+		}
+		//TODO myGifts
+		this.setState({
+			mainView: (<MyGiftsView
+				accountId={this.state.accountId}
+				themeId={this.state.themeId}
+				myGiftsId={this.state.myGiftsId}
+			/>),
+			viewType: 'MyGiftsView',
 		});
 	}
 
@@ -260,9 +287,11 @@ class App extends Component {
 					showUserEdit={this.showUserEdit}
 					showAccountEdit={this.showAccountEdit}
 					showThemeEdit={this.showThemeEdit}
+					showMyGiftsEdit={this.showMyGiftsEdit}
 					showServices={this.showServices}
 					accountId={this.state.accountId}
 					themeId={this.state.themeId}
+					myGiftsId={this.state.myGiftsId}
 					viewType={this.state.viewType}
 					admin={this.state.admin}>
 				</NavBar>

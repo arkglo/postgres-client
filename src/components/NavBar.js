@@ -10,6 +10,7 @@ export default class NavBar extends Component {
 	render() {
 		const accountLabel = (this.props.accountId === -1) ? "" : `(accountId:${this.props.accountId})`
 		const themeLabel = (this.props.themeId === -1) ? "" : `(themeId:${this.props.themeId})`
+		const myGiftsLabel = (this.props.myGiftsId === -1) ? "" : (this.props.myGiftsId !== null) ? `(myGiftsId:${this.props.myGiftsId})` : `(No myGifts)`
 		const title = this.props.admin ? <span style={{color:'red'}} title='Admin User'>Test</span> : 'Test'
 		return (
 			<nav className="navbar navbar-default myNav">
@@ -35,13 +36,19 @@ export default class NavBar extends Component {
 						className="btn btn-default navbar-btn"
 						disabled={this.props.accountId === -1}
 						onClick={this.props.showAccountEdit}>
-						Account {accountLabel} edit
+						Account {accountLabel}
 						</button>
-					<button type="button" name="theme_edit"
+						<button type="button" name="theme_edit"
 						className="btn btn-default navbar-btn"
 						disabled={this.props.themeId === -1}
 						onClick={this.props.showThemeEdit}>
-						Theme {themeLabel} edit
+						Theme {themeLabel}
+						</button>
+						<button type="button" name="theme_edit"
+						className="btn btn-default navbar-btn"
+						disabled={this.props.myGiftsId === -1}
+						onClick={this.props.showMyGiftsEdit}>
+						My Gifts {myGiftsLabel}
 						</button>
 					<button type="button" name="services_edit"
 						className="btn btn-default navbar-btn"
