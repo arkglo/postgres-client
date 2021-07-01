@@ -17,6 +17,7 @@ export default class UserEditView extends Component {
 			lastName: '',
 			password: '',
 			password2: '',
+			role: '',
 		};
 
 		console.log(props)
@@ -42,6 +43,7 @@ export default class UserEditView extends Component {
 				lastName: user.lastName,
 				password: '',  // Empty means no change.
 				password2: '',
+				role: user.role,
 			});
 		}).catch((error) => {
 			Error.message(error.response)
@@ -50,8 +52,10 @@ export default class UserEditView extends Component {
 
 	handleChange(event) {
 		const target = event.target;
-		const value = target.type === 'checkbox' ? target.checked : target.value;
+		let value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
+		if(name === "role") value = value ? "admin" : "user" 
+		// console.log(`name: ${name}, value: ${value}`)
 		this.setState({
 			[name]: value
 		});
@@ -81,6 +85,9 @@ export default class UserEditView extends Component {
 		}
 		if(this.state.lastName !== this.props.user.lastName && this.state.lastName.length > 0) { 
 			req.lastName = this.state.lastName
+		}
+		if(this.state.role !== this.props.user.role && this.state.role.length > 0) { 
+			req.role = this.state.role
 		}
 
 		axios.put(apiPath('PUT','user', this.props.user.id), req).then((response) => {
@@ -122,9 +129,9 @@ export default class UserEditView extends Component {
 		});
 	}
 
-
-	//TODO: add admin tick box
 	render() {
+		const thisAdmin = this.state.role === "admin"
+
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">User Edit</div>
@@ -155,6 +162,11 @@ export default class UserEditView extends Component {
 						<div className="form-group">
 							<label>Confirm password</label>
 							<input className="form-control" type="password" name="password2" value={this.state.password2} onChange={this.handleChange} />
+						</div>
+
+						<div className="form-group">
+							<label>Admin</label>
+							<input style={{ width: '34px' }} className="form-control" type="checkbox" name="role" checked={thisAdmin} onChange={this.handleChange} /><br/>
 						</div>
 
 						<div className="btn-group">

@@ -102,7 +102,7 @@ class App extends Component {
 		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
 		if (config.debugLevel > 1) console.log(response.data.data)
 		const admin = response.data.data?.role ? (response.data.data?.role === 'admin') : false
-		console.log(`admin: ${admin}`)
+		console.log(`  admin: ${admin}`)
 		this.setState({
 			user: response.data.data,
 			mainView: null,
@@ -195,6 +195,7 @@ class App extends Component {
 				user={this.state.user}
 				themeId={this.state.themeId}
 				handleLogout={this.handleLogout}
+				admin={this.state.admin}
 			/>),
 			viewType: 'UserEditView',
 		});
@@ -261,6 +262,7 @@ class App extends Component {
 			toast={this.toast}
 			authenticated={this.state.authenticated}
 			viewType={this.state.viewType}
+			admin={this.state.admin}
 		/>)
 	}
 	
