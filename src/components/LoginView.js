@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import * as config from '../config/config';
 import { apiPath } from '../lib/apiPath'
@@ -11,7 +11,7 @@ const LoginView = (props) => {
 	const [admin, setAdmin] = useState(props.admin)
 
 
-	const getUsers = () => {
+	const getUsers = useCallback(() => {
 		if(!props.authenticated) return;
 
 		console.log("LoginView.getUsers()")
@@ -34,7 +34,7 @@ const LoginView = (props) => {
 			Error.message(error)
 			console.log("Query Running RESET 2")
 		});
-	}
+	}, [props.authenticated])
 
 	//===========================================================================
 	//Functions
@@ -45,6 +45,7 @@ const LoginView = (props) => {
 		switch(name){
 			case 'email': setEmail(value); break
 			case 'password': setPassword(value); break
+			default: console.log(`  handleChange() Unknown name: ${name}`); break
 		}
 		//this.setState({ [name]: value });
 	}
@@ -169,7 +170,7 @@ const LoginView = (props) => {
 	useEffect(() => {
 		console.log('*** LoginView MOUNT ***')
 		console.log(props)
-	},[])
+	},[props])
 
 	//per Render
 	useEffect(() => {
@@ -183,7 +184,7 @@ const LoginView = (props) => {
 		if(props.admin) {
 			getUsers()
 		}
-	},[props.admin])
+	},[getUsers, props.admin])
 
 	//===========================================================================
 	//Start the actual Render....
