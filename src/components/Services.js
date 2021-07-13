@@ -98,7 +98,7 @@ export default class Services extends Component {
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">Services ({allServicesLength})</div>
-				<code>{apiPath('GET', 'services')}</code>
+				<code>GET {apiPath('GET', 'services')}</code>
 
 				<div className="panel-body">
 					{servicesList}

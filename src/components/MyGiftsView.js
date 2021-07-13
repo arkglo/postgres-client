@@ -349,8 +349,8 @@ export default class MyGiftsView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading">MyGifts Edit (<i>myGiftsID: {this.props.myGiftsId}</i>)<br />
-						<code>{apiPath('GET', 'myGifts', this.props.myGiftsId, false)}</code><br/>
-						<code>{apiPath('GET', '/accounts/myGifts', this.props.accountId, false)}</code><br/>
+						<code>GET {apiPath('GET', 'myGifts', this.props.myGiftsId, false)}</code><br/>
+						<code>GET {apiPath('GET', '/accounts/myGifts', this.props.accountId, false)}</code><br/>
 					</div>
 					<div className="panel-body">
 

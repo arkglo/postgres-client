@@ -431,8 +431,8 @@ export default class ThemeEditView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading">Theme Edit (<i>themeID: {this.props.themeId}</i>)<br/>
-						<code>{apiPath('GET', 'theme', this.props.themeId, false)}</code><br/>
-						<code>{apiPath('GET', '/accounts/theme', this.props.accountId, false)}</code>
+						<code>GET {apiPath('GET', 'theme', this.props.themeId, false)}</code><br/>
+						<code>GET {apiPath('GET', '/accounts/theme', this.props.accountId, false)}</code>
 					</div>
 					<div className="panel-body">
 
@@ -460,7 +460,7 @@ export default class ThemeEditView extends Component {
 				</div>
 				<div className="panel panel-default">
 					<div className="panel-heading">All Available Themes (<i>{allThemesLength}</i>)<br />
-						<code>{apiPath('GET', 'theme', null, false)}</code>
+						<code>GET {apiPath('GET', 'theme', null, false)}</code>
 					</div>
 					<div className="panel-body">
 						Update Account({this.props.accountId}) to use a pre-existing theme:<p/>

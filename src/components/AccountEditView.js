@@ -157,7 +157,7 @@ export default class AccountEditView extends Component {
     return (
       <div className="panel panel-default">
         <div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br/>
-					<code>{apiPath('GET', 'account', this.props.accountId)}</code></div>
+					<code>GET {apiPath('GET', 'account', this.props.accountId)}</code></div>
         <div className="panel-body">
 
           <form className="form">

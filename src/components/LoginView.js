@@ -98,9 +98,15 @@ const LoginView = (props) => {
 					<label>Password</label>
 					<input className="leftMargin form-control" type="password" name="password" autoComplete="off" value={password} onChange={handleChange} />
 				</div><p />
+				<code>POST {apiPath('POST', 'user', `login`, false)}<br/>
+				{"{"}<br/>
+				··email={email}<br/>
+				··password={password}<br/>
+				{"}"}</code><p/>
 				<button type="submit" className="btn btn-primary" onClick={handleLogin} >Login</button>
 			</form>
 		);
+		//interpunt U+00B7
 	}
 
 	const setAccount = (id) => { props.setAccountId(id) }
@@ -122,7 +128,7 @@ const LoginView = (props) => {
 			<div>
 				<span>Welcome {props.user.firstName} {props.user.lastName}!</span><p />
 				<span>Accounts (count: {props.user.accounts.length})</span><br/>
-					<code>{getAPIPathId}</code><p/>
+					<code>GET {getAPIPathId}</code><p/>
 					{(user.accounts == null || user.accounts.length === 0)?<i>No Account Registered for User</i>:''}
 				<span>
 					<ul>
@@ -153,7 +159,7 @@ const LoginView = (props) => {
 		return (
 			<div className="panel-body">
 				<label>Users</label><br/>
-				<code>{apiPath('GET', 'user')}</code><br/>
+				<code>GET {apiPath('GET', 'user')}</code><br/>
 				Available users:
 				<ul>
 					{renUserData}
