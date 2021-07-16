@@ -59,7 +59,7 @@ export default class ThemeEditView extends Component {
 			//Get just the theme we want
 			if (this.props.themeId == null) return;
 
-			return axios.get(apiPath('GET','theme', this.props.themeId))
+			return axios.get(apiPath('GET','/accounts/theme', this.props.accountId))
 		}).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
@@ -228,7 +228,8 @@ export default class ThemeEditView extends Component {
 			if (response.status !== 200) {
 				return console.warn('Failed to update theme.');
 			}
-			console.log('Updated theme details!');
+			console.log('Updated theme details!')
+			this.getThemes()
 		}).catch((error) => {
 			Error.message(error.response)
 		});
@@ -404,15 +405,24 @@ export default class ThemeEditView extends Component {
 		}
 
 		//AllThemes
+		const colorBox = {
+			display: 'inline-block', 
+			width: '20px', height: '20px',
+			verticalAlign: 'middle'
+		}
 		let allThemesLength = 0
 		let themeList = null
 		if (this.state.allThemes != null) {
 			allThemesLength = this.state.allThemes.length
 			themeList = this.state.allThemes.map((data, idx) =>
-				<li key={idx}><button onClick={this.setTheme.bind(this, data.id)}>Select Theme {data.id}</button> - '{data.names}'</li>
+				<li key={idx}>
+					<button onClick={this.setTheme.bind(this, data.id)}>Select Theme {data.id}</button> - '{data.names}' {' '}
+					<div style={{ ...colorBox, backgroundColor:data.colour1 }} /> 
+					<div style={{ ...colorBox, backgroundColor:data.colour2 }} />
+				</li>
 			)
 		}
-
+// name='color-{data.id}' 
 		//Create theme (admin only)
 		let createTheme = null
 		if(this.props.admin) {
@@ -431,8 +441,8 @@ export default class ThemeEditView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading">Theme Edit (<i>themeID: {this.props.themeId}</i>)<br/>
-						<code>GET {apiPath('GET', 'theme', this.props.themeId, false)}</code><br/>
-						<code>GET {apiPath('GET', '/accounts/theme', this.props.accountId, false)}</code>
+						<code>GET {apiPath('GET', 'theme', this.props.themeId, false)}</code> {'<'} <i>themeId</i><br/>
+						<code>GET {apiPath('GET', '/accounts/theme', this.props.accountId, false)}</code> {'<'} <i>accountId</i> - suggested option
 					</div>
 					<div className="panel-body">
 

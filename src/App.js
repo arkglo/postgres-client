@@ -60,11 +60,11 @@ class App extends Component {
 		console.log(`App.componentDidMount()`)
 
 		if (process.env.NODE_ENV === 'production')
-			document.title = "TL-PG-CLient"
+			document.title = "TL-PG-Client"
 		else if (config.productionTest)
-			document.title = "[TEST] TL-PG-CLient"
+			document.title = "[TEST] TL-PG-Client"
 		else
-			document.title = "[LOCAL] TL-PG-CLient"
+			document.title = "[LOCAL] TL-PG-Client"
 
 		this.checkAuth()
 	}
