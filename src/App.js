@@ -14,8 +14,11 @@ import AccountEditView from "./components/AccountEditView";
 import ThemeEditView from "./components/ThemeEditView";
 import MyGiftsView from "./components/MyGiftsView";
 import Services from "./components/Services";
+import Admin from "./components/Admin";
 
 import Error from './components/error';
+import Wrapper from './components/wrapper';
+
 
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
@@ -44,6 +47,7 @@ class App extends Component {
 		this.showThemeEdit = this.showThemeEdit.bind(this);
 		this.showMyGiftsEdit = this.showMyGiftsEdit.bind(this);
 		this.showServices = this.showServices.bind(this);
+		this.showAdmin = this.showAdmin.bind(this);
 
 		// Handlers for child components.
 		this.handleLogin = this.handleLogin.bind(this);
@@ -273,6 +277,13 @@ class App extends Component {
 		});
 	}
 
+	showAdmin() {
+		this.setState({
+			mainView: (<Admin />),
+			viewType: 'Admin',
+		});
+	}
+
 	render() {
 		console.log(`%cApp - render('${this.state.viewType}')`, 'color: yellow')
 		let loginView = null;
@@ -282,7 +293,7 @@ class App extends Component {
 		}
 
 		return (
-			<div className="container">
+			<Wrapper className="container">
 				<NavBar
 					handleReset={this.handleReset}
 					showSignup={this.showSignup}
@@ -291,6 +302,7 @@ class App extends Component {
 					showThemeEdit={this.showThemeEdit}
 					showMyGiftsEdit={this.showMyGiftsEdit}
 					showServices={this.showServices}
+					showAdmin={this.showAdmin}
 					accountId={this.state.accountId}
 					themeId={this.state.themeId}
 					myGiftsId={this.state.myGiftsId}
@@ -301,7 +313,7 @@ class App extends Component {
 				{loginView}
 
 				{ this.state.mainView}
-			</div>
+			</Wrapper>
 		);
 	}
 }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styles from '../css/mystyles.module.css'
 
 export default class NavBar extends Component {
 	constructor(props) {
@@ -12,8 +13,17 @@ export default class NavBar extends Component {
 		const themeLabel = (this.props.themeId === -1) ? "" : `(themeId:${this.props.themeId})`
 		const myGiftsLabel = (this.props.myGiftsId === -1) ? "" : (this.props.myGiftsId !== null) ? `(myGiftsId:${this.props.myGiftsId})` : `(No myGifts)`
 		const title = this.props.admin ? <span style={{color:'red'}} title='Admin User'>Test</span> : 'Test'
+
+		const adminButton = this.props.admin ? 
+			<button type="button" name="services_edit"
+				className="btn btn-info navbar-btn"
+				onClick={this.props.showAdmin}>
+					Admin
+			</button> : ""
+
+		console.log(styles.sticky)
 		return (
-			<nav className="navbar navbar-default myNav">
+			<nav className={styles.sticky}>
 				<span className="navbar-brand">{title}</span>
 				<span className="navbar-text">({this.props.viewType})</span>
 				<div className="btn-group" role="group">
@@ -44,7 +54,7 @@ export default class NavBar extends Component {
 						onClick={this.props.showThemeEdit}>
 						Theme {themeLabel}
 						</button>
-						<button type="button" name="theme_edit"
+					<button type="button" name="theme_edit"
 						className="btn btn-default navbar-btn"
 						disabled={this.props.myGiftsId === -1}
 						onClick={this.props.showMyGiftsEdit}>
@@ -55,6 +65,7 @@ export default class NavBar extends Component {
 						onClick={this.props.showServices}>
 						Sevices
 						</button>
+					{adminButton}
 				</div>
 			</nav>
 		);
