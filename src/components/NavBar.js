@@ -16,7 +16,7 @@ export default class NavBar extends Component {
 
 		const adminButton = this.props.admin ? 
 			<button type="button" name="services_edit"
-				className="btn btn-info navbar-btn"
+				className="btn btn-warning navbar-btn"
 				onClick={this.props.showAdmin}>
 					Admin
 			</button> : ""
@@ -66,6 +66,12 @@ export default class NavBar extends Component {
 						Sevices
 						</button>
 					{adminButton}
+
+					<button type="button" name="services_edit"
+						className="btn btn-secondary navbar-btn"
+						onClick={()=> window.open('https://tl-pg-server.herokuapp.com/docs/', '_blank')}>
+						Help
+						</button>
 				</div>
 			</nav>
 		);
