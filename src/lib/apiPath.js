@@ -7,6 +7,8 @@ export const apiPath = (type, endpoint, extra = null, debug = true) => {
 	else if (endpoint === 'theme') endpoint = config.THEME_ENDPOINT
 	else if (endpoint === 'services') endpoint = config.SERVICES_ENDPOINT
 	else if (endpoint === 'myGifts') endpoint = config.MYGIFTS_ENDPOINT
+	else if (endpoint === 'gifts') endpoint = config.GIFTS_ENDPOINT
+	else if (endpoint === 'giftDS') endpoint = config.GIFTSDS_ENDPOINT
 
 	let apiCall = config.SERVER_URL + config.SERVER_PATH + endpoint
 	if (extra) apiCall += '/' + extra

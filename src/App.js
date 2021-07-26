@@ -13,6 +13,7 @@ import UserEditView from "./components/UserEditView";
 import AccountEditView from "./components/AccountEditView";
 import ThemeEditView from "./components/ThemeEditView";
 import MyGiftsView from "./components/MyGiftsView";
+import GiftsView from "./components/GiftsView";
 import Services from "./components/Services";
 import Admin from "./components/Admin";
 
@@ -46,6 +47,7 @@ class App extends Component {
 		this.showAccountEdit = this.showAccountEdit.bind(this);
 		this.showThemeEdit = this.showThemeEdit.bind(this);
 		this.showMyGiftsEdit = this.showMyGiftsEdit.bind(this);
+		this.showGiftsEdit = this.showGiftsEdit.bind(this);
 		this.showServices = this.showServices.bind(this);
 		this.showAdmin = this.showAdmin.bind(this);
 
@@ -246,7 +248,6 @@ class App extends Component {
 			// return this.toast.error('Not logged in');
 			return console.warn('Not Logged in')
 		}
-		//TODO myGifts
 		this.setState({
 			mainView: (<MyGiftsView
 				accountId={this.state.accountId}
@@ -254,6 +255,22 @@ class App extends Component {
 				myGiftsId={this.state.myGiftsId}
 			/>),
 			viewType: 'MyGiftsView',
+		});
+	}
+		
+	// Gifts Edit
+	showGiftsEdit() {
+		if (!this.state.user) {
+			// return this.toast.error('Not logged in');
+			return console.warn('Not Logged in')
+		}
+		this.setState({
+			mainView: (<GiftsView
+				accountId={this.state.accountId}
+				themeId={this.state.themeId}
+				myGiftsId={this.state.myGiftsId}
+			/>),
+			viewType: 'GiftsView',
 		});
 	}
 
@@ -301,13 +318,15 @@ class App extends Component {
 					showAccountEdit={this.showAccountEdit}
 					showThemeEdit={this.showThemeEdit}
 					showMyGiftsEdit={this.showMyGiftsEdit}
+					showGiftsEdit={this.showGiftsEdit}
 					showServices={this.showServices}
 					showAdmin={this.showAdmin}
 					accountId={this.state.accountId}
 					themeId={this.state.themeId}
 					myGiftsId={this.state.myGiftsId}
 					viewType={this.state.viewType}
-					admin={this.state.admin}>
+					admin={this.state.admin}
+					user={this.state.user}>
 				</NavBar>
 
 				{loginView}

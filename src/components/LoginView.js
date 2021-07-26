@@ -109,7 +109,18 @@ const LoginView = (props) => {
 		//interpunt U+00B7
 	}
 
-	const setAccount = (id) => { props.setAccountId(id) }
+	const setAccount = (id) => {
+		axios.post(apiPath('POST','/accounts/set', id), {}).then(props.setAccountId(id))
+			.catch((error) => {
+				var data = error?.response?.data ?? null
+				if (data) {
+					console.warn(`${data.function}() - ${data.message}`)
+				}
+				else {
+					console.log(error)
+				}
+			})
+	}
 
 	const handleSelection = (selectedUser) => {
 		console.log(`------------------- handleSelection(${selectedUser})`)
@@ -130,6 +141,8 @@ const LoginView = (props) => {
 				<span>Accounts (count: {props.user.accounts.length})</span><br/>
 					<code>GET {getAPIPathId}</code><p/>
 					{(user.accounts == null || user.accounts.length === 0)?<i>No Account Registered for User</i>:''}
+					Select an Account to set the session to that account, as a user may have mulitple accounts<br/>
+					<code>POST {apiPath('POST', '/accounts/set', '<accountID>')}</code><p/>
 				<span>
 					<ul>
 						{renAccountsData}

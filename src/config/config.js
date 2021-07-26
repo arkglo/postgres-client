@@ -11,6 +11,8 @@ export const USER_ENDPOINT = "/users"
 export const THEME_ENDPOINT = "/themes"
 export const SERVICES_ENDPOINT = "/services"
 export const MYGIFTS_ENDPOINT = "/myGifts"
+export const GIFTS_ENDPOINT = "/gifts"
+export const GIFTSDS_ENDPOINT = "/giftDataStore"
 
 //Override
 export let productionTest = true

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button, ButtonGroup } from 'react-bootstrap'
 import styles from '../css/mystyles.module.css'
 
 export default class NavBar extends Component {
@@ -12,67 +13,94 @@ export default class NavBar extends Component {
 		const accountLabel = (this.props.accountId === -1) ? "" : `(accountId:${this.props.accountId})`
 		const themeLabel = (this.props.themeId === -1) ? "" : `(themeId:${this.props.themeId})`
 		const myGiftsLabel = (this.props.myGiftsId === -1) ? "" : (this.props.myGiftsId !== null) ? `(myGiftsId:${this.props.myGiftsId})` : `(No myGifts)`
-		const title = this.props.admin ? <span style={{color:'red'}} title='Admin User'>Test</span> : 'Test'
+		const title = this.props.admin ? <span style={{ color: 'red' }} title='Admin User'>Test</span> : 'Test'
 
-		const adminButton = this.props.admin ? 
-			<button type="button" name="services_edit"
-				className="btn btn-warning navbar-btn"
-				onClick={this.props.showAdmin}>
-					Admin
-			</button> : ""
+		const accountSelectText = 'Select an Account to access menu option'
+		const accountEditSelectText = 'Select an Account and Edit the account to access menu option'
+		const adminButton = this.props.admin ?
+			<Button type="button" name="services_edit"
+				//className="btn btn-warning navbar-btn"
+				variant='warning'
+				disabled={this.props.accountId === -1}
+				onClick={this.props.showAdmin}
+				title={this.props.accountId === -1 ? accountSelectText : 'Admin'}>
+				Admin
+			</Button> : ""
 
 		console.log(styles.sticky)
+		const vt = this.props.viewType
 		return (
 			<nav className={styles.sticky}>
 				<span className="navbar-brand">{title}</span>
-				<span className="navbar-text">({this.props.viewType})</span>
-				<div className="btn-group" role="group">
-					<button type="button" name="reset"
-						className="btn btn-default navbar-btn"
+				<span className="navbar-text">({vt})</span>
+				<ButtonGroup style={{verticalAlign: 'middle', marginTop:'10px'}} aria-label="NavBar">
+					<Button type="button" name="reset"
+						// className="btn btn-secondary navbar-btn"
+						variant='dark'
 						onClick={this.props.handleReset}>
 						Reset
-						</button>
-					<button type="button" name="signup"
-						className="btn btn-default navbar-btn"
-						onClick={this.props.showSignup}>
+					</Button>
+					<Button type="button" name="signup"
+						//className="btn btn-default navbar-btn"
+						variant='primary'
+						onClick={this.props.showSignup}
+						active={vt === 'SignupView'}>
 						Signup
-						</button>
-					<button type="button" name="user_edit"
-						className="btn btn-default navbar-btn"
-						onClick={this.props.showUserEdit}>
+					</Button>
+					<Button type="button" name="user_edit"
+						//className="btn btn-default navbar-btn"
+						disabled={this.props.user === null}
+						onClick={this.props.showUserEdit}
+						title='Available when logged in'
+						active={vt === 'UserEditView'}>
 						User edit
-						</button>
-					<button type="button" name="account_edit"
-						className="btn btn-default navbar-btn"
+					</Button>
+					<Button type="button" name="account_edit"
+						//className="btn btn-default navbar-btn"
 						disabled={this.props.accountId === -1}
-						onClick={this.props.showAccountEdit}>
+						onClick={this.props.showAccountEdit}
+						title={this.props.accountId === -1 ? accountSelectText : 'Account Edit'}
+						active={vt === 'AccountEditView'}>
 						Account {accountLabel}
-						</button>
-						<button type="button" name="theme_edit"
-						className="btn btn-default navbar-btn"
+					</Button>
+					<Button type="button" name="theme_edit"
+						//className="btn btn-default navbar-btn"
 						disabled={this.props.themeId === -1}
-						onClick={this.props.showThemeEdit}>
+						onClick={this.props.showThemeEdit}
+						title={this.props.themeId === -1 ? accountEditSelectText : 'Theme Edit'}
+						active={vt === 'ThemeEditView'}>
 						Theme {themeLabel}
-						</button>
-					<button type="button" name="theme_edit"
-						className="btn btn-default navbar-btn"
+					</Button>
+					<Button type="button" name="mygifts_edit"
+						//className="btn btn-default navbar-btn"
 						disabled={this.props.myGiftsId === -1}
-						onClick={this.props.showMyGiftsEdit}>
+						onClick={this.props.showMyGiftsEdit}
+						title={this.props.myGiftsId === -1 ? accountEditSelectText : 'MyGifts Edit'}
+						active={vt === 'MyGiftsView'}>
 						My Gifts {myGiftsLabel}
-						</button>
-					<button type="button" name="services_edit"
-						className="btn btn-default navbar-btn"
-						onClick={this.props.showServices}>
+					</Button>
+					<Button type="button" name="gifts_edit"
+						//className="btn btn-default navbar-btn"
+						disabled={this.props.accountId === -1}
+						onClick={this.props.showGiftsEdit}
+						title={this.props.accountId === -1 ? accountSelectText : 'Gifts Edit'}
+						active={vt === 'GiftsView'}>
+						Gifts
+					</Button>
+					<Button type="button" name="services_edit"
+						//className="btn btn-default navbar-btn"
+						onClick={this.props.showServices}
+						active={vt === 'Services'}>
 						Sevices
-						</button>
+					</Button>
 					{adminButton}
 
-					<button type="button" name="services_edit"
-						className="btn btn-secondary navbar-btn"
-						onClick={()=> window.open('https://tl-pg-server.herokuapp.com/docs/', '_blank')}>
+					<Button type="button" name="services_edit"
+						//className="btn btn-secondary navbar-btn"
+						onClick={() => window.open('https://tl-pg-server.herokuapp.com/docs/', '_blank')}>
 						Help
-						</button>
-				</div>
+					</Button>
+				</ButtonGroup>
 			</nav>
 		);
 	}
