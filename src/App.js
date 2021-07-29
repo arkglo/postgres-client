@@ -253,6 +253,7 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
+				admin={this.state.admin}
 			/>),
 			viewType: 'MyGiftsView',
 		});
@@ -269,6 +270,7 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
+				admin={this.state.admin}
 			/>),
 			viewType: 'GiftsView',
 		});

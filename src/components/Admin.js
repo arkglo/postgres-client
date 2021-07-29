@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, ButtonGroup, Container, FormControl, Row, Col } from 'react-bootstrap'
+import { Button, ButtonGroup, Container, FormControl, Row, Col, ToggleButton } from 'react-bootstrap'
 import ReactJson from 'react-json-view'
 import axios from 'axios'
 import * as config from '../config/config'
@@ -19,7 +19,8 @@ function initialState() {
 		error: null,
 		type: null,
 		extra: null,
-	};
+		details: false,
+	}
 }
 
 //============================================================
@@ -72,6 +73,7 @@ export default class Admin extends Component {
 					endpoint: t.value,
 					error: null,
 					extra: null,
+					details: false,
 				})
 				break
 			case 'type':
@@ -130,7 +132,13 @@ export default class Admin extends Component {
 
 		if (this.state.requestType === 'GET') {
 			let extra = this.state.id ?? ''
-			if (this.state.extra) extra += `?${this.state.extra}`
+			let start = '?'
+			if (this.state.extra) {
+				extra += `${start}${this.state.extra}`
+				start = '&'
+			}
+			if (this.state.details) extra += `${start}details=true`
+
 			axios.get(apiPath('GET', this.state.endpoint, extra)).then((response) => {
 				console.log('API STATUS: ' + response.status)
 				if (response.status !== 200) {
@@ -211,25 +219,30 @@ export default class Admin extends Component {
 		}
 		return (
 			<div style={errorStyle}>
-				
-					<strong>{err.code ?? '404'}</strong> {err.function ?? 'Error'}<br />
-					<small>{err.message}</small>
+
+				<strong>{err.code ?? '404'}</strong> {err.function ?? 'Error'}<br />
+				<small>{err.message}</small>
 			</div>
 		)
 	}
 
 	//------------------------------------------------------------
 	renderEndpoints = () => {
-		if (config.debugLevel > 1) console.log("  renderForm()")
+		if (config.debugLevel > 1) console.log(`  renderForm(${this.state.endpoin})`)
 
 		const darkerButton = { backgroundColor: '#a0a0a075' }
 		let giftOptions = null;
 		const access = this.setState.access
-		if (this.state.endpoint === 'gifts') {
+		if (this.state.endpoint === 'gifts' || this.state.endpoint === 'giftDS') {
+
+			const detailsButton = this.state.endpoint === 'gifts' ? <ToggleButton id="toggle-check" type="checkbox" variant="secondary" checked={this.state.details} value="1" onChange={(e) => this.setState({ details: e.currentTarget.checked })}>Details</ToggleButton> : null
+
+			const disabledAccessButton = !(this.state.details || this.state.endpoint === 'giftDS')
 			giftOptions = <ButtonGroup aria-label='Gift options'>
-				<Button style={darkerButton} variant='secondary' title='access' active={access === null} value='all' onClick={this.handleClick}>All</Button>
-				<Button style={darkerButton} variant='secondary' title='access' active={access === 'public'} value='public' onClick={this.handleClick}>Public</Button>
-				<Button style={darkerButton} variant='secondary' title='access' active={access === 'private'} value='private' onClick={this.handleClick}>Private</Button>
+				{detailsButton}
+				<Button style={darkerButton} variant='secondary' disabled={disabledAccessButton} title='access' active={access === null} value='all' onClick={this.handleClick}>All</Button>
+				<Button style={darkerButton} variant='secondary' disabled={disabledAccessButton} title='access' active={access === 'public'} value='public' onClick={this.handleClick}>Public</Button>
+				<Button style={darkerButton} variant='secondary' disabled={disabledAccessButton} title='access' active={access === 'private'} value='private' onClick={this.handleClick}>Private</Button>
 			</ButtonGroup>
 		}
 
@@ -243,6 +256,7 @@ export default class Admin extends Component {
 					<Button variant='primary' title='endpoint' value='theme' active={ep === 'theme'} onClick={this.handleClick}>Themes</Button>
 					<Button variant='primary' title='endpoint' value='myGifts' active={ep === 'myGifts'} onClick={this.handleClick}>myGifts</Button>
 					<Button variant='primary' title='endpoint' value='gifts' active={ep === 'gifts'} onClick={this.handleClick}>Gifts</Button>
+					<Button variant='primary' title='endpoint' value='giftDS' active={ep === 'giftDataStore'} onClick={this.handleClick}>GiftDataStore</Button>
 					<Button variant='primary' title='endpoint' value='services' active={ep === 'services'} onClick={this.handleClick}>Services</Button>
 				</ButtonGroup><br />
 				<ButtonGroup aria-label='REST Calls'>
@@ -250,7 +264,7 @@ export default class Admin extends Component {
 					<Button variant='info' title='type' value='GETID' active={ty === 'GETID'} onClick={this.handleClick}>GET:id</Button>
 					<Button variant='danger' title='type' value='DELETE' active={ty === 'DELETE'} onClick={this.handleClick}>DELETE</Button>
 					{this.state.showId &&
-						<FormControl inline='true' style={{width:'unset'}}
+						<FormControl inline='true' style={{ width: 'unset' }}
 							type="number"
 							placeholder="ID"
 							aria-label="Input group example"
@@ -269,7 +283,13 @@ export default class Admin extends Component {
 		let type = this.state.requestType ?? `(TYPE NOT SET)`
 		let api = '(ENDPOINT NOT SET)'
 		let extra = this.state.id ?? ''
-		if (this.state.extra) extra += `?${this.state.extra}`
+		let start = '?'
+		if (this.state.extra) {
+			extra += `${start}${this.state.extra}`
+			start = '&'
+		}
+		if (this.state.details) extra += `${start}details=true`
+
 		if (this.state.endpoint) {
 			// if (this.state.id) {
 			api = apiPath(type, this.state.endpoint, extra, false)
