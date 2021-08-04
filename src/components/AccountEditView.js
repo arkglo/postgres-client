@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import * as config from '../config/config';
 import { apiPath } from '../lib/apiPath'
+import styles from '../css/mystyles.module.css'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -157,6 +158,7 @@ export default class AccountEditView extends Component {
     return (
       <div className="panel panel-default">
         <div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br/>
+        <div className={styles.blue}>The Account View provides the Account Entry Fields<br/>Note: <i>these are combined with the User fields</i></div><p/>
 					<code>GET {apiPath('GET', 'account', this.props.accountId)}</code></div>
         <div className="panel-body">
 
@@ -168,27 +170,27 @@ export default class AccountEditView extends Component {
             </div>
 
             <div className="form-group">
-              <label>First Name</label>
+              <label>First Name</label> (User field)
               <input className="form-control" type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
             </div>
 
             <div className="form-group">
-              <label>Last Name</label>
+              <label>Last Name</label> (User field)
               <input className="form-control" type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
             </div>
 
             <div className="form-group">
-              <label>Email</label>
+              <label>Email</label> (User field)
               <input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
             </div>
 
             <div className="form-group">
-              <label>Partner FirstName</label>
+              <label>Partner FirstName</label> (Account field)
               <input className="form-control" type="text" name="partnerFirstName" value={this.state.partnerFirstName} onChange={this.handleChange} />
             </div>
 
             <div className="form-group">
-              <label>Partner LastName</label>
+              <label>Partner LastName</label> (Account field)
               <input className="form-control" type="text" name="partnerLastName" value={this.state.partnerLastName} onChange={this.handleChange} />
             </div>
 

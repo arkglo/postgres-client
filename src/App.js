@@ -14,6 +14,7 @@ import AccountEditView from "./components/AccountEditView";
 import ThemeEditView from "./components/ThemeEditView";
 import MyGiftsView from "./components/MyGiftsView";
 import GiftsView from "./components/GiftsView";
+import GiftsAvailable from "./components/GiftsAvailable";
 import Services from "./components/Services";
 import Admin from "./components/Admin";
 
@@ -47,6 +48,7 @@ class App extends Component {
 		this.showAccountEdit = this.showAccountEdit.bind(this);
 		this.showThemeEdit = this.showThemeEdit.bind(this);
 		this.showMyGiftsEdit = this.showMyGiftsEdit.bind(this);
+		this.showGiftsAvailable = this.showGiftsAvailable.bind(this);
 		this.showGiftsEdit = this.showGiftsEdit.bind(this);
 		this.showServices = this.showServices.bind(this);
 		this.showAdmin = this.showAdmin.bind(this);
@@ -276,6 +278,24 @@ class App extends Component {
 		});
 	}
 
+	
+	// Gifts Available
+	showGiftsAvailable() {
+		if (!this.state.user) {
+			// return this.toast.error('Not logged in');
+			return console.warn('Not Logged in')
+		}
+		this.setState({
+			mainView: (<GiftsAvailable
+				accountId={this.state.accountId}
+				themeId={this.state.themeId}
+				myGiftsId={this.state.myGiftsId}
+				admin={this.state.admin}
+			/>),
+			viewType: 'GiftsAvailable',
+		});
+	}
+
 	loginViewRender() {
 		return(<LoginView
 			handleLogin={this.handleLogin}
@@ -306,7 +326,7 @@ class App extends Component {
 	render() {
 		console.log(`%cApp - render('${this.state.viewType}')`, 'color: yellow')
 		let loginView = null;
-		const validLoginView = ['', 'SignupView', 'UserEditView', 'AccountEditView', 'ThemeEditView']
+		const validLoginView = ['', 'SignupView', 'UserEditView']
 		if(validLoginView.includes(this.state.viewType)) {
 			loginView = this.loginViewRender()
 		}
@@ -320,9 +340,11 @@ class App extends Component {
 					showAccountEdit={this.showAccountEdit}
 					showThemeEdit={this.showThemeEdit}
 					showMyGiftsEdit={this.showMyGiftsEdit}
+					showGiftsAvailable={this.showGiftsAvailable}
 					showGiftsEdit={this.showGiftsEdit}
 					showServices={this.showServices}
 					showAdmin={this.showAdmin}
+					handleLogout={this.handleLogout}
 					accountId={this.state.accountId}
 					themeId={this.state.themeId}
 					myGiftsId={this.state.myGiftsId}

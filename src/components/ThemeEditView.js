@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import * as config from '../config/config';
 import { apiPath } from '../lib/apiPath'
+import styles from '../css/mystyles.module.css'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -408,7 +409,13 @@ export default class ThemeEditView extends Component {
 		const colorBox = {
 			display: 'inline-block', 
 			width: '20px', height: '20px',
-			verticalAlign: 'middle'
+			verticalAlign: 'middle',
+		}
+		const colorBoxExample = {
+			display: 'inline-block', 
+			width: '100px', height: '20px',
+			verticalAlign: 'middle',
+			textAlign:'center',
 		}
 		let allThemesLength = 0
 		let themeList = null
@@ -418,7 +425,8 @@ export default class ThemeEditView extends Component {
 				<li key={idx}>
 					<button onClick={this.setTheme.bind(this, data.id)}>Select Theme {data.id}</button> - '{data.names}' {' '}
 					<div style={{ ...colorBox, backgroundColor:data.colour1 }} /> 
-					<div style={{ ...colorBox, backgroundColor:data.colour2 }} />
+					<div style={{ ...colorBox, backgroundColor:data.colour2 }} />{' - '}
+					<div style={{ ...colorBoxExample, backgroundColor:data.colour2, color:data.colour1 }}>{data.names}</div>
 				</li>
 			)
 		}
@@ -441,6 +449,7 @@ export default class ThemeEditView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading">Theme Edit (<i>themeID: {this.props.themeId}</i>)<br/>
+						<div className={styles.blue}>The Theme View provides the Theme setup and selection for the current account</div><p/>
 						<code>GET {apiPath('GET', 'theme', this.props.themeId, false)}</code> {'<'} <i>themeId</i><br/>
 						<code>GET {apiPath('GET', '/accounts/theme', this.props.accountId, false)}</code> {'<'} <i>accountId</i> - suggested option
 					</div>

@@ -35,11 +35,16 @@ export default class GiftsView extends Component {
 		// console.log("Props:")
 		// console.log(props)
 		//Gifts
-		this.handleCreate = this.handleCreate.bind(this)
-		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleChange = this.handleChange.bind(this)
-		this.handleRemove = this.handleRemove.bind(this)
+
 		this.handleNew = this.handleNew.bind(this)
+		this.handleCreate = this.handleCreate.bind(this)
+
+		//GiftDataStore
+		this.handleNewGDS = this.handleNewGDS.bind(this)
+		this.handleCreateGDS = this.handleCreateGDS.bind(this)
+		this.handleSubmitGDS = this.handleSubmitGDS.bind(this)
+		this.handleRemoveGDS = this.handleRemoveGDS.bind(this)
 
 		this.handleDropDownClick = this.handleDropDownClick.bind(this)
 	}
@@ -49,7 +54,6 @@ export default class GiftsView extends Component {
 		this.refreshContent()
 		this.getThemes()
 	}
-
 
 	//--------------------------------------
 	refreshContent() {
@@ -70,7 +74,7 @@ export default class GiftsView extends Component {
 		}
 
 		//Get this myGifts
-		axios.get(apiPath('GET', '/accounts/gifts', this.props.accountId + '?details=true')).then((response) => {
+		axios.get(apiPath('GET', '/accounts/gifts', this.props.accountId + '?details=true&access=private')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get Account.gifts details.')
 			}
@@ -157,8 +161,12 @@ export default class GiftsView extends Component {
 		const name = target.type === 'color' ? target.name.split('-')[1] : target.name;
 		console.log("Change: " + name + ", new Value: " + value)
 
-		let gift = this.state.gift
+		if (this.state.gift === null) {
+			this.handleNewGDS()
+			return
+		}
 
+		let gift = this.state.gift
 		switch (name) {
 			case 'access': gift.giftDataStore[name] = value ? 'public' : 'private'
 				break
@@ -171,9 +179,6 @@ export default class GiftsView extends Component {
 				break
 			case 'price':
 				gift.giftDataStore[name] = (typeof (value) === 'string') ? parseInt(value) : value
-				break
-			case 'paid':
-				gift.[name] = (typeof (value) === 'string') ? parseInt(value) : value
 				break
 			default:
 				gift[name] = value
@@ -281,6 +286,129 @@ export default class GiftsView extends Component {
 		this.selectGift(gift)
 	}
 
+
+	//===========================================
+	handleNewGDS(event) { //Create a GiftDS Entry
+		if (event) event.preventDefault();  // IMPORTANT.
+		const gift = this.createDefaultEmptyGift()
+		this.setState({ createDS: true })
+		this.selectGift(gift)
+	}
+
+	//-------------------------------------- Create - POST a GiftDataStore Item
+	handleCreateGDS(event) { //Create a Gift Entry
+		event.preventDefault()  // IMPORTANT.
+		console.log("------------------- handleCreateGDS()")
+
+		const giftDS = this.state?.gift?.giftDataStore
+		console.log(giftDS)
+		if (!(giftDS?.title)) {
+			console.log('  Requires a GiftDataStore entry to create')
+			return
+		}
+
+		const req = this.createGiftDSChangeReqObject()
+		req.access = giftDS?.access // ensure these are set
+		req.type = giftDS?.type // ensure these are set
+		req.accountID = this.props.accountId
+
+		const count = Object.keys(req).length
+		if (config.debugLevel > 0) {
+			console.log('Call GiftDataStore POST')
+			console.log(`Number to update: ${count}`)
+			console.log(req)
+		}
+
+		if (count <= 1) {
+			console.warn("Nothing to post, bail")
+			return
+		}
+
+		axios.post(apiPath('POST', 'giftDS'), req).then((response) => {
+			if (response.status !== 201) {
+				return console.warn('Failed to create GiftDataStore Entry.')
+			}
+			console.log('Created a new GiftDataStore Entry')
+			this.refreshContent()
+		}).catch((error) => {
+			console.log(error)
+			Error.message(error.response)
+		})
+	}// handleCreateGDS
+
+
+	//-------------------------------------- Submit - UPDATE of GiftDataStore entry
+	handleSubmitGDS(event) {
+		event.preventDefault();  // IMPORTANT.
+		console.log("------------------- handleSubmitGDS()")
+
+		if (!this.state?.gift?.giftDatStore?.id == null) {
+			console.log("No GiftDatStore Entry to Update")
+			return
+		}
+
+		const req = this.createGiftDSChangeReqObject()
+
+		const count = Object.keys(req).length;
+		if (config.debugLevel > 1) {
+			console.log('Call myGifts UPDATE')
+			console.log(`Number to update: ${count}`)
+			console.log(req)
+		}
+
+		if (count <= 1) {
+			console.warn("Nothing to update, skip calling api")
+			return
+		}
+
+		axios.put(apiPath('PUT', 'giftDS', req.id), req).then((response) => {
+			if (response.status !== 200) {
+				return console.warn('Failed to update Gift.')
+			}
+			console.log('Updated Gift details!')
+			this.forceUpdate()
+		}).catch((error) => {
+			Error.message(error.response)
+		})
+	}// handleSubmitGDS
+
+
+	handleRemoveGDS(event) {
+		event.preventDefault();
+		console.log("------------------- handleRemoveGDS()")
+
+		if (!this.state?.gift?.giftDatStore?.id) {
+			console.log("No GiftDataStore Entry to Delete")
+			return
+		}
+		const id = this.state.gift.giftDataStore.id
+
+		confirmAlert({
+			title: 'Confirm',
+			message: `Are you VERY sure you want to delete this giftDataStore(${id}) Entry?`,
+			buttons: [
+				{
+					label: "Yes",
+					onClick: () => {
+						axios.delete(apiPath('DELETE', 'giftDS', id)).then((response) => {
+							if (response.status !== 200) {
+								return console.warn('Failed to remove Gift.');
+							}
+							console.log(`Successfully deleted Gift(${id})`)
+							this.refreshContent()
+						}).catch((error) => {
+							Error.message(error.response)
+						})
+					}
+				},
+				{
+					label: "No",
+				}
+			]
+		})
+	}// handleRemoveGDS
+
+
 	//===========================================
 	handleNew(event) { //Create a Gift Entry
 		event.preventDefault();  // IMPORTANT.
@@ -327,84 +455,15 @@ export default class GiftsView extends Component {
 			if (response.status !== 201) {
 				return console.warn('Failed to create Gift.');
 			}
-			console.log('Created a new Gift')
-			this.refreshContent()
+			console.log('Created a new Gift');
 		}).catch((error) => {
 			console.log(error)
 			Error.message(error.response)
 		})
 	}// handleCreate
 
-	//-------------------------------------- Submit - UPDATE of Gift
-	handleSubmit(event) {
-		event.preventDefault();  // IMPORTANT.
-		console.log("------------------- handleSubmit()")
-
-		if (!this.state?.gift?.id == null) {
-			console.log("No Gift to Update")
-			return
-		}
-
-		const req = this.createGiftChangeReqObject()
-
-		const count = Object.keys(req).length;
-		if (config.debugLevel > 1) {
-			console.log('Call gifts UPDATE')
-			console.log(`Number to update: ${count}`)
-			console.log(req)
-		}
-
-		if (count <= 1) {
-			console.warn("Nothing to update, skip calling api")
-			return
-		}
-
-		axios.put(apiPath('PUT', 'gifts', req.id), req).then((response) => {
-			if (response.status !== 200) {
-				return console.warn('Failed to update Gift.')
-			}
-			console.log('Updated Gift details!')
-			this.refreshContent()
-		}).catch((error) => {
-			Error.message(error.response)
-		})
-	}// handleSubmit
-
-	handleRemove(event) {
-		event.preventDefault();
-		console.log("------------------- handleRemove()")
-
-		if (!this.state?.gift?.id) {
-			console.log("No Gifts Entry selected to Delete")
-			return
-		}
-		const id = this.state.gift.id
 
 
-		confirmAlert({
-			title: 'Confirm',
-			message: 'Are you VERY sure you want to delete the Gift?',
-			buttons: [
-				{
-					label: "Yes",
-					onClick: () => {
-						axios.delete(apiPath('DELETE', 'gifts', id)).then((response) => {
-							if (response.status !== 200) {
-								return console.warn('Failed to remove Gift.');
-							}
-							console.log(`Successfully deleted Gift(${id})`)
-							this.refreshContent()
-						}).catch((error) => {
-							Error.message(error.response)
-						})
-					}
-				},
-				{
-					label: "No",
-				}
-			]
-		})
-	}
 
 	//------------------------------------------------------------
 	capitalize = (s) => {
@@ -412,7 +471,7 @@ export default class GiftsView extends Component {
 		return s.charAt(0).toUpperCase() + s.slice(1)
 	}
 
-	addDiv = (divType, field, state = undefined, placeHolder = null) => {
+	addDiv = (divType, field, state = undefined) => {
 		let thisValue = null
 		if (this.state.gift) {
 			if (this.state.gift[field]) thisValue = this.state.gift[field]
@@ -434,7 +493,7 @@ export default class GiftsView extends Component {
 				typeField = <input style={{ width: '34px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
 				break
 			case "text":
-				typeField = <input style={{ width: '92%', display: 'inline-block' }} className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} placeholder={placeHolder} onChange={this.handleChange} />
+				typeField = <input style={{ width: '92%', display: 'inline-block' }} className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
 				break
 			case "color":
 				const fieldName = "color-" + field
@@ -480,20 +539,19 @@ export default class GiftsView extends Component {
 	render() {
 		console.log(`%cGiftsView - render(myGiftsId ${this.props.myGiftsId})`, 'color: yellow')
 		const gift = this.state.gift
-
-		var giftButtons
 		console.log(gift)
-		if (gift?.id !== -1) {
-			giftButtons = <div className="btn-group">
-				<button className="btn btn-primary" onClick={this.handleSubmit}>Update</button>
-				<button className="btn btn-danger" onClick={this.handleRemove}>Remove</button>
-			</div>
-		}
-		else {
-			giftButtons = <div className="btn-group">
-				<button className="btn btn-success" onClick={this.handleCreate} title='Add the chosen gift to the account'>Create</button>
-			</div>
-		}
+
+		const admin = this.props.admin ?? false
+		const allowToUpdate = admin || this.gifts?.giftDataStore?.access === 'private'
+		// console.log(`  admin: ${admin}`)
+		// console.log(`  allowToUpdate: ${allowToUpdate}`)
+		// console.log(`  createDS: ${this.state.createDS}`)
+		const giftDSButtons = <div className="btn-group">
+			<button className="btn btn-success" onClick={this.handleNewGDS} >New</button>
+			<button className="btn btn-success" onClick={this.handleCreateGDS} disabled={!this.state.createDS}>Create</button>
+			<button className="btn btn-primary" onClick={this.handleSubmitGDS} disabled={!allowToUpdate || this.state.createDS}>Update</button>
+			<button className="btn btn-danger" onClick={this.handleRemoveGDS} disabled={!allowToUpdate}>Remove</button>
+		</div>
 
 		// backgroundColor: this.state.colour2,
 		const font = {
@@ -546,7 +604,7 @@ export default class GiftsView extends Component {
 		let giftsCount = 'No Gifts'
 		if (gifts) {
 			renderGiftsData = gifts.map((data, idx) =>
-				<li key={idx}><Button style={darkerButton} variant='secondary' onClick={this.setGiftid.bind(this, data.id)}> {data.giftDataStore.title}</Button> - [{data.id}]:{data.access}</li>
+				<li key={idx}><Button style={darkerButton} variant='secondary' onClick={this.setGiftid.bind(this, data.id)}> {data.giftDataStore.title}</Button> - [gift.id:{data.id}, giftDataStore.id{data.giftDataStore.id}]</li>
 			)
 			giftsCount = <><b>{gifts.length}</b> gifts</>
 		}
@@ -556,14 +614,13 @@ export default class GiftsView extends Component {
 		let publicGiftCount = 'No Public Gifts'
 		if (publicGifts) {
 			renderPublicGiftsData = publicGifts.map((data, idx) =>
-				<li key={idx}><Button style={darkerButton} variant='secondary' onClick={this.setPublicGiftid.bind(this, data.id)}> {data.title}</Button> - [{data.id}]</li>
+				<li key={idx}><Button style={darkerButton} variant='secondary' onClick={this.setPublicGiftid.bind(this, data.id)}> {data.title}</Button> - [giftDataStore.id{data.id}]</li>
 			)
 			publicGiftCount = <><b>{publicGifts.length}</b> public gifts</>
 		}
 
-		const GroupText = 'This item allows a group contribution, until fully paid, paid = price'
-		const MainText = 'This item allows is flagged as the main gift item'
-		const OpenText = "This item is flagged as OpenContribution, no real upper limit multiple people can just pay an amount to this 'fund'"
+		const AccessText = gift?.giftDataStore?.access === 'public' ? '- This item is public item (pre-defined item) user cannot update the item details' :
+			gift?.giftDataStore?.access === 'private' ? '- This item is private item (user created) user can update the item details' : ''
 
 		let giftView = ''
 		if (gift) {
@@ -602,15 +659,15 @@ export default class GiftsView extends Component {
 		return (
 			<>
 				<div className="panel panel-default">
-					<div className="panel-heading"><h4 className='text-primary'>Gifts Status</h4><p />
-						<div className={styles.blue}>The Gifts View provides access to the gifts assigned to this Account and their current status</div><p />
-						These are <b>All</b> the Gifts associated with this account:<br />
+					<div className="panel-heading"><h4 className='text-primary'>Gifts Available</h4> (<i>giftDataStore</i>)<p />
+						<div className={styles.blue}>The Gifts Availble View provides access to the aviailable gifts</div><p />
+						These are the <b>Private</b> Gifts associated with this account:<br />
 						<code>GET {apiPath('GET', '/accounts/gifts', this.props.accountId + '?details=true&access=private', false)}</code> {'<'} <i>accountId</i><br />
 						Gifts assigned to Account ({this.props.accountId}): {giftsCount}
 						<ul>
 							{renderGiftsData}
 						</ul><p />
-						These are the <b>Public</b> available gifts that can be added<br />
+						These are the <b>Public</b> available gifts<br />
 						<code>GET {apiPath('GET', '/giftDataStore', '?access=public', false)}</code><br />
 						Available Public Gifts: {publicGiftCount}
 						<ul>
@@ -621,23 +678,21 @@ export default class GiftsView extends Component {
 
 
 						<form className="form">
-							<h4 className='text-primary'>Gift - Status</h4>
-							<div>Gift ID: {gift?.id}</div>
-							<div> {'>'} giftDataStore.id: {gift?.giftDataStore?.id}</div>
-							{this.addDiv("dropdown", "status")}
-							{this.addDiv("text", "paid", undefined, 'How much has been paid, default: 0')}
-							{this.addDiv("text", "notes", undefined, 'Add Personal Note here')}
-							<table style={{ width: '100%' }}>
-								<tbody>
-									<tr>
-										<td title={GroupText} style={{ width: '20%' }}>{this.addDiv("checkbox", "group")}</td>
-										<td title={MainText} style={{ width: '20%' }}>{this.addDiv("checkbox", "main")}</td>
-										<td title={OpenText} style={{ width: '20%' }}>{this.addDiv("checkbox", "openContributions")}</td>
-									</tr>
-								</tbody>
-							</table>
-							<p />
-							{giftButtons}
+							<h4 className='text-primary'>GiftDataStore</h4>
+							<div>giftDataStore ID: {gift?.giftDataStore?.id}</div>
+							<div style={{ marginBottom: '2px' }} className="form-group">
+								<label style={{ display: 'inline-block', width: '8%' }}>Access</label>
+								<input style={{ display: 'inline-block', width: '34px', verticalAlign: 'middle' }} className="form-control" type='checkbox' name='access' checked={gift?.giftDataStore?.access === 'public'} onChange={this.handleChange} disabled={!admin} />{' '}
+								<div style={{ display: 'inline-block' }}>{gift?.giftDataStore?.access ?? 'Not Set'} <i>{AccessText}</i></div>
+							</div>
+							{this.addDiv("dropdown", "type", allowToUpdate)}
+							{this.addDiv("text", "title", allowToUpdate)}
+							{this.addDiv("text", "from", allowToUpdate)}
+							{this.addDiv("text", "message", allowToUpdate)}
+							{this.addDiv("text", "image", allowToUpdate)}
+							{this.addDiv("text", "price", allowToUpdate)}
+							{giftDSButtons}
+
 						</form>
 					</div>
 					{giftView}

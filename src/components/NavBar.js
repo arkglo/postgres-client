@@ -2,11 +2,31 @@ import React, { Component } from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap'
 import styles from '../css/mystyles.module.css'
 
+import axios from 'axios';
+import { apiPath } from '../lib/apiPath'
+
+
 export default class NavBar extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 		};
+	}
+
+	handleLogout = (event) => {
+		event.preventDefault();
+
+		axios.post(apiPath('POST', 'user', 'logout'))
+			.then(this.props.handleLogout)
+			.catch((error) => {
+				var data = error?.response?.data ?? null
+				if (data) {
+					console.error(`${data.function}() - ${data.message}`)
+				}
+				else {
+					console.log(error)
+				}
+			})
 	}
 
 	render() {
@@ -27,19 +47,22 @@ export default class NavBar extends Component {
 				Admin
 			</Button> : ""
 
+		const logoutView = !this.props.user ? null : <Button type="submit" variant='btn-secondary' onClick={this.handleLogout}>Logout</Button>
+
 		console.log(styles.sticky)
 		const vt = this.props.viewType
 		return (
-			<nav className={styles.sticky}>
+			<nav className={styles.sticky} >
 				<span className="navbar-brand">{title}</span>
 				<span className="navbar-text">({vt})</span>
-				<ButtonGroup style={{verticalAlign: 'middle', marginTop:'10px'}} aria-label="NavBar">
+				<ButtonGroup style={{ verticalAlign: 'middle', marginTop: '10px' }} aria-label="NavBar">
 					<Button type="button" name="reset"
 						// className="btn btn-secondary navbar-btn"
 						variant='dark'
 						onClick={this.props.handleReset}>
 						Reset
 					</Button>
+					{logoutView}
 					<Button type="button" name="signup"
 						//className="btn btn-default navbar-btn"
 						variant='primary'
@@ -79,13 +102,21 @@ export default class NavBar extends Component {
 						active={vt === 'MyGiftsView'}>
 						My Gifts {myGiftsLabel}
 					</Button>
+					<Button type="button" name="gifts_available"
+						//className="btn btn-default navbar-btn"
+						disabled={this.props.accountId === -1}
+						onClick={this.props.showGiftsAvailable}
+						title={this.props.accountId === -1 ? accountSelectText : 'Gifts Edit'}
+						active={vt === 'GiftsAvailable'}>
+						Gifts Available
+					</Button>
 					<Button type="button" name="gifts_edit"
 						//className="btn btn-default navbar-btn"
 						disabled={this.props.accountId === -1}
 						onClick={this.props.showGiftsEdit}
 						title={this.props.accountId === -1 ? accountSelectText : 'Gifts Edit'}
 						active={vt === 'GiftsView'}>
-						Gifts
+						Gifts Status
 					</Button>
 					<Button type="button" name="services_edit"
 						//className="btn btn-default navbar-btn"
@@ -102,6 +133,6 @@ export default class NavBar extends Component {
 					</Button>
 				</ButtonGroup>
 			</nav>
-		);
+		)
 	}
 }

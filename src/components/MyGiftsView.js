@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import * as config from '../config/config';
 import { apiPath } from '../lib/apiPath'
+import styles from '../css/mystyles.module.css'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -349,6 +350,7 @@ export default class MyGiftsView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading">MyGifts Edit (<i>myGiftsID: {this.props.myGiftsId}</i>)<br />
+						<div className={styles.blue}>The MyGifts's View provides the Gifts Introduction as defined by the User and demonstrates the active theme</div><p/>
 						<code>GET {apiPath('GET', 'myGifts', this.props.myGiftsId, false)}</code> {'<'} <i>myGiftsId</i><br/>
 						<code>GET {apiPath('GET', '/accounts/myGifts', this.props.accountId, false)}</code> {'<'} <i>accountId</i> - suggested option<br/>
 					</div>
@@ -365,7 +367,7 @@ export default class MyGiftsView extends Component {
 							</div>
 						</form>
 					</div>
-					<div className="panel-body"  style={{border:'1px solid #6c757d', borderRadius: '20px'}}>
+					<div className="panel-body"  style={{border:'1px solid #6c757d', borderRadius: '20px', margin:'10px 50px'}}>
 						<img style={{width: '100%', maxHeight: '100px', objectFit: 'cover'}} src={this.state.imageUrl} alt='myGifts URL'/> 
 						<h1 style={h1Overide}>{this.state.title}</h1>
 						<span style={messageOveride}>{this.state.message}</span><br/>

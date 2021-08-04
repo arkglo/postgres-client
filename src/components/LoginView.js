@@ -135,9 +135,12 @@ const LoginView = (props) => {
 		const renAccountsData = user.accounts.map((data, idx) =>
 			<li key={idx}><button onClick={setAccount.bind(this, data.id)}>Select Account (accountId: {data.id})</button></li>
 		);
+		const admin=props.admin?'(Admin User)':''
+
+
 		return (
 			<div>
-				<span>Welcome {props.user.firstName} {props.user.lastName}!</span><p />
+				<span>Welcome {props.user.firstName} {props.user.lastName}! {admin}</span><p />
 				<span>Accounts (count: {props.user.accounts.length})</span><br/>
 					<code>GET {getAPIPathId}</code><p/>
 					{(user.accounts == null || user.accounts.length === 0)?<i>No Account Registered for User</i>:''}

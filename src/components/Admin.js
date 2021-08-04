@@ -255,8 +255,8 @@ export default class Admin extends Component {
 					<Button variant='primary' title='endpoint' value='account' active={ep === 'account'} onClick={this.handleClick}>Accounts</Button>
 					<Button variant='primary' title='endpoint' value='theme' active={ep === 'theme'} onClick={this.handleClick}>Themes</Button>
 					<Button variant='primary' title='endpoint' value='myGifts' active={ep === 'myGifts'} onClick={this.handleClick}>myGifts</Button>
-					<Button variant='primary' title='endpoint' value='gifts' active={ep === 'gifts'} onClick={this.handleClick}>Gifts</Button>
-					<Button variant='primary' title='endpoint' value='giftDS' active={ep === 'giftDataStore'} onClick={this.handleClick}>GiftDataStore</Button>
+					<Button variant='primary' title='endpoint' value='giftDS' active={ep === 'giftDataStore'} onClick={this.handleClick}>Gifts Available</Button>
+					<Button variant='primary' title='endpoint' value='gifts' active={ep === 'gifts'} onClick={this.handleClick}>Gifts Status</Button>
 					<Button variant='primary' title='endpoint' value='services' active={ep === 'services'} onClick={this.handleClick}>Services</Button>
 				</ButtonGroup><br />
 				<ButtonGroup aria-label='REST Calls'>
