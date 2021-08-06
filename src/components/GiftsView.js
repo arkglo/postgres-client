@@ -173,7 +173,7 @@ export default class GiftsView extends Component {
 				gift.giftDataStore[name] = (typeof (value) === 'string') ? parseInt(value) : value
 				break
 			case 'paid':
-				gift.[name] = (typeof (value) === 'string') ? parseInt(value) : value
+				gift[name] = (typeof (value) === 'string') ? parseInt(value) : value
 				break
 			default:
 				gift[name] = value

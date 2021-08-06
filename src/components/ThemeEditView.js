@@ -51,7 +51,7 @@ export default class ThemeEditView extends Component {
 		console.log(`ThemeEditView.getThemes(${this.props.themeId})`)
 
 		//Get All themes
-		axios.get(apiPath('GET','theme')).then((response) => {
+		axios.get(apiPath('GET', 'theme')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
 			}
@@ -60,7 +60,7 @@ export default class ThemeEditView extends Component {
 			//Get just the theme we want
 			if (this.props.themeId == null) return;
 
-			return axios.get(apiPath('GET','/accounts/theme', this.props.accountId))
+			return axios.get(apiPath('GET', '/accounts/theme', this.props.accountId))
 		}).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
@@ -191,7 +191,7 @@ export default class ThemeEditView extends Component {
 			return;
 		}
 
-		axios.post(apiPath('POST','theme'), req).then((response) => {
+		axios.post(apiPath('POST', 'theme'), req).then((response) => {
 			if (response.status !== 201) {
 				return console.warn('Failed to create theme.');
 			}
@@ -225,7 +225,7 @@ export default class ThemeEditView extends Component {
 			return;
 		}
 
-		axios.put(apiPath('PUT','theme', this.props.themeId), req).then((response) => {
+		axios.put(apiPath('PUT', 'theme', this.props.themeId), req).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to update theme.');
 			}
@@ -246,7 +246,7 @@ export default class ThemeEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						axios.delete(apiPath('DELETE','theme', this.props.themeId)).then((response) => {
+						axios.delete(apiPath('DELETE', 'theme', this.props.themeId)).then((response) => {
 							if (response.status !== 200) {
 								return console.warn('Failed to remove theme.');
 							}
@@ -267,7 +267,7 @@ export default class ThemeEditView extends Component {
 	createTheme(theme) {
 		console.log("ThemeEditView.createTheme()")
 
-		axios.post(apiPath('POST','theme'), theme).then((response) => {
+		axios.post(apiPath('POST', 'theme'), theme).then((response) => {
 			if (response.status !== 201) {
 				return console.warn('Failed to create theme.');
 			}
@@ -296,11 +296,11 @@ export default class ThemeEditView extends Component {
 					accountID: this.props.accountId,
 					colour1: "#5678D4",
 					colour2: "#D4B256",
-					font: "TestFont",
-					imageUrl: "test_image.jpg",
-					names: "TestNames",
-					byLine: "TestByLine",
-					message: "TestMessage"
+					font: this.state.font || "TestFont",
+					imageUrl: this.state.imageUrl || "test_image.jpg",
+					names: this.state.names || "TestNames",
+					byLine: this.state.byLine || "TestByLine",
+					message: this.state.message || "TestMessage"
 				}
 				break;
 			case 'TestTheme-2':
@@ -308,11 +308,11 @@ export default class ThemeEditView extends Component {
 					accountID: this.props.accountId,
 					colour1: "#f6ae13",
 					colour2: "#2e3484",
-					font: "TestFont2",
-					imageUrl: "test_image2.jpg",
-					names: "TestNames2",
-					byLine: "TestByLine2",
-					message: "TestMessage2"
+					font: this.state.font || "TestFont2",
+					imageUrl: this.state.imageUrl || "test_image2.jpg",
+					names: this.state.names || "TestNames2",
+					byLine: this.state.byLine || "TestByLine2",
+					message: this.state.message || "TestMessage2"
 				}
 				break;
 			case 'TestTheme-3':
@@ -320,11 +320,11 @@ export default class ThemeEditView extends Component {
 					accountID: this.props.accountId,
 					colour1: "#646464",
 					colour2: "#000000",
-					font: "TestFont3",
-					imageUrl: "test_image3.jpg",
-					names: "TestNames3",
-					byLine: "TestByLine3",
-					message: "TestMessage3",
+					font: this.state.font || "TestFont3",
+					imageUrl: this.state.imageUrl || "test_image3.jpg",
+					names: this.state.names || "TestNames3",
+					byLine: this.state.byLine || "TestByLine3",
+					message: this.state.message || "TestMessage3",
 					ceremonyEnabled: true,
 					ceremonyMessage: "ceremonyMessage3",
 					ceremonyDateTime: "2021-03-17T13:37:16.991Z"
@@ -335,7 +335,7 @@ export default class ThemeEditView extends Component {
 				return;
 		}
 
-		if(this.checkThemeExists(thisTheme.names) === -1){
+		if (this.checkThemeExists(thisTheme.names) === -1) {
 			this.createTheme(thisTheme)
 		}
 		else {
@@ -390,6 +390,85 @@ export default class ThemeEditView extends Component {
 		)
 	}
 
+	renderPreview() {
+		const font = {
+			fontFamily: this.state.font,
+			color: this.state.colour1,
+		}
+
+		const h1Overide = {
+			...font,
+			fontSize: '1.5em',
+			textAlign: 'left',
+			fontWeight: 'bold'
+		}
+
+		const h2Overide = {
+			...font,
+			fontSize: '0.9em',
+			textAlign: 'left',
+			fontWeight: 'lighter',
+			fontStyle: 'italic',
+		}
+
+		const messageOveride = {
+			...font,
+			fontSize: '1em',
+			width: '100%',
+		}
+
+
+		let ceremony = null
+		if(this.state.ceremonyEnabled) {
+			ceremony = <div><b>Ceremony</b><br/>{this.state.ceremonyMessage}<br/>{this.state.ceremonyDateTime}</div>
+		}
+
+		let reception = null
+		if(this.state.receptionEnabled) {
+			reception = <div><b>Reception</b><br/>{this.state.receptionMessage}<br/>{this.state.receptionDateTime}</div>
+		}
+
+		return (
+			<div>
+				<h4 className='text-primary'> Preview:</h4>
+				<div className="panel-body" style={{ margin: '10px 50px', width: '80%', border: '1px solid #6c757d', borderRadius: '20px', backgroundColor: this.state.colour2 }} >
+					<img style={{ maxWidth: '80%', objectFit: 'contain', display: 'block', margin: 'auto' }} src={this.state?.imageUrl} alt='Theme URL' />
+					<h1 style={h1Overide}>{this.state.names}</h1>
+					<div style={h2Overide}>{this.state.byLine}</div>
+					<div style={messageOveride}>{this.state.message}</div><p/>
+					<table style={{ width: '100%' }}>
+						<tbody>
+							<tr>
+							<td>
+									<div style={messageOveride}>{ceremony}</div>
+								</td>
+								<td>
+									<div style={messageOveride}>{reception}</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		)
+	}
+
+	renderCreateThemes() {
+		let createTheme = null
+		if (this.props.admin) {
+			createTheme = <div className="panel panel-default">
+				<div className="panel-heading">PreConfigured Theme data</div>
+				<div className="panel-body">
+					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
+					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
+					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
+				</div>
+			</div>
+		}
+		else
+			return
+	}
+
 	render() {
 		console.log(`%cThemeEditView - render(themeId ${this.props.themeId})`, 'color: yellow')
 
@@ -405,17 +484,19 @@ export default class ThemeEditView extends Component {
 			</div>
 		}
 
+		const themePreview = this.renderPreview()
+
 		//AllThemes
 		const colorBox = {
-			display: 'inline-block', 
+			display: 'inline-block',
 			width: '20px', height: '20px',
 			verticalAlign: 'middle',
 		}
 		const colorBoxExample = {
-			display: 'inline-block', 
+			display: 'inline-block',
 			width: '100px', height: '20px',
 			verticalAlign: 'middle',
-			textAlign:'center',
+			textAlign: 'center',
 		}
 		let allThemesLength = 0
 		let themeList = null
@@ -424,33 +505,33 @@ export default class ThemeEditView extends Component {
 			themeList = this.state.allThemes.map((data, idx) =>
 				<li key={idx}>
 					<button onClick={this.setTheme.bind(this, data.id)}>Select Theme {data.id}</button> - '{data.names}' {' '}
-					<div style={{ ...colorBox, backgroundColor:data.colour1 }} /> 
-					<div style={{ ...colorBox, backgroundColor:data.colour2 }} />{' - '}
-					<div style={{ ...colorBoxExample, backgroundColor:data.colour2, color:data.colour1 }}>{data.names}</div>
+					<div style={{ ...colorBox, backgroundColor: data.colour1 }} />
+					<div style={{ ...colorBox, backgroundColor: data.colour2 }} />{' - '}
+					<div style={{ ...colorBoxExample, backgroundColor: data.colour2, color: data.colour1 }}>{data.names}</div>
 				</li>
 			)
 		}
-// name='color-{data.id}' 
+		// name='color-{data.id}' 
 		//Create theme (admin only)
 		let createTheme = null
-		if(this.props.admin) {
+		if (this.props.admin) {
 			createTheme = <div className="panel panel-default">
-					<div className="panel-heading">PreConfigured Theme data</div>
-					<div className="panel-body">
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
-					</div>
+				<div className="panel-heading">PreConfigured Theme data</div>
+				<div className="panel-body">
+					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
+					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
+					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
 				</div>
+			</div>
 		}
 
 		//Now render
 		return (
 			<>
 				<div className="panel panel-default">
-					<div className="panel-heading">Theme Edit (<i>themeID: {this.props.themeId}</i>)<br/>
-						<div className={styles.blue}>The Theme View provides the Theme setup and selection for the current account</div><p/>
-						<code>GET {apiPath('GET', 'theme', this.props.themeId, false)}</code> {'<'} <i>themeId</i><br/>
+					<div className="panel-heading">Theme Edit (<i>themeID: {this.props.themeId}</i>)<br />
+						<div className={styles.blue}>The Theme View provides the Theme setup and selection for the current account</div><p />
+						<code>GET {apiPath('GET', 'theme', this.props.themeId, false)}</code> {'<'} <i>themeId</i><br />
 						<code>GET {apiPath('GET', '/accounts/theme', this.props.accountId, false)}</code> {'<'} <i>accountId</i> - suggested option
 					</div>
 					<div className="panel-body">
@@ -482,11 +563,12 @@ export default class ThemeEditView extends Component {
 						<code>GET {apiPath('GET', 'theme', null, false)}</code>
 					</div>
 					<div className="panel-body">
-						Update Account({this.props.accountId}) to use a pre-existing theme:<p/>
+						Update Account({this.props.accountId}) to use a pre-existing theme:<p />
 						{themeList}
 					</div>
 				</div>
 				{createTheme}
+				{themePreview}
 			</>
 		);
 	}
