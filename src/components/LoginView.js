@@ -24,7 +24,7 @@ const LoginView = (props) => {
 
 			console.log('GET USERS')
 			// console.log(response.data)
-			const users = response.data
+			const users = response.data.data
 			console.log(users)
 
 			console.log('--------------------------------------------')
