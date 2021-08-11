@@ -55,7 +55,7 @@ export default class ThemeEditView extends Component {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.');
 			}
-			this.setState({ allThemes: response.data })
+			this.setState({ allThemes: response.data.data })
 
 			//Get just the theme we want
 			if (this.props.themeId == null) return;
@@ -66,7 +66,7 @@ export default class ThemeEditView extends Component {
 				return console.warn('Failed to get theme details.');
 			}
 
-			const theme = response.data
+			const theme = response.data.data
 			this.setState({
 				id: theme.id,
 				colour1: theme.colour1,
@@ -419,13 +419,13 @@ export default class ThemeEditView extends Component {
 
 
 		let ceremony = null
-		if(this.state.ceremonyEnabled) {
-			ceremony = <div><b>Ceremony</b><br/>{this.state.ceremonyMessage}<br/>{this.state.ceremonyDateTime}</div>
+		if (this.state.ceremonyEnabled) {
+			ceremony = <div><b>Ceremony</b><br />{this.state.ceremonyMessage}<br />{this.state.ceremonyDateTime}</div>
 		}
 
 		let reception = null
-		if(this.state.receptionEnabled) {
-			reception = <div><b>Reception</b><br/>{this.state.receptionMessage}<br/>{this.state.receptionDateTime}</div>
+		if (this.state.receptionEnabled) {
+			reception = <div><b>Reception</b><br />{this.state.receptionMessage}<br />{this.state.receptionDateTime}</div>
 		}
 
 		return (
@@ -435,11 +435,11 @@ export default class ThemeEditView extends Component {
 					<img style={{ maxWidth: '80%', objectFit: 'contain', display: 'block', margin: 'auto' }} src={this.state?.imageUrl} alt='Theme URL' />
 					<h1 style={h1Overide}>{this.state.names}</h1>
 					<div style={h2Overide}>{this.state.byLine}</div>
-					<div style={messageOveride}>{this.state.message}</div><p/>
+					<div style={messageOveride}>{this.state.message}</div><p />
 					<table style={{ width: '100%' }}>
 						<tbody>
 							<tr>
-							<td>
+								<td>
 									<div style={messageOveride}>{ceremony}</div>
 								</td>
 								<td>
@@ -454,16 +454,18 @@ export default class ThemeEditView extends Component {
 	}
 
 	renderCreateThemes() {
-		let createTheme = null
+		//Create theme (admin only)
 		if (this.props.admin) {
-			createTheme = <div className="panel panel-default">
-				<div className="panel-heading">PreConfigured Theme data</div>
-				<div className="panel-body">
-					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
-					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
-					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
+			return (
+				<div className="panel panel-default">
+					<div className="panel-heading">PreConfigured Theme data</div>
+					<div className="panel-body">
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
+						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
+					</div>
 				</div>
-			</div>
+			)
 		}
 		else
 			return
@@ -511,19 +513,9 @@ export default class ThemeEditView extends Component {
 				</li>
 			)
 		}
-		// name='color-{data.id}' 
-		//Create theme (admin only)
-		let createTheme = null
-		if (this.props.admin) {
-			createTheme = <div className="panel panel-default">
-				<div className="panel-heading">PreConfigured Theme data</div>
-				<div className="panel-body">
-					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
-					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
-					<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
-				</div>
-			</div>
-		}
+
+		let createTheme = this.renderCreateThemes()
+
 
 		//Now render
 		return (

@@ -20,6 +20,7 @@ function initialState() {
 		type: null,
 		extra: null,
 		details: false,
+		status: -1
 	}
 }
 
@@ -141,25 +142,38 @@ export default class Admin extends Component {
 
 			axios.get(apiPath('GET', this.state.endpoint, extra)).then((response) => {
 				console.log('API STATUS: ' + response.status)
+				// console.log(response.data)
+				const data = response.data.data
 				if (response.status !== 200) {
+					this.setState({
+						status: response.status,
+						data: data ?? null,
+						error: {
+							status: response.status,
+							function: response.data.function ?? null,
+							message: response.data.message ?? null
+						}
+					})
+					console.log('Error:')
 					console.log(response)
 					return console.warn('Failed to get data');
 				}
 
-				// console.log(response.data)
-				const data = response.data
 				if (config.debugLevel > 1) console.log(data)
 				this.setState({
+					status: response.status,
 					data: data,
 					error: null,
-				});
+				})
 			}).catch((error) => {
+				console.log('Error.catch():')
+				console.log(error.response)
 				this.setState({
 					data: null,
 					error: {
-						code: error.response.status,
-						function: error.response.data.function ?? null,
-						message: error.response.data.message ?? null
+						status: error.response?.status ?? -1,
+						function: error.response?.data?.function ?? null,
+						message: error.response?.data?.message ?? null
 					}
 				})
 				// console.log(error.response ?? 'no repsonse')
@@ -176,7 +190,7 @@ export default class Admin extends Component {
 				}
 
 				// console.log(response.data)
-				const data = response.data
+				const data = response.data.data
 				if (config.debugLevel > 1) console.log(data)
 				this.setState({
 					data: data,
@@ -186,7 +200,7 @@ export default class Admin extends Component {
 				this.setState({
 					data: null,
 					error: {
-						code: error.response.status,
+						status: error.response.status,
 						function: error.response.data.function ?? null,
 						message: error.response.data.message ?? null
 					}
@@ -220,7 +234,7 @@ export default class Admin extends Component {
 		return (
 			<div style={errorStyle}>
 
-				<strong>{err.code ?? '404'}</strong> {err.function ?? 'Error'}<br />
+				<strong>{err.status ?? '404'}</strong> {err.function ?? 'Error'}<br />
 				<small>{err.message}</small>
 			</div>
 		)
@@ -258,6 +272,7 @@ export default class Admin extends Component {
 					<Button variant='primary' title='endpoint' value='giftDS' active={ep === 'giftDataStore'} onClick={this.handleClick}>Gifts Available</Button>
 					<Button variant='primary' title='endpoint' value='gifts' active={ep === 'gifts'} onClick={this.handleClick}>Gifts Status</Button>
 					<Button variant='primary' title='endpoint' value='services' active={ep === 'services'} onClick={this.handleClick}>Services</Button>
+					<Button variant='primary' title='endpoint' value='logs' active={ep === 'logs'} onClick={this.handleClick}>Logs</Button>
 				</ButtonGroup><br />
 				<ButtonGroup aria-label='REST Calls'>
 					<Button variant='info' title='type' value='GET' active={ty === 'GET'} onClick={this.handleClick}>GET all</Button>
@@ -343,6 +358,7 @@ export default class Admin extends Component {
 
 
 				<div className="panel-body">
+					<p class='lead'>Status: <b>{this.state.status}</b></p>
 					<ReactJson style={jsonStyle} src={myJsonObject} />
 				</div>
 			</div>

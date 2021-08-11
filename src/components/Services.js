@@ -35,7 +35,7 @@ export default class Services extends Component {
 			}
 
 			// console.log(response.data)
-			const services = response.data
+			const services = response.data.data
 			console.log(services)
 			this.setState({
 				services: services

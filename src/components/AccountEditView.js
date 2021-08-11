@@ -44,7 +44,8 @@ export default class AccountEditView extends Component {
         return console.warn('Failed to get account details.');
       }
 
-      const account = response.data
+      const account = response.data.data
+      // console.log(response.data)
       this.setState({
         role: account.role,
         firstName: account.firstName,

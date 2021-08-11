@@ -75,10 +75,10 @@ export default class GiftsView extends Component {
 				return console.warn('Failed to get Account.gifts details.')
 			}
 
-			this.setState({ gifts: response.data })
+			this.setState({ gifts: response.data.data })
 			if (config.debugLevel > 1) {
 				console.log('getPrivateGifts =>')
-				console.log(response.data)
+				console.log(response.data.data)
 			}
 
 		}).catch((error) => {
@@ -95,10 +95,10 @@ export default class GiftsView extends Component {
 				return console.warn('Failed to get gifts details.')
 			}
 
-			this.setState({ publicGifts: response.data })
+			this.setState({ publicGifts: response.data.data })
 			if (config.debugLevel > 1) {
 				console.log('getPublicGifts =>')
-				console.log(response.data)
+				console.log(response.data.data)
 			}
 		}).catch((error) => {
 			Error.message(error.response)
@@ -114,7 +114,7 @@ export default class GiftsView extends Component {
 				return console.warn('Failed to get theme details.')
 			}
 
-			const theme = response.data
+			const theme = response.data.data
 			this.setState({
 				theme: theme,
 				font: theme?.font ?? null,

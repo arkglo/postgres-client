@@ -13,6 +13,7 @@ export const SERVICES_ENDPOINT = "/services"
 export const MYGIFTS_ENDPOINT = "/myGifts"
 export const GIFTS_ENDPOINT = "/gifts"
 export const GIFTSDS_ENDPOINT = "/giftDataStore"
+export const LOGS_ENDPOINT = "/logs"
 
 //Override
 export let productionTest = true

@@ -35,8 +35,8 @@ export default class UserEditView extends Component {
 				return console.warn('Failed to get user details.');
 			}
 
-			// console.log(response.data)
-			const user = response.data
+			const user = response.data.data
+			console.log(user)
 			this.setState({
 				email: user.email,
 				firstName: user.firstName,
@@ -44,10 +44,10 @@ export default class UserEditView extends Component {
 				password: '',  // Empty means no change.
 				password2: '',
 				role: user.role,
-			});
+			})
 		}).catch((error) => {
 			Error.message(error.response)
-		});
+		})
 	}
 
 	handleChange(event) {

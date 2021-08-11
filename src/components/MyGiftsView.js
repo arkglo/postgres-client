@@ -61,7 +61,7 @@ export default class MyGiftsView extends Component {
 				return console.warn('Failed to get myGifts details.');
 			}
 
-			const myGifts = response.data
+			const myGifts = response.data.data
 			this.setState({
 				id: myGifts.id,
 				title: myGifts.title,
@@ -85,7 +85,7 @@ export default class MyGiftsView extends Component {
 				return console.warn('Failed to get theme details.');
 			}
 
-			const theme = response.data
+			const theme = response.data.data
 			this.setState({ 
 				theme: theme,
 				font: theme?.font ?? null,
