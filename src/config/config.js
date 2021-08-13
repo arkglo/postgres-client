@@ -1,7 +1,7 @@
 export const debugLevel = 2
 
 // Paths
-const LOCAL_SERVER_URL = "http://localhost:8080"
+const LOCAL_SERVER_URL = "http://127.0.0.1:8080"
 export const HEROKU_SERVER_URL = "https://tl-pg-server.herokuapp.com"
 export const SERVER_PATH = "/api"
 
@@ -10,14 +10,16 @@ export const ACCOUNT_ENDPOINT = "/accounts"
 export const USER_ENDPOINT = "/users"
 export const THEME_ENDPOINT = "/themes"
 export const SERVICES_ENDPOINT = "/services"
+export const PAYMENT_ENDPOINT = "/payment"
 export const MYGIFTS_ENDPOINT = "/myGifts"
 export const GIFTS_ENDPOINT = "/gifts"
 export const GIFTSDS_ENDPOINT = "/giftDataStore"
+export const STRIPE_ENDPOINT = "/create-checkout-session"
 export const LOGS_ENDPOINT = "/logs"
 
 //Override
 export let productionTest = true
-if(window.location.hostname === 'localhost') {
+if(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
 	//Actually running locally - full dev
 	productionTest = false
 }

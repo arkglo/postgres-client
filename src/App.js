@@ -16,6 +16,7 @@ import MyGiftsView from "./components/MyGiftsView";
 import GiftsView from "./components/GiftsView";
 import GiftsAvailable from "./components/GiftsAvailable";
 import Services from "./components/Services";
+import Payment from "./components/Payment";
 import Admin from "./components/Admin";
 
 import Error from './components/error';
@@ -51,6 +52,7 @@ class App extends Component {
 		this.showGiftsAvailable = this.showGiftsAvailable.bind(this);
 		this.showGiftsEdit = this.showGiftsEdit.bind(this);
 		this.showServices = this.showServices.bind(this);
+		this.showPayment = this.showPayment.bind(this);
 		this.showAdmin = this.showAdmin.bind(this);
 
 		// Handlers for child components.
@@ -315,6 +317,13 @@ class App extends Component {
 			viewType: 'Services',
 		});
 	}
+	
+	showPayment() {
+		this.setState({
+			mainView: (<Payment accountId={this.state.accountId} />),
+			viewType: 'Payment',
+		});
+	}
 
 	showAdmin() {
 		this.setState({
@@ -343,6 +352,7 @@ class App extends Component {
 					showGiftsAvailable={this.showGiftsAvailable}
 					showGiftsEdit={this.showGiftsEdit}
 					showServices={this.showServices}
+					showPayment={this.showPayment}
 					showAdmin={this.showAdmin}
 					handleLogout={this.handleLogout}
 					accountId={this.state.accountId}

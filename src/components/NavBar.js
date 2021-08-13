@@ -124,9 +124,15 @@ export default class NavBar extends Component {
 						active={vt === 'Services'}>
 						Sevices
 					</Button>
+					<Button type="button" name="payment_edit"
+						//className="btn btn-default navbar-btn"
+						onClick={this.props.showPayment}
+						active={vt === 'Payment'}>
+						Payment
+					</Button>
 					{adminButton}
 
-					<Button type="button" name="services_edit"
+					<Button type="button" name="help"
 						//className="btn btn-secondary navbar-btn"
 						onClick={() => window.open('https://tl-pg-server.herokuapp.com/docs/', '_blank')}>
 						Help
