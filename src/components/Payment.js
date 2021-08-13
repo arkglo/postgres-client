@@ -42,10 +42,12 @@ export default class Payment extends Component {
 			if (response.status !== 200) {
 				return console.warn('Failed to create payment.');
 			}
+			var serverResponce = response?.data?.data ?? null;
 			
-			var url = response?.data?.url ?? null
+			var url = serverResponce?.url ?? null
 			console.log(`url=`+url)
-			window.location=url
+			if( url !== null )
+				window.location = url
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -73,10 +75,12 @@ export default class Payment extends Component {
 			if (response.status !== 200) {
 				return console.warn('Failed to create payment.');
 			}
+			var serverResponce = response?.data?.data ?? null;
 			
-			var url = response?.data?.url ?? null
+			var url = serverResponce?.url ?? null
 			console.log(`url=`+url)
-			window.location=url
+			if( url !== null )
+				window.location = url
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -169,8 +173,8 @@ export default class Payment extends Component {
 		//Setup some initial data
 		event.preventDefault();  // IMPORTANT.
 		let gifts=[
-			{id:12, quantity:1, value:2999},
-			{id:15, quantity:6, value:999}
+			{id:1, quantity:1, value:2999},
+			{id:2, quantity:1, value:999}
 		]
 		this.sendGiftPayment(gifts);
 	}
