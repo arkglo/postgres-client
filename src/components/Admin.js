@@ -32,6 +32,7 @@ export default class Admin extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleClick = this.handleClick.bind(this)
 		this.handleChange = this.handleChange.bind(this)
+		this.handleSchema = this.handleSchema.bind(this)
 	}
 
 	componentDidMount() {
@@ -61,6 +62,32 @@ export default class Admin extends Component {
 	handleChange(event) {
 		// console.log(`CHANGE: ${event.target.value}`)
 		this.setState({ id: event.target.value, error: null })
+	}
+
+	handleSchema(event) {
+		event.preventDefault()
+
+		console.log("Admin.getData()")
+
+		axios.post(apiPath('POST', '/admin/checkSchema'), {}).then((response) => {
+			console.log(response.status)
+			console.log(response.data)
+
+			if (response.status !== 200) {
+				return console.warn('Failed to get user details.');
+			}
+
+			this.setState({
+				requestType: 'POST',
+				endpoint: '/admin/checkSchema',
+				data: response.data,
+				status: response.status,
+				error: null,
+			})
+
+		}).catch((error) => {
+			Error.message(error)
+		})
 	}
 
 	handleClick(event) {
@@ -195,7 +222,7 @@ export default class Admin extends Component {
 				this.setState({
 					data: data,
 					error: null,
-				});
+				})
 			}).catch((error) => {
 				this.setState({
 					data: null,
@@ -260,37 +287,58 @@ export default class Admin extends Component {
 			</ButtonGroup>
 		}
 
+		const schemaText = 'This is a Development Admin function,\nThis allows checks/updates be made on the server side to the DB'
+
 		const ep = this.state.endpoint
 		const ty = this.state.type
 		return (
-			<>
-				<ButtonGroup aria-label="Endpoints">
-					<Button variant='primary' title='endpoint' value='user' active={ep === 'user'} onClick={this.handleClick}>Users</Button>
-					<Button variant='primary' title='endpoint' value='account' active={ep === 'account'} onClick={this.handleClick}>Accounts</Button>
-					<Button variant='primary' title='endpoint' value='theme' active={ep === 'theme'} onClick={this.handleClick}>Themes</Button>
-					<Button variant='primary' title='endpoint' value='myGifts' active={ep === 'myGifts'} onClick={this.handleClick}>myGifts</Button>
-					<Button variant='primary' title='endpoint' value='giftDS' active={ep === 'giftDataStore'} onClick={this.handleClick}>Gifts Available</Button>
-					<Button variant='primary' title='endpoint' value='gifts' active={ep === 'gifts'} onClick={this.handleClick}>Gifts Status</Button>
-					<Button variant='primary' title='endpoint' value='services' active={ep === 'services'} onClick={this.handleClick}>Services</Button>
-					<Button variant='primary' title='endpoint' value='logs' active={ep === 'logs'} onClick={this.handleClick}>Logs</Button>
-				</ButtonGroup><br />
-				<ButtonGroup aria-label='REST Calls'>
-					<Button variant='info' title='type' value='GET' active={ty === 'GET'} onClick={this.handleClick}>GET all</Button>
-					<Button variant='info' title='type' value='GETID' active={ty === 'GETID'} onClick={this.handleClick}>GET:id</Button>
-					<Button variant='danger' title='type' value='DELETE' active={ty === 'DELETE'} onClick={this.handleClick}>DELETE</Button>
-					{this.state.showId &&
-						<FormControl inline='true' style={{ width: 'unset' }}
-							type="number"
-							placeholder="ID"
-							aria-label="Input group example"
-							aria-describedby="btnGroupAddon"
-							onChange={this.handleChange}
-						/>}
-				</ButtonGroup>
-				{giftOptions}
-			</>
+			<Container fluid>
+				<Row>
+					<Col>Tools:</Col>
+					<Col>
+						<ButtonGroup aria-label="tools">
+							<Button style={darkerButton} variant='secondary' onClick={this.handleSchema} title={schemaText}>Schema</Button>
+						</ButtonGroup>
+					</Col>
+				</Row>
+				<Row>
+					<Col>Endpoints:</Col>
+					<Col>
+						<ButtonGroup aria-label="Endpoints">
+							<Button variant='primary' title='endpoint' value='user' active={ep === 'user'} onClick={this.handleClick}>Users</Button>
+							<Button variant='primary' title='endpoint' value='account' active={ep === 'account'} onClick={this.handleClick}>Accounts</Button>
+							<Button variant='primary' title='endpoint' value='theme' active={ep === 'theme'} onClick={this.handleClick}>Themes</Button>
+							<Button variant='primary' title='endpoint' value='myGifts' active={ep === 'myGifts'} onClick={this.handleClick}>myGifts</Button>
+							<Button variant='primary' title='endpoint' value='giftDS' active={ep === 'giftDataStore'} onClick={this.handleClick}>Gifts Available</Button>
+							<Button variant='primary' title='endpoint' value='gifts' active={ep === 'gifts'} onClick={this.handleClick}>Gifts Status</Button>
+							<Button variant='primary' title='endpoint' value='services' active={ep === 'services'} onClick={this.handleClick}>Services</Button>
+							<Button variant='primary' title='endpoint' value='logs' active={ep === 'logs'} onClick={this.handleClick}>Logs</Button>
+						</ButtonGroup>
+					</Col>
+				</Row>
+				<Row>
+					<Col>Methods:</Col>
+					<Col><ButtonGroup aria-label='REST Calls'>
+						<Button variant='info' title='type' value='GET' active={ty === 'GET'} onClick={this.handleClick}>GET all</Button>
+						<Button variant='info' title='type' value='GETID' active={ty === 'GETID'} onClick={this.handleClick}>GET:id</Button>
+						<Button variant='danger' title='type' value='DELETE' active={ty === 'DELETE'} onClick={this.handleClick}>DELETE</Button>
+						{this.state.showId &&
+							<FormControl inline='true' style={{ width: 'unset' }}
+								type="number"
+								placeholder="ID"
+								aria-label="Input group example"
+								aria-describedby="btnGroupAddon"
+								onChange={this.handleChange}
+							/>}
+					</ButtonGroup>
+					</Col>
+				</Row>
+				<Row>
+					{giftOptions}
+				</Row>
+			</Container>
 		)
-		//interpunt U+00B7
+		//interpunt U+00B7 '·' 
 	}
 
 	//------------------------------------------------------------
@@ -341,24 +389,15 @@ export default class Admin extends Component {
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">
-					<Container fluid>
-						<Row>
-							<Col>
-								<span className="navbar-brand">Admin</span>
-							</Col>
-							<Col>
-								{endPoints}<p />
-								{url}<p />
-								<button type="submit" className="btn btn-success" onClick={this.handleSubmit}>Submit</button>
-								{errorToast}
-							</Col>
-						</Row>
-					</Container>
+					{endPoints}<p />
+					{url}<p />
+					<button type="submit" className="btn btn-success" onClick={this.handleSubmit}>Submit</button>
+					{errorToast}
 				</div>
 
 
 				<div className="panel-body">
-					<p class='lead'>Status: <b>{this.state.status}</b></p>
+					<p className='lead'>Status: <b>{this.state.status}</b></p>
 					<ReactJson style={jsonStyle} src={myJsonObject} />
 				</div>
 			</div>
