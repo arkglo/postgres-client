@@ -1,7 +1,7 @@
 export const debugLevel = 2
 
 // Paths
-const LOCAL_SERVER_URL = "http://127.0.0.1:8080"
+const LOCAL_SERVER_URL = "http://localhost:8080"
 export const HEROKU_SERVER_URL = "https://tl-pg-server.herokuapp.com"
 export const SERVER_PATH = "/api"
 

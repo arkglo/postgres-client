@@ -37,9 +37,6 @@ export default class GiftsView extends Component {
 		//Gifts
 		this.handleChange = this.handleChange.bind(this)
 
-		this.handleNew = this.handleNew.bind(this)
-		this.handleCreate = this.handleCreate.bind(this)
-
 		//GiftDataStore
 		this.handleNewGDS = this.handleNewGDS.bind(this)
 		this.handleCreateGDS = this.handleCreateGDS.bind(this)
@@ -47,6 +44,8 @@ export default class GiftsView extends Component {
 		this.handleRemoveGDS = this.handleRemoveGDS.bind(this)
 
 		this.handleDropDownClick = this.handleDropDownClick.bind(this)
+
+		this.handleCreateGift = this.handleCreateGift.bind(this)
 	}
 
 	componentDidMount() {
@@ -408,61 +407,57 @@ export default class GiftsView extends Component {
 		})
 	}// handleRemoveGDS
 
+	
+	createQuickGift(gift) {
+		console.log('createQuickGift');
+		console.log(gift)
 
-	//===========================================
-	handleNew(event) { //Create a Gift Entry
-		event.preventDefault();  // IMPORTANT.
-		const gift = this.createDefaultEmptyGift()
-		this.selectGift(gift)
+		axios.post(apiPath('POST', 'giftDS'), gift).then((response) => {
+			if (response.status !== 201) {
+				return console.warn('Failed to create account.');
+			}
+			console.log(`Created account [${gift.title}]!`)
+		}).catch((error) => {
+			var data = error?.response?.data ?? null
+			if (data) {
+				console.error(`${data.function}() - ${data.message}`)
+			}
+			else {
+				console.log(error)
+			}
+		})
+		this.getPublicGifts()
 	}
 
-	//-------------------------------------- Create - POST a Gift
-	handleCreate(event) { //Create a Gift Entry
-		event.preventDefault()  // IMPORTANT.
-		console.log("------------------- handleCreate()")
+	handleCreateGift(event) {
+		event.preventDefault();  // IMPORTANT.
+		console.log("------------------- handleCreateGift()")
+		console.log(`handleCreateTestUser: ${event.target.id}`)
 
-		const gift = this.state.gift
-		// if (!(gift?.id > -1)) {
-		// 	console.log('  Requires a valid Gift AND GiftDataStore entry to create')
-		// 	console.log(`  invalid gift: ${gift?.id}`)
-		// 	return
-		// }
-
-		if (!(gift?.giftDataStore?.id > -1)) {
-			console.log('  Requires a valid Gift AND GiftDataStore entry to create')
-			console.log(`  invalid giftDataStore: ${gift?.giftData?.id}`)
-			return
+		// console.log(event)
+		switch (event.target.id) {
+			case 'CreateGift-Holiday':
+				this.createQuickGift({
+					access: "public",
+					type: "item",
+					title: "Holiday",
+					image: "https://picsum.photos/id/46/400/300",
+					message: "Honeymoon Get-away in the dunes",
+					price: 7850,
+					from: 'Saharan Holidays'
+				})
+				break;
+			case 'CreateGift-Car':
+				break;
+			case 'CreateGift-AmazonVoucher':
+				break;
+			case 'CreateGift-TestTitle':
+				break;
+			default:
+				console.log("Unknown");
+				break;
 		}
-
-		const req = this.createGiftChangeReqObject()
-		req.accountID = this.props.accountId
-		req.status = gift.status
-		req.giftID = gift.giftDataStore.id
-
-		const count = Object.keys(req).length
-		if (config.debugLevel > 0) {
-			console.log('Call Gift POST')
-			console.log(`Number to update: ${count}`)
-			console.log(req)
-		}
-
-		if (count <= 1) {
-			console.warn("Nothing to post, bail")
-			return
-		}
-
-		axios.post(apiPath('POST', 'gifts'), req).then((response) => {
-			if (response.status !== 201) {
-				return console.warn('Failed to create Gift.');
-			}
-			console.log('Created a new Gift');
-		}).catch((error) => {
-			console.log(error)
-			Error.message(error.response)
-		})
-	}// handleCreate
-
-
+	}// handleCreateGift
 
 
 	//------------------------------------------------------------
@@ -534,6 +529,29 @@ export default class GiftsView extends Component {
 			</div>
 		)
 	}
+
+	publicGiftCreate(gift) {
+		// console.log(`publicGiftCreate - ${gift}`)
+		// console.log(this.state.publicGifts)
+		const gifts = this.state.publicGifts
+
+		let found = {};
+
+		if (gifts?.find) {
+			found = gifts.find(element => element.title === gift)
+		}
+
+		if (!found) {
+			const giftId = `CreateGift-${gift.replace(/\s/g, '')}`
+			return (<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateGift} id={giftId} >Create '{gift}'</button></li>)
+		}
+		else {
+			// console.log(found)
+			return ""
+		}
+	}
+
+
 
 	//=================================================================
 	render() {
@@ -655,6 +673,20 @@ export default class GiftsView extends Component {
 			</div>
 		}
 
+		// Allows creation of pre-configured gifts
+		let createGifts = (
+			<div class="panel panel-default">
+				<h4 className="panel-heading">PreConfigured Test data</h4>
+				<div className="panel-body">
+					<i>If empty already, gifts already added</i><br />
+					{this.publicGiftCreate('Car')}
+					{this.publicGiftCreate('Amazon Voucher')}
+					{this.publicGiftCreate('Holiday')}
+					{this.publicGiftCreate('TestTitle')}
+				</div>
+			</div>
+		)
+
 		//Now render
 		return (
 			<>
@@ -696,6 +728,7 @@ export default class GiftsView extends Component {
 						</form>
 					</div>
 					{giftView}
+					{createGifts}
 				</div>
 			</>
 		);
