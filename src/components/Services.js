@@ -45,8 +45,8 @@ export default class Services extends Component {
 		});
 	}
 
-	createService(title, price) {
-		axios.post(apiPath('POST','services'), {
+	async createService(title, price) {
+		await axios.post(apiPath('POST','services'), {
 			title: title,
 			price: price
 		}).then((response) => {

@@ -164,7 +164,7 @@ export default class Payment extends Component {
 	handlePayServiceSubmit(event) {
 		//Setup some initial data
 		event.preventDefault();  // IMPORTANT.
-		let service=[{id:1, quantity:1, value:0},{id: 2, quantity:1, value:1520}];
+		let service=[{id:1, quantity:1, value:0},{id: 2, quantity:1, value:10.00}];
 		this.sendServicePayment(service);
 	}
 
@@ -173,8 +173,8 @@ export default class Payment extends Component {
 		//Setup some initial data
 		event.preventDefault();  // IMPORTANT.
 		let gifts=[
-			{id:1, quantity:1, value:2999},
-			{id:2, quantity:1, value:999}
+			{id:1, quantity:1, value:29.99},
+			{id:2, quantity:1, value:9.99}
 		]
 		this.sendGiftPayment(gifts);
 	}
