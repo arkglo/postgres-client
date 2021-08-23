@@ -9,6 +9,8 @@ import { apiPath } from '../lib/apiPath'
 import Error from './error';
 
 //------------------------------------------------------------
+const defaultLimit = 10
+const defaultOffset = 0
 function initialState() {
 	return {
 		endpoint: null,
@@ -20,7 +22,13 @@ function initialState() {
 		type: null,
 		extra: null,
 		details: false,
-		status: -1
+		status: -1,
+		logs: {
+			limit: defaultLimit,
+			offset: defaultOffset,
+			accountID: null,
+			userID: null,
+		}
 	}
 }
 
@@ -33,6 +41,8 @@ export default class Admin extends Component {
 		this.handleClick = this.handleClick.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSchema = this.handleSchema.bind(this)
+
+		this.handleLogsChange = this.handleLogsChange.bind(this)
 	}
 
 	componentDidMount() {
@@ -53,15 +63,25 @@ export default class Admin extends Component {
 			console.log(services)
 			this.setState({
 				services: services
-			});
+			})
 		}).catch((error) => {
 			Error.message(error)
-		});
+		})
 	}
 
 	handleChange(event) {
 		// console.log(`CHANGE: ${event.target.value}`)
 		this.setState({ id: event.target.value, error: null })
+	}
+
+	handleLogsChange(event) {
+		console.log(`CHANGE: ${event.target.name}:${event.target.value}`)
+
+		const value = Math.max(parseInt(event.target.value), 1)
+		const name = event.target.name
+
+		if (name === 'limit') this.setState({ logs: { ...this.state.logs, limit: value } })
+		else if (name === 'offset') this.setState({ logs: { ...this.state.logs, offset: value } })
 	}
 
 	handleSchema(event) {
@@ -92,8 +112,8 @@ export default class Admin extends Component {
 
 	handleClick(event) {
 		const t = event.target
-		console.log('CLICK: ' + t)
-		// console.log(t)
+		console.log('CLICK: ')
+		console.log(t)
 
 		switch (t.title) {
 			case 'endpoint':
@@ -119,6 +139,14 @@ export default class Admin extends Component {
 					this.setState({
 						requestType: 'GET',
 						showId: true,
+						error: null,
+						type: t.value,
+					})
+				}
+				else if (t.value === 'COUNT') {
+					this.setState({
+						requestType: 'GET',
+						showId: false,
 						error: null,
 						type: t.value,
 					})
@@ -159,15 +187,32 @@ export default class Admin extends Component {
 		if (config.debugLevel > 1) console.log(this.state)
 
 		if (this.state.requestType === 'GET') {
+			const endpoint = this.state.endpoint
+			const type = this.state.type
 			let extra = this.state.id ?? ''
 			let start = '?'
+
+			if (type === 'COUNT') {
+				extra += 'count'
+			}
+
 			if (this.state.extra) {
 				extra += `${start}${this.state.extra}`
 				start = '&'
 			}
 			if (this.state.details) extra += `${start}details=true`
 
-			axios.get(apiPath('GET', this.state.endpoint, extra)).then((response) => {
+
+			if (endpoint === 'logs') {
+				const ls = this.state.logs
+				if (ls.limit !== defaultLimit) { extra += `${start}limit=${ls.limit}`; start = '&' }
+				if (ls.offset !== defaultOffset) { extra += `${start}offset=${ls.offset}`; start = '&' }
+			}
+
+			console.log(`  endpoint: ${endpoint}`);//ABC
+			console.log(`  extra: ${extra}`);//ABC
+
+			axios.get(apiPath('GET', endpoint, extra)).then((response) => {
 				console.log('API STATUS: ' + response.status)
 				// console.log(response.data)
 				const data = response.data.data
@@ -185,7 +230,6 @@ export default class Admin extends Component {
 					console.log(response)
 					return console.warn('Failed to get data');
 				}
-
 				if (config.debugLevel > 1) console.log(data)
 				this.setState({
 					status: response.status,
@@ -242,11 +286,12 @@ export default class Admin extends Component {
 
 	//------------------------------------------------------------
 	renderError = () => {
-		if (config.debugLevel > 0) console.log("  renderError()")
 		if (!this.state.error) {
-			console.log('    SKIP')
+			// console.log('  renderError()- skipped') // no error
 			return
 		}
+
+		if (config.debugLevel > 0) console.log("  renderError()")
 		const err = this.state.error
 
 		const errorStyle = {
@@ -267,9 +312,90 @@ export default class Admin extends Component {
 		)
 	}
 
+	renderMethods = () => {
+		const ty = this.state.type
+		const ep = this.state.endpoint
+		console.log(`  renderMethods(${ep})`)
+
+		switch (ep) {
+			case 'logs':
+				// console.log('  state.logs:')
+				// console.log(this.state.logs)
+				const ls = this.state.logs
+
+				let logsExtra = ""
+				if (this.state.type !== 'COUNT') {
+					logsExtra = (
+						<div>
+							<span >Limit</span>
+							<FormControl inline='true' style={{ display: 'unset', width: 'unset' }}
+								type="number"
+								aria-label="Input group example"
+								aria-describedby="btnGroupAddon"
+								placeholder='limit to ...'
+								value={ls.limit}
+								name='limit'
+								title={`Limit, Default ${defaultLimit}`}
+								onChange={this.handleLogsChange}
+							/>
+							<span >Offset</span>
+							<FormControl inline='true' style={{ width: 'unset' }}
+								type="number"
+								aria-label="Input group example"
+								aria-describedby="btnGroupAddon"
+								placeholder='offset ...'
+								value={ls.offset}
+								name='offset'
+								title={`Offset, Default ${defaultOffset}`}
+								onChange={this.handleLogsChange}
+							/>
+						</div>
+					)
+				}
+
+				return (
+					<Col><ButtonGroup style={{ width: '100%' }} aria-label='REST Calls'>
+						<Button variant='info' title='type' value='GET' active={ty === 'GET'} onClick={this.handleClick}>GET all</Button>
+						<Button variant='info' title='type' value='GETID' active={ty === 'GETID'} onClick={this.handleClick}>GET:id</Button>
+						<Button variant='info' title='type' value='COUNT' active={ty === 'COUNT'} onClick={this.handleClick}>COUNT</Button>
+						<Button variant='danger' title='type' value='DELETE' active={ty === 'DELETE'} onClick={this.handleClick}>DELETE</Button>
+
+					</ButtonGroup>
+						{this.state.showId &&
+							<FormControl inline='true' style={{ width: 'unset' }}
+								type="number"
+								placeholder="ID"
+								aria-label="Input group example"
+								aria-describedby="btnGroupAddon"
+								onChange={this.handleChange}
+							/>}
+						{logsExtra}
+					</Col>
+				)
+
+			default:
+				return (
+					<Col><ButtonGroup aria-label='REST Calls'>
+						<Button variant='info' title='type' value='GET' active={ty === 'GET'} onClick={this.handleClick}>GET all</Button>
+						<Button variant='info' title='type' value='GETID' active={ty === 'GETID'} onClick={this.handleClick}>GET:id</Button>
+						<Button variant='danger' title='type' value='DELETE' active={ty === 'DELETE'} onClick={this.handleClick}>DELETE</Button>
+						{this.state.showId &&
+							<FormControl inline='true' style={{ width: 'unset' }}
+								type="number"
+								placeholder="ID"
+								aria-label="Input group example"
+								aria-describedby="btnGroupAddon"
+								onChange={this.handleChange}
+							/>}
+					</ButtonGroup>
+					</Col>
+				)
+		}
+	}
+
 	//------------------------------------------------------------
 	renderEndpoints = () => {
-		if (config.debugLevel > 1) console.log(`  renderForm(${this.state.endpoin})`)
+		if (config.debugLevel > 1) console.log(`  renderForm(${this.state.endpoint})`)
 
 		const darkerButton = { backgroundColor: '#a0a0a075' }
 		let giftOptions = null;
@@ -288,9 +414,8 @@ export default class Admin extends Component {
 		}
 
 		const schemaText = 'This is a Development Admin function,\nThis allows checks/updates be made on the server side to the DB'
-
+		const methods = this.renderMethods()
 		const ep = this.state.endpoint
-		const ty = this.state.type
 		return (
 			<Container fluid>
 				<Row>
@@ -318,20 +443,7 @@ export default class Admin extends Component {
 				</Row>
 				<Row>
 					<Col>Methods:</Col>
-					<Col><ButtonGroup aria-label='REST Calls'>
-						<Button variant='info' title='type' value='GET' active={ty === 'GET'} onClick={this.handleClick}>GET all</Button>
-						<Button variant='info' title='type' value='GETID' active={ty === 'GETID'} onClick={this.handleClick}>GET:id</Button>
-						<Button variant='danger' title='type' value='DELETE' active={ty === 'DELETE'} onClick={this.handleClick}>DELETE</Button>
-						{this.state.showId &&
-							<FormControl inline='true' style={{ width: 'unset' }}
-								type="number"
-								placeholder="ID"
-								aria-label="Input group example"
-								aria-describedby="btnGroupAddon"
-								onChange={this.handleChange}
-							/>}
-					</ButtonGroup>
-					</Col>
+					{methods}
 				</Row>
 				<Row>
 					{giftOptions}
@@ -343,24 +455,39 @@ export default class Admin extends Component {
 
 	//------------------------------------------------------------
 	generateURL() {
-		let type = this.state.requestType ?? `(TYPE NOT SET)`
+		let requestType = this.state.requestType ?? `(TYPE NOT SET)`
 		let api = '(ENDPOINT NOT SET)'
 		let extra = this.state.id ?? ''
+		const endpoint = this.state.endpoint
+		const type = this.state.type
 		let start = '?'
+
+		// special to url
+		if (type === 'COUNT') {
+			extra += 'count'
+		}
+
+		// now build up params
 		if (this.state.extra) {
 			extra += `${start}${this.state.extra}`
 			start = '&'
 		}
 		if (this.state.details) extra += `${start}details=true`
 
-		if (this.state.endpoint) {
-			// if (this.state.id) {
-			api = apiPath(type, this.state.endpoint, extra, false)
-			// }
-			// else { api = apiPath(type, this.state.endpoint, this.state.id) }
+		if (endpoint === 'logs') {
+			const ls = this.state.logs
+			if (ls.limit !== defaultLimit) { extra += `${start}limit=${ls.limit}`; start = '&' }
+			if (ls.offset !== defaultOffset) { extra += `${start}offset=${ls.offset}`; start = '&' }
 		}
 
-		return <code> {type} {api}</code>
+		if (endpoint) {
+			// if (this.state.id) {
+			api = apiPath(requestType, endpoint, extra, false)
+			// }
+			// else { api = apiPath(requestType, this.state.endpoint, this.state.id) }
+		}
+
+		return <code> {requestType} {api}</code>
 	}
 
 	//------------------------------------------------------------
@@ -394,7 +521,6 @@ export default class Admin extends Component {
 					<button type="submit" className="btn btn-success" onClick={this.handleSubmit}>Submit</button>
 					{errorToast}
 				</div>
-
 
 				<div className="panel-body">
 					<p className='lead'>Status: <b>{this.state.status}</b></p>
