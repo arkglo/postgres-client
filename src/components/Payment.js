@@ -30,26 +30,12 @@ function initialState() {
 
 function purchaseError(message) {
 	toast.error( message, {
-		position: "top-center",
-		autoClose: 5000,
-		hideProgressBar: false,
-		closeOnClick: true,
-		pauseOnHover: true,
-		draggable: true,
-		progress: undefined,
 		transition:drop
 	});
 }
  
 function redirectingToPurchase(message, url) {
 	let toastOptions = {
-		position: "top-center",
-		autoClose: 5000,
-		hideProgressBar: false,
-		closeOnClick: true,
-		pauseOnHover: true,
-		draggable: true,
-		progress: undefined,
 		transition:zoom
 	};
 	if( url !== undefined || url !== null || url !== "" ) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import ReactHtmlParser from 'react-html-parser';
 
 
 import { apiPath } from '../lib/apiPath'
@@ -159,17 +159,7 @@ export default class BadPayment extends Component {
 					{this.state.summaryData}
 					{okButton}
 				</div>
-			<ToastContainer
-				position="top-center"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-			/>
+			<ToastContainer />
 			</div>
 		);
 	}
