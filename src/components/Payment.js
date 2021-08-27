@@ -206,7 +206,7 @@ export default class Payment extends Component {
 	handlePayServiceSubmit(event) {
 		//Setup some initial data
 		event.preventDefault();  // IMPORTANT.
-		let service=[{id:1, quantity:1, value:0},{id: 2, quantity:1, value:10.0}];
+		let service=[{id:1, quantity:1, value:0},{id: 2, quantity:1, value:10.00}];
 		this.sendServicePayment(service);
 	}
 

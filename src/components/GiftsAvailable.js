@@ -417,6 +417,7 @@ export default class GiftsView extends Component {
 				return console.warn('Failed to create account.');
 			}
 			console.log(`Created account [${gift.title}]!`)
+			this.getPublicGifts()
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
 			if (data) {
@@ -426,32 +427,58 @@ export default class GiftsView extends Component {
 				console.log(error)
 			}
 		})
-		this.getPublicGifts()
 	}
 
 	handleCreateGift(event) {
 		event.preventDefault();  // IMPORTANT.
 		console.log("------------------- handleCreateGift()")
-		console.log(`handleCreateTestUser: ${event.target.id}`)
+		console.log(`handleCreateGift: ${event.target.id}`)
 
 		// console.log(event)
 		switch (event.target.id) {
 			case 'CreateGift-Holiday':
 				this.createQuickGift({
-					access: "public",
-					type: "item",
-					title: "Holiday",
-					image: "https://picsum.photos/id/46/400/300",
-					message: "Honeymoon Get-away in the dunes",
+					access: 'public',
+					type: 'item',
+					title: 'Holiday',
+					image: 'https://picsum.photos/id/46/400/300',
+					message: 'Honeymoon Get-away in the dunes',
 					price: 7850,
 					from: 'Saharan Holidays'
 				})
 				break;
 			case 'CreateGift-Car':
+				this.createQuickGift({
+					access: 'public',
+					type: 'item',
+					title: 'Car',
+					image: 'https://assets.whichcar.com.au/image/upload/s--dimTae7W--/c_fill,f_auto,q_auto:good,w_1350/v1/archive/whichcar/2021/03/15/Misc/01E-TYPEFHCexteriorF3Qscopy-(1).jpg',
+					message: 'We want a car - this looks nice',
+					price: 35999,
+					from: 'Jaguar'
+				})
 				break;
 			case 'CreateGift-AmazonVoucher':
+				this.createQuickGift({
+					access: 'public',
+					type: 'item',
+					title: 'Amazon Voucher',
+					image: 'https://picsum.photos/id/46/400/300',
+					message: 'Honeymoon Get-away in the dunes',
+					price: 7850,
+					from: 'Saharan Holidays'
+				})
 				break;
 			case 'CreateGift-TestTitle':
+				this.createQuickGift({
+					access: 'public',
+					type: 'item',
+					title: 'TestTitle',
+					image: 'https://picsum.photos/150/150',
+					message: 'TestMessage',
+					price: 123,
+					from: 'TestFrom'
+				})
 				break;
 			default:
 				console.log("Unknown");
