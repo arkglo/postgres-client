@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { Switch, Redirect, Route, BrowserRouter as Router } from "react-router-dom";
 
 import * as config from './config/config';
 import { apiPath } from './lib/apiPath'
@@ -21,12 +22,31 @@ import Admin from "./components/Admin";
 
 import Error from './components/error';
 import Wrapper from './components/wrapper';
+import GoodPayment from './components/GoodPayment';
+import BadPayment from './components/BadPayment';
 
 
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
 
 // console.log("APP")
+export const PrivateRoute = ({ component: Component, ...rest }) => (
+	<Route {...rest}
+		render={props =>
+			localStorage.getItem("authToken") ? (
+				<Component {...props} />
+			) : (
+				<Redirect
+				to={{
+					pathname: "/login",
+					state: { from: props.location }
+				}}
+				/>
+			)
+		}
+	/>
+);
+
 
 class App extends Component {
 	constructor(props) {
@@ -341,36 +361,42 @@ class App extends Component {
 		}
 
 		return (
-			<Wrapper className="container">
-				<NavBar
-					handleReset={this.handleReset}
-					showSignup={this.showSignup}
-					showUserEdit={this.showUserEdit}
-					showAccountEdit={this.showAccountEdit}
-					showThemeEdit={this.showThemeEdit}
-					showMyGiftsEdit={this.showMyGiftsEdit}
-					showGiftsAvailable={this.showGiftsAvailable}
-					showGiftsEdit={this.showGiftsEdit}
-					showServices={this.showServices}
-					showPayment={this.showPayment}
-					showAdmin={this.showAdmin}
-					handleLogout={this.handleLogout}
-					accountId={this.state.accountId}
-					themeId={this.state.themeId}
-					myGiftsId={this.state.myGiftsId}
-					viewType={this.state.viewType}
-					admin={this.state.admin}
-					user={this.state.user}>
-				</NavBar>
+			<Router>
+			<Switch>
+				<Route exact path="/success" component={GoodPayment} />
+				<Route exact path="/canceled" component={BadPayment} />
+				<Route path="/" >
+					<Wrapper className="container">
+						<NavBar
+							handleReset={this.handleReset}
+							showSignup={this.showSignup}
+							showUserEdit={this.showUserEdit}
+							showAccountEdit={this.showAccountEdit}
+							showThemeEdit={this.showThemeEdit}
+							showMyGiftsEdit={this.showMyGiftsEdit}
+							showGiftsAvailable={this.showGiftsAvailable}
+							showGiftsEdit={this.showGiftsEdit}
+							showServices={this.showServices}
+							showPayment={this.showPayment}
+							showAdmin={this.showAdmin}
+							handleLogout={this.handleLogout}
+							accountId={this.state.accountId}
+							themeId={this.state.themeId}
+							myGiftsId={this.state.myGiftsId}
+							viewType={this.state.viewType}
+							admin={this.state.admin}
+							user={this.state.user}>
+						</NavBar>
 
-				{loginView}
+						{loginView}
 
-				{ this.state.mainView}
-			</Wrapper>
+						{ this.state.mainView}
+					</Wrapper>
+				</Route>
+			</Switch>
+			</Router>
 		);
 	}
 }
 
 export default App;
-
-

@@ -2,12 +2,60 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import { apiPath } from '../lib/apiPath'
+import Error from './error';
+
+import { ToastContainer, toast, cssTransition } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import "animate.css/animate.min.css";
+
+const bounce = cssTransition({
+  enter: "animate__animated animate__bounceIn",
+  exit: "animate__animated animate__bounceOut"
+});
+const zoom = cssTransition({
+  enter: "animate__animated animate__zoomInDown",
+  exit: "animate__animated animate__zoomOutDown"
+});
+const drop = cssTransition({
+	enter: "animate__animated animate__slideInDown",
+	exit: "animate__animated animate__hinge"
+});
 
 //------------------------------------------------------------
 function initialState() {
 	return {
 		payment: null,
 	};
+}
+
+function purchaseError(message) {
+	toast.error( message, {
+		position: "top-center",
+		autoClose: 5000,
+		hideProgressBar: false,
+		closeOnClick: true,
+		pauseOnHover: true,
+		draggable: true,
+		progress: undefined,
+		transition:drop
+	});
+}
+ 
+function redirectingToPurchase(message, url) {
+	let toastOptions = {
+		position: "top-center",
+		autoClose: 5000,
+		hideProgressBar: false,
+		closeOnClick: true,
+		pauseOnHover: true,
+		draggable: true,
+		progress: undefined,
+		transition:zoom
+	};
+	if( url !== undefined || url !== null || url !== "" ) {
+		toastOptions.onClose = () => {window.location = url;}
+	}
+	toast.info( message, toastOptions);
 }
 
 //============================================================
@@ -24,6 +72,7 @@ export default class Payment extends Component {
 	}
 
 	componentDidMount() {
+		//toast("componentDidMount!", {transition:bounce});
 		console.log("Payment.componentDidMount()")
 	}
 
@@ -37,17 +86,16 @@ export default class Payment extends Component {
 		axios.post(apiPath('POST','/payment/service/'), {
 			accountID: this.props.accountId,
 			items: service
-		}
-		).then((response) => {
+		}).then((response) => {
 			if (response.status !== 200) {
+				purchaseError("Failed to create purchase");
 				return console.warn('Failed to create payment.');
 			}
 			var serverResponce = response?.data?.data ?? null;
 			
-			var url = serverResponce?.url ?? null
-			console.log(`url=`+url)
+			const url = serverResponce?.url ?? null
 			if( url !== null )
-				window.location = url
+				redirectingToPurchase("Redirecting to purchase page...", url);
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -57,7 +105,8 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-		})
+			purchaseError("Purchase Failed");
+		});
 	};
 
 	sendGiftPayment(gifts) {
@@ -70,17 +119,16 @@ export default class Payment extends Component {
 		axios.post(apiPath('POST','/payment/gifts/'), {
 			accountID: this.props.accountId,
 			items: gifts
-		}
-		).then((response) => {
+		}).then((response) => {
 			if (response.status !== 200) {
+				purchaseError("Failed to create purchase");
 				return console.warn('Failed to create payment.');
 			}
 			var serverResponce = response?.data?.data ?? null;
 			
 			var url = serverResponce?.url ?? null
-			console.log(`url=`+url)
 			if( url !== null )
-				window.location = url
+				redirectingToPurchase("Redirecting to purchase page...", url);
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -90,7 +138,8 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-		})
+			purchaseError("Purchase Failed");
+		});
 	};
 
 	requestRefundByOrderNumber(orderId) {
@@ -103,17 +152,13 @@ export default class Payment extends Component {
 		axios.post(apiPath('POST','/payment/refundOrder/'), {
 			accountID: this.props.accountId,
 			orderNumber: orderId
-		}
-		).then((response) => {
+		}	).then((response) => {
 			if (response.status !== 200) {
+				purchaseError("Failed to create refund");
 				return console.warn('Failed to create refund.');
 			}
 			
-			var url = response?.data?.url ?? null
-			console.log(`url=`+url)
-			if (url !== null) {
-				window.location=url
-			}
+			redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -123,7 +168,8 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-		})
+			purchaseError("Refund Failed");
+		});
 	};
 
 	requestRefundByGiftId(giftId) {
@@ -136,17 +182,12 @@ export default class Payment extends Component {
 		axios.post(apiPath('POST','/payment/refundGift'), {
 			accountID: this.props.accountId,
 			giftNumber: giftId
-		}
-		).then((response) => {
+		}).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to create refund.');
 			}
 			
-			var url = response?.data?.url ?? null
-			console.log(`url=`+url)
-			if (url !== null) {
-				window.location=url
-			}
+			redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -156,7 +197,8 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-		})
+			purchaseError("Refund Failed");
+		});
 	};
 
 
@@ -173,7 +215,7 @@ export default class Payment extends Component {
 		//Setup some initial data
 		event.preventDefault();  // IMPORTANT.
 		let gifts=[
-			{id:1, quantity:1, value:29.99},
+			{id:1, quantity:1, value:120.00},
 			{id:2, quantity:1, value:9.99}
 		]
 		this.sendGiftPayment(gifts);
@@ -229,6 +271,17 @@ export default class Payment extends Component {
 					{girfRefundButton}
 					{orderRefundButton}
 				</div>
+			<ToastContainer
+				position="top-center"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
 			</div>
 		);
 	}
