@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
-
+import ReactHtmlParser from 'react-html-parser';
 
 import { apiPath } from '../lib/apiPath'
 import Error from './error';
