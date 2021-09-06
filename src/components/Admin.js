@@ -16,7 +16,6 @@ function initialState() {
 		data: null,
 		showId: false,
 		id: null,
-		error: null,
 		type: null,
 		extra: null,
 		details: false,
@@ -33,6 +32,16 @@ export default class Admin extends Component {
 		this.handleClick = this.handleClick.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSchema = this.handleSchema.bind(this)
+	}
+
+	showError = (err) => {
+		console.warn('Error:')
+		console.log(err ?? 'no response')
+		const message = <>
+			<strong>{err.status ?? '404'}</strong> {err.function ?? 'Error'}<br />
+			<small>{err.message}</small>
+		</>
+		this.props.toastThis(message, 'error', false)
 	}
 
 	componentDidMount() {
@@ -56,7 +65,7 @@ export default class Admin extends Component {
 			});
 		}).catch((error) => {
 			Error.message(error)
-		});
+		})
 	}
 
 	handleChange(event) {
@@ -82,7 +91,6 @@ export default class Admin extends Component {
 				endpoint: '/admin/checkSchema',
 				data: response.data,
 				status: response.status,
-				error: null,
 			})
 
 		}).catch((error) => {
@@ -99,7 +107,6 @@ export default class Admin extends Component {
 			case 'endpoint':
 				this.setState({
 					endpoint: t.value,
-					error: null,
 					extra: null,
 					details: false,
 				})
@@ -111,7 +118,6 @@ export default class Admin extends Component {
 						requestType: t.value,
 						showId: false,
 						id: null,
-						error: null,
 						type: t.value,
 					})
 				}
@@ -119,7 +125,6 @@ export default class Admin extends Component {
 					this.setState({
 						requestType: 'GET',
 						showId: true,
-						error: null,
 						type: t.value,
 					})
 				}
@@ -127,7 +132,6 @@ export default class Admin extends Component {
 					this.setState({
 						requestType: t.value,
 						showId: true,
-						error: null,
 						type: t.value,
 					})
 				}
@@ -175,14 +179,12 @@ export default class Admin extends Component {
 					this.setState({
 						status: response.status,
 						data: data ?? null,
-						error: {
-							status: response.status,
-							function: response.data.function ?? null,
-							message: response.data.message ?? null
-						}
 					})
-					console.log('Error:')
-					console.log(response)
+					this.showError({
+						status: response.status,
+						function: response.data.function ?? null,
+						message: response.data.message ?? null
+					})
 					return console.warn('Failed to get data');
 				}
 
@@ -190,81 +192,55 @@ export default class Admin extends Component {
 				this.setState({
 					status: response.status,
 					data: data,
-					error: null,
 				})
 			}).catch((error) => {
 				console.log('Error.catch():')
 				console.log(error.response)
 				this.setState({
 					data: null,
-					error: {
-						status: error.response?.status ?? -1,
-						function: error.response?.data?.function ?? null,
-						message: error.response?.data?.message ?? null
-					}
 				})
-				// console.log(error.response ?? 'no repsonse')
-			});
+				this.showError({
+					status: error.response?.status ?? -1,
+					function: error.response?.data?.function ?? null,
+					message: error.response?.data?.message ?? null
+				})
+			})
 		}
-		if (this.state.requestType === 'DELETE') {
+		else if (this.state.requestType === 'DELETE') {
 			let extra = this.state.id ?? ''
 			if (this.state.extra) extra += `?${this.state.extra}`
 			axios.delete(apiPath('GET', this.state.endpoint, extra)).then((response) => {
 				console.log('API STATUS: ' + response.status)
 				if (response.status !== 200) {
-					console.log(response)
-					return console.warn('Failed to remove item');
+					this.showError({
+						status: response.status,
+						function: response.data.function ?? null,
+						message: response.data.message ?? null
+					})
+					return
 				}
 
 				// console.log(response.data)
 				const data = response.data.data
 				if (config.debugLevel > 1) console.log(data)
 				this.setState({
-					data: data,
-					error: null,
+					data: data
 				})
 			}).catch((error) => {
 				this.setState({
-					data: null,
-					error: {
-						status: error.response.status,
-						function: error.response.data.function ?? null,
-						message: error.response.data.message ?? null
-					}
+					data: null
+				})
+				this.showError({
+					status: error.response.status,
+					function: error.response.data.function ?? null,
+					message: error.response.data.message ?? null
 				})
 				// console.log(error.response ?? 'no repsonse')
-			});
+			})
 		}
 		else {
 			console.warn(`Unknown request: ${this.state.requestType}`)
 		}
-	}
-
-	//------------------------------------------------------------
-	renderError = () => {
-		if (config.debugLevel > 0) console.log("  renderError()")
-		if (!this.state.error) {
-			console.log('    SKIP')
-			return
-		}
-		const err = this.state.error
-
-		const errorStyle = {
-			backgroundColor: '#ffd4d4',
-			border: '1px solid #ddd',
-			padding: '2px 10px',
-			borderRadius: '3px',
-			margin: '10px',
-			display: 'inline-block',
-			verticalAlign: 'middle',
-		}
-		return (
-			<div style={errorStyle}>
-
-				<strong>{err.status ?? '404'}</strong> {err.function ?? 'Error'}<br />
-				<small>{err.message}</small>
-			</div>
-		)
 	}
 
 	//------------------------------------------------------------
@@ -383,8 +359,6 @@ export default class Admin extends Component {
 			borderRadius: '3px',
 		}
 
-		const errorToast = this.renderError()
-
 		//And Render...
 		return (
 			<div className="panel panel-default">
@@ -392,9 +366,7 @@ export default class Admin extends Component {
 					{endPoints}<p />
 					{url}<p />
 					<button type="submit" className="btn btn-success" onClick={this.handleSubmit}>Submit</button>
-					{errorToast}
 				</div>
-
 
 				<div className="panel-body">
 					<p className='lead'>Status: <b>{this.state.status}</b></p>
