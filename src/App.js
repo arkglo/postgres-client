@@ -25,6 +25,9 @@ import Wrapper from './components/wrapper';
 import GoodPayment from './components/GoodPayment';
 import BadPayment from './components/BadPayment';
 
+import { ToastContainer, toast, cssTransition } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import "animate.css/animate.min.css";
 
 // NOTE: Needed for making ajax calls to a different port or address.
 axios.defaults.withCredentials = true;
@@ -37,10 +40,10 @@ export const PrivateRoute = ({ component: Component, ...rest }) => (
 				<Component {...props} />
 			) : (
 				<Redirect
-				to={{
-					pathname: "/login",
-					state: { from: props.location }
-				}}
+					to={{
+						pathname: "/login",
+						state: { from: props.location }
+					}}
 				/>
 			)
 		}
@@ -101,26 +104,48 @@ class App extends Component {
 
 	checkAuth() {
 		// Check auth. This is for Remember Me.
-		axios.get(apiPath('GET','user', 'checkauth')).then((response) => {
+		axios.get(apiPath('GET', 'user', 'checkauth')).then((response) => {
 			// if(config.debugLevel > 1) console.log(response.data.data)
 			console.log(response)
 			if (response.status === 200) {
 				console.log(`checkAuth - %cSucceeded`, 'color:lightgreen')
-				const admin = response.data.data?.role ? (response.data.data?.role === 'admin') : false
+				const data = response.data.data
+
+				const admin = data?.role ? (data?.role === 'admin') : false
 				// console.log(`admin: ${admin}`)
-				this.setState({ 
-					user: response.data.data,
+				this.setState({
+					user: data,
 					admin: admin,
-					authenticated: true
-				});
+					authenticated: true,
+					accountId: data?.activeAccountID ?? -1
+				})
+
+				const message = <div>
+					Welcome back "{data.firstName} {data.lastName}"<br/>
+					AccountId: {this.state.accountId}
+				</div>
+
+				this.toastThis(message, 'info')
 			}
 			this.setState({ viewType: '' })
 		}).catch(error => {
 			console.log(`checkAuth: ${error}`)
 			// console.log(`  • Check Production vs Development Endpoints`)
 			this.setState({ viewType: '' })
-			return;
-		});
+			return
+		})
+	}
+
+	toastThis(message, type, timeout = 2000) { //timeout= false no timeout
+		let theme = toast.TYPE.DEFAULT
+		switch(type) {
+			case 'dark': theme  = toast.TYPE.DARK; break
+			case 'error': theme  = toast.TYPE.ERROR ; break
+			case 'info': theme  = toast.TYPE.INFO; break
+			case 'sucess': theme  = toast.TYPE.SUCCESS ; break
+			case 'warning': theme  = toast.TYPE.WARNING; break
+		}
+		toast(message, { type: theme, autoClose: timeout })
 	}
 
 	// Handler for LoginView.
@@ -155,21 +180,21 @@ class App extends Component {
 
 	updateToThisThemeId(thisId) {
 		console.log(`updateToThisThemeId - accountId: ${this.state.accountId}, theme: ${thisId})`)
-		axios.put(apiPath('PUT','account', this.state.accountId), { themeID: thisId }).then((response) => {
-      if (response.status !== 200) {
-        return console.warn('Failed to update account.');
-      }
+		axios.put(apiPath('PUT', 'account', this.state.accountId), { themeID: thisId }).then((response) => {
+			if (response.status !== 200) {
+				return console.warn('Failed to update account.');
+			}
 			this.setThemeID(thisId)
 			this.showThemeEdit()
-      console.log('Updated account details!');
-    }).catch((error) => {
-      Error.message(error.response)
-    });
+			console.log('Updated account details!');
+		}).catch((error) => {
+			Error.message(error.response)
+		});
 	}
 
 	//Set the state viewType after 500ms, allows other state handling to complete
 	resetViewType(viewType = '') {
-		setTimeout(() => { this.setState({viewType: viewType }) }, 500)
+		setTimeout(() => { this.setState({ viewType: viewType }) }, 500)
 	}
 
 	//Reset state to default
@@ -265,7 +290,7 @@ class App extends Component {
 		});
 	}
 
-	
+
 	// myGifts Edit
 	showMyGiftsEdit() {
 		if (!this.state.user) {
@@ -282,7 +307,7 @@ class App extends Component {
 			viewType: 'MyGiftsView',
 		});
 	}
-		
+
 	// Gifts Edit
 	showGiftsEdit() {
 		if (!this.state.user) {
@@ -300,7 +325,7 @@ class App extends Component {
 		});
 	}
 
-	
+
 	// Gifts Available
 	showGiftsAvailable() {
 		if (!this.state.user) {
@@ -319,7 +344,7 @@ class App extends Component {
 	}
 
 	loginViewRender() {
-		return(<LoginView
+		return (<LoginView
 			handleLogin={this.handleLogin}
 			handleLogout={this.handleLogout}
 			setAccountId={this.setAccountId}
@@ -330,70 +355,83 @@ class App extends Component {
 			admin={this.state.admin}
 		/>)
 	}
-	
+
 	showServices() {
 		this.setState({
 			mainView: (<Services />),
 			viewType: 'Services',
-		});
+		})
 	}
-	
+
 	showPayment() {
 		this.setState({
 			mainView: (<Payment accountId={this.state.accountId} />),
 			viewType: 'Payment',
-		});
+		})
 	}
 
 	showAdmin() {
 		this.setState({
-			mainView: (<Admin />),
-			viewType: 'Admin',
-		});
+			mainView: (<Admin 
+				toastThis={this.toastThis}
+			/>),
+			viewType: 'Admin'
+		})
 	}
 
 	render() {
 		console.log(`%cApp - render('${this.state.viewType}')`, 'color: yellow')
 		let loginView = null;
 		const validLoginView = ['', 'SignupView', 'UserEditView']
-		if(validLoginView.includes(this.state.viewType)) {
+		if (validLoginView.includes(this.state.viewType)) {
 			loginView = this.loginViewRender()
 		}
 
 		return (
 			<Router>
-			<Switch>
-				<Route exact path="/success" component={GoodPayment} />
-				<Route exact path="/canceled" component={BadPayment} />
-				<Route path="/" >
-					<Wrapper className="container">
-						<NavBar
-							handleReset={this.handleReset}
-							showSignup={this.showSignup}
-							showUserEdit={this.showUserEdit}
-							showAccountEdit={this.showAccountEdit}
-							showThemeEdit={this.showThemeEdit}
-							showMyGiftsEdit={this.showMyGiftsEdit}
-							showGiftsAvailable={this.showGiftsAvailable}
-							showGiftsEdit={this.showGiftsEdit}
-							showServices={this.showServices}
-							showPayment={this.showPayment}
-							showAdmin={this.showAdmin}
-							handleLogout={this.handleLogout}
-							accountId={this.state.accountId}
-							themeId={this.state.themeId}
-							myGiftsId={this.state.myGiftsId}
-							viewType={this.state.viewType}
-							admin={this.state.admin}
-							user={this.state.user}>
-						</NavBar>
+				<Switch>
+					<Route exact path="/success" component={GoodPayment} />
+					<Route exact path="/canceled" component={BadPayment} />
+					<Route path="/" >
+						<Wrapper className="container">
+							<NavBar
+								handleReset={this.handleReset}
+								showSignup={this.showSignup}
+								showUserEdit={this.showUserEdit}
+								showAccountEdit={this.showAccountEdit}
+								showThemeEdit={this.showThemeEdit}
+								showMyGiftsEdit={this.showMyGiftsEdit}
+								showGiftsAvailable={this.showGiftsAvailable}
+								showGiftsEdit={this.showGiftsEdit}
+								showServices={this.showServices}
+								showPayment={this.showPayment}
+								showAdmin={this.showAdmin}
+								handleLogout={this.handleLogout}
+								accountId={this.state.accountId}
+								themeId={this.state.themeId}
+								myGiftsId={this.state.myGiftsId}
+								viewType={this.state.viewType}
+								admin={this.state.admin}
+								user={this.state.user}>
+							</NavBar>
 
-						{loginView}
+							{loginView}
 
-						{ this.state.mainView}
-					</Wrapper>
-				</Route>
-			</Switch>
+							{this.state.mainView}
+						</Wrapper>
+					</Route>
+				</Switch>
+				<ToastContainer
+					position="top-center"
+					autoClose={2000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+				/>
 			</Router>
 		);
 	}
