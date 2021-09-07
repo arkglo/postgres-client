@@ -25,7 +25,7 @@ import Wrapper from './components/wrapper';
 import GoodPayment from './components/GoodPayment';
 import BadPayment from './components/BadPayment';
 
-import { ToastContainer, toast, cssTransition } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "animate.css/animate.min.css";
 
@@ -136,16 +136,18 @@ class App extends Component {
 		})
 	}
 
-	toastThis(message, type, timeout = 2000) { //timeout= false no timeout
+	toastThis(message, type, timeout = 2000, options) { //timeout= false no timeout
 		let theme = toast.TYPE.DEFAULT
 		switch(type) {
-			case 'dark': theme  = toast.TYPE.DARK; break
-			case 'error': theme  = toast.TYPE.ERROR ; break
-			case 'info': theme  = toast.TYPE.INFO; break
-			case 'sucess': theme  = toast.TYPE.SUCCESS ; break
-			case 'warning': theme  = toast.TYPE.WARNING; break
+			case 'dark': theme = toast.TYPE.DARK; break
+			case 'error': theme = toast.TYPE.ERROR ; break
+			case 'info': theme = toast.TYPE.INFO; break
+			case 'sucess': theme = toast.TYPE.SUCCESS ; break
+			case 'warning': theme = toast.TYPE.WARNING; break
+			default : theme = toast.TYPE.DEFAULT
 		}
-		toast(message, { type: theme, autoClose: timeout })
+		let toastOptions = { type: theme, autoClose: timeout };
+		toast(message, {...toastOptions, ...options});
 	}
 
 	// Handler for LoginView.
@@ -365,7 +367,10 @@ class App extends Component {
 
 	showPayment() {
 		this.setState({
-			mainView: (<Payment accountId={this.state.accountId} />),
+			mainView: (<Payment 
+				toastThis={this.toastThis}
+				accountId={this.state.accountId}
+			/>),
 			viewType: 'Payment',
 		})
 	}

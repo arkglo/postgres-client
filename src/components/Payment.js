@@ -6,7 +6,7 @@ import * as config from '../config/config'
 
 import { apiPath } from '../lib/apiPath'
 
-import { ToastContainer, toast, cssTransition } from 'react-toastify';
+import { cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "animate.css/animate.min.css";
 
@@ -32,22 +32,6 @@ function initialState() {
 		paymentIntentId: '',
 		getNumber: -1,
 	};
-}
-
-function purchaseError(message) {
-	toast.error( message, {
-		transition:drop
-	});
-}
- 
-function redirectingToPurchase(message, url) {
-	let toastOptions = {
-		transition:zoom
-	};
-	if( url !== undefined || url !== null || url !== "" ) {
-		toastOptions.onClose = () => {window.location = url;}
-	}
-	toast.info( message, toastOptions);
 }
 
 //============================================================
@@ -81,6 +65,20 @@ export default class Payment extends Component {
 		this.setState({getNumber: this.props.accountId});
 	}
 
+	purchaseError(message) {
+		this.props.toastThis(message, 'error', 4000, { transition: drop })
+	}
+ 
+	redirectingToPurchase(message, url) {
+		let toastOptions = {
+			transition: zoom
+		};
+		if( url !== undefined || url !== null || url !== "" ) {
+			toastOptions.onClose = () => {window.location = url;}
+		}
+		this.props.toastThis(message, 'error', 4000, toastOptions)
+	}
+
 	sendServicePayment(service) {
 		console.log(`Payment.sendServicePayment(${this.props.accountId})`)
 		if (this.props.accountId === null) {
@@ -93,19 +91,19 @@ export default class Payment extends Component {
 			items: service
 		}).then((response) => {
 			if (response.status !== 200) {
-				purchaseError("Failed to create purchase");
+				this.purchaseError("Failed to create purchase");
 				return console.warn('Failed to create payment.');
 			}
 			var serverResponce = response?.data?.data ?? null;
 			
 			const url = serverResponce?.url ?? null
 			if( url !== null ) {
-				redirectingToPurchase("Redirecting to purchase page...", url);
+				this.redirectingToPurchase("Redirecting to purchase page...", url);
 			}
 			else {
 				var orderId = serverResponce?.orderId ?? null
 				if( orderId !== null ) {
-					redirectingToPurchase(<div>{ ReactHtmlParser("Your purchase was free &#128512;<br/>Order Number is <b>"+orderId+"</b>") }</div>);
+					this.redirectingToPurchase(<div>{ ReactHtmlParser("Your purchase was free &#128512;<br/>Order Number is <b>"+orderId+"</b>") }</div>);
 				}
 			}
 
@@ -117,7 +115,7 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-			purchaseError("Purchase Failed");
+			this.purchaseError("Purchase Failed");
 		});
 	};
 
@@ -133,19 +131,19 @@ export default class Payment extends Component {
 			items: gifts
 		}).then((response) => {
 			if (response.status !== 200) {
-				purchaseError("Failed to create purchase");
+				this.purchaseError("Failed to create purchase");
 				return console.warn('Failed to create payment.');
 			}
 			var serverResponce = response?.data?.data ?? null;
 
 			var url = serverResponce?.url ?? null
 			if( url !== null ) {
-				redirectingToPurchase("Redirecting to purchase page...", url);
+				this.redirectingToPurchase("Redirecting to purchase page...", url);
 			}
 			else {
 				var orderId = serverResponce?.orderId ?? null
 				if( orderId !== null ) {
-					redirectingToPurchase(<div>{ ReactHtmlParser("Your purchase was free &#128512;<br/>Order Number is <b>"+orderId+"</b>") }</div>);
+					this.redirectingToPurchase(<div>{ ReactHtmlParser("Your purchase was free &#128512;<br/>Order Number is <b>"+orderId+"</b>") }</div>);
 				}
 			}
 
@@ -157,7 +155,7 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-			purchaseError("Purchase Failed");
+			this.purchaseError("Purchase Failed");
 		});
 	};
 
@@ -173,11 +171,11 @@ export default class Payment extends Component {
 			orderNumber: orderId
 		}	).then((response) => {
 			if (response.status !== 200) {
-				purchaseError("Failed to create refund");
+				this.purchaseError("Failed to create refund");
 				return console.warn('Failed to create refund.');
 			}
 			
-			redirectingToPurchase("Refunded")
+			this.redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -187,7 +185,7 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-			purchaseError("Refund Failed");
+			this.purchaseError("Refund Failed");
 		});
 	};
 
@@ -206,7 +204,7 @@ export default class Payment extends Component {
 				return console.warn('Failed to create refund.');
 			}
 			
-			redirectingToPurchase("Refunded")
+			this.redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -216,7 +214,7 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-			purchaseError("Refund Failed");
+			this.purchaseError("Refund Failed");
 		});
 	};
 
@@ -235,7 +233,7 @@ export default class Payment extends Component {
 				return console.warn('Failed to create refund.');
 			}
 			
-			redirectingToPurchase("Refunded")
+			this.redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
@@ -245,7 +243,7 @@ export default class Payment extends Component {
 			else {
 				console.log(error)
 			}
-			purchaseError("Refund Failed");
+			this.purchaseError("Refund Failed");
 		});
 	};
 
@@ -633,18 +631,6 @@ export default class Payment extends Component {
 				{refundSection}
 				<br />
 				{querySection}
-
-				<ToastContainer
-					position="top-center"
-					autoClose={5000}
-					hideProgressBar={false}
-					newestOnTop={false}
-					closeOnClick
-					rtl={false}
-					pauseOnFocusLoss
-					draggable
-					pauseOnHover
-				/>
 			</div>
 		);
 	}
