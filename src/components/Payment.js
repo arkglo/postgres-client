@@ -76,7 +76,7 @@ export default class Payment extends Component {
 		if( url !== undefined || url !== null || url !== "" ) {
 			toastOptions.onClose = () => {window.location = url;}
 		}
-		this.props.toastThis(message, 'error', 4000, toastOptions)
+		this.props.toastThis(message, 'success', 4000, toastOptions)
 	}
 
 	sendServicePayment(service) {

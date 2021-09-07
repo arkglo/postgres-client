@@ -25,7 +25,8 @@ export default class AccountEditView extends Component {
       eventDate: '',
       websiteLink: '',
       themeID: '',
-      gifts: ''
+      gifts: '',
+      stripeAccount: ''
     };
 
     // console.log("Props:")
@@ -34,6 +35,7 @@ export default class AccountEditView extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
+    this.handleStripeAccount = this.handleStripeAccount.bind(this);
   }//constructor
 
   componentDidMount() {
@@ -57,6 +59,7 @@ export default class AccountEditView extends Component {
         websiteLink: account.websiteLink,
         id: account.id,
         userID: account.userID,
+        stripeAccount: account.stripeAccount,
       })
       this.setState({account: account})
       this.props.setThemeID(account.themeID)
@@ -155,6 +158,35 @@ export default class AccountEditView extends Component {
     });
   }
 
+  handleStripeAccount(event, accountID) {
+    event.preventDefault();
+    console.log("------------------- handleStripeAccount()")
+    confirmAlert({
+      title: 'Confirm',
+      message: 'Are you sure you want to create a stripe Account?',
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            axios.post(apiPath('POST','/accounts/createStripe', this.props.accountId)).then((response) => {
+              if (response.status !== 200) {
+                return console.warn('Failed to create stripe account.');
+              }
+              console.log('Successfully created stripe account.');
+              this.props.handleLogout()
+            }).catch((error) => {
+              Error.message(error.response)
+            });
+          }
+        },
+        {
+          label: "No",
+
+        }
+      ]
+    });
+  }
+
   render() {
     return (
       <div className="panel panel-default">
@@ -200,6 +232,9 @@ export default class AccountEditView extends Component {
             </div>
             <div className="btn-group">
               <button className="btn btn-danger" onClick={this.handleRemove} >Remove</button>
+            </div>
+            <div className="btn-group">
+              <button className="btn btn-warning" onClick={this.handleStripeAccount} >Create Stripe Account</button>
             </div>
           </form>
         </div>
