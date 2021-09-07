@@ -313,6 +313,7 @@ export default class Admin extends Component {
 							<Button variant='primary' title='endpoint' value='gifts' active={ep === 'gifts'} onClick={this.handleClick}>Gifts Status</Button>
 							<Button variant='primary' title='endpoint' value='services' active={ep === 'services'} onClick={this.handleClick}>Services</Button>
 							<Button variant='primary' title='endpoint' value='logs' active={ep === 'logs'} onClick={this.handleClick}>Logs</Button>
+							<Button variant='primary' title='endpoint' value='payment' active={ep === 'payment'} onClick={this.handleClick}>Payment</Button>
 						</ButtonGroup>
 					</Col>
 				</Row>
