@@ -702,7 +702,7 @@ export default class GiftsView extends Component {
 
 		// Allows creation of pre-configured gifts
 		let createGifts = (
-			<div class="panel panel-default">
+			<div className="panel panel-default">
 				<h4 className="panel-heading">PreConfigured Test data</h4>
 				<div className="panel-body">
 					<i>If empty already, gifts already added</i><br />

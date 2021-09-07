@@ -339,13 +339,14 @@ export default class Payment extends Component {
 		event.preventDefault();  // IMPORTANT.
 		this.setState({selectedButton: 6})
 		//Setup some data
-		console.log(`Payment.getAccountPayments(${this.props.accountId})`)
+		const accNumber = this.state.getNumber;
+		console.log(`Payment.getAccountPayments(${accNumber})`)
 		if (this.props.accountId === null) {
 			console.log("  accountId not set - skip handleGetPaymentsSection")
 			return
 		}
 
-		axios.get(apiPath('GET','/payment/account', this.props.accountId)).then((response) => {
+		axios.get(apiPath('GET','/payment/account', accNumber)).then((response) => {
 			console.log('API STATUS: ' + response.status)
 			// console.log(response.data)
 			const data = response.data.data
@@ -389,13 +390,14 @@ export default class Payment extends Component {
 		event.preventDefault();  // IMPORTANT.
 		this.setState({selectedButton: 7})
 		//Setup some data
-		console.log(`Payment.getAccountPaidPayments(${this.props.accountId})`)
+		const accNumber = this.state.getNumber;
+		console.log(`Payment.getAccountPaidPayments(${accNumber})`)
 		if (this.props.accountId === null) {
 			console.log("  accountId not set - skip handleGetPaidSection")
 			return
 		}
 
-		axios.get(apiPath('GET','/payment/account/paid', this.props.accountId)).then((response) => {
+		axios.get(apiPath('GET','/payment/account/paid', accNumber)).then((response) => {
 			console.log('API STATUS: ' + response.status)
 			// console.log(response.data)
 			const data = response.data.data
@@ -439,13 +441,14 @@ export default class Payment extends Component {
 		event.preventDefault();  // IMPORTANT.
 		this.setState({selectedButton: 8})
 		//Setup some data
-		console.log(`Payment.getAccountRefundPayments(${this.props.accountId})`)
+		const accNumber = this.state.getNumber;
+		console.log(`Payment.getAccountRefundPayments(${accNumber})`)
 		if (this.props.accountId === null) {
 			console.log("  accountId not set - skip handleGetPaymentsSection")
 			return
 		}
 
-		axios.get(apiPath('GET','/payment/account/refund', this.props.accountId)).then((response) => {
+		axios.get(apiPath('GET','/payment/account/refund', accNumber)).then((response) => {
 			console.log('API STATUS: ' + response.status)
 			// console.log(response.data)
 			const data = response.data.data
@@ -514,7 +517,7 @@ export default class Payment extends Component {
 			<button type="submit" className="btn btn-primary" onClick={this.handlePartPaymentSubmit} >Submit Partial Payment</button></div>
 		const hidePaymentBody = !(this.state.selectedButton === 1 || this.state.selectedButton === 2) ? {display: "none"} : {display: "block"}
 		return (
-			<div class="panel panel-default">
+			<div className="panel panel-default">
 				<div className="panel-heading">Making Payment</div>
 
 				<div className="panel-body">
@@ -545,7 +548,7 @@ export default class Payment extends Component {
 			<button type="submit" className="btn btn-primary" onClick={this.handleRefundPaymentSubmit} >Submit Refund Request</button></div>
 		const hideRefundBody = !(this.state.selectedButton === 3 || this.state.selectedButton === 4 || this.state.selectedButton === 5) ? {display: "none"} : {display: "block"}
 		return (
-			<div class="panel panel-default">
+			<div className="panel panel-default">
 				<div className="panel-heading">Refunding Payments</div>
 				<div className="panel-body">
 					{giftRefundButton}
@@ -598,7 +601,7 @@ export default class Payment extends Component {
 
 		const hideGettingBody = !(this.state.selectedButton === 6 || this.state.selectedButton === 7 || this.state.selectedButton === 8) ? {display: "none"} : {display: "block"}
 		return (
-			<div class="panel panel-default">
+			<div className="panel panel-default">
 				<div className="panel-heading">Getting Payment Details</div>
 				<div className="panel-body">
 					{paymentsButton}
