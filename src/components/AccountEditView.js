@@ -204,19 +204,13 @@ export default class AccountEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						const DOB = new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(this.state.stripeDOB);
-						if( this.state.stripeName !== "" && DOB !== "" &&	this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" && 
-								this.state.addressLine1 !== "" && this.state.stripeAddressPostCode !== "" && this.state.stripeAddressCity !== "" ) {
+						if( this.state.stripeBankHolderName !== "" &&	this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" ) {
 							axios.post(apiPath('POST','/accounts/stripe', this.props.accountId), {
 								country: "US",
 								currency: "usd",
-								name: this.state.stripeName,
-								dob: DOB,
+								name: this.state.stripeBankHolderName,
 								routing: this.state.stripeRoute,
 								account: this.state.stripeBankNumber,
-								address1: this.state.addressLine1,
-								postcode: this.state.stripeAddressPostCode,
-								city: this.state.stripeAddressCity,
 							}).then((response) => {
 								if (response.status !== 200) {
 									return console.warn('Failed to create stripe account.');
