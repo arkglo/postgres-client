@@ -55,6 +55,7 @@ export default class Payment extends Component {
 		this.handleGetPaymentsSection = this.handleGetPaymentsSection.bind(this);
 		this.handleGetPaidSection = this.handleGetPaidSection.bind(this);
 		this.handleGetRefundsSection = this.handleGetRefundsSection.bind(this);
+		this.handleGetAllRefundsSection = this.handleGetAllRefundsSection.bind(this);
 		
 		this.handleChange = this.handleChange.bind(this);
 	}
@@ -485,6 +486,52 @@ export default class Payment extends Component {
 			// console.log(error.response ?? 'no repsonse')
 		});
 	}
+	//------------------------------------------------------------
+	handleGetAllRefundsSection(event) {
+		event.preventDefault();  // IMPORTANT.
+		this.setState({selectedButton: 9})
+		//Setup some data
+		console.log(`Payment.getAllRefundPayments()`)
+
+		axios.get(apiPath('GET','/payment/refund/')).then((response) => {
+			console.log('API STATUS: ' + response.status)
+			// console.log(response.data)
+			const data = response.data.data
+			if (response.status !== 200) {
+				this.setState({
+					status: response.status,
+					data: data ?? null,
+					error: {
+						status: response.status,
+						function: response.data.function ?? null,
+						message: response.data.message ?? null
+					}
+				})
+				console.log('Error:')
+				console.log(response)
+				return console.warn('Failed to get data');
+			}
+
+			if (config.debugLevel > 1) console.log(data)
+			this.setState({
+				status: response.status,
+				data: data,
+				error: null,
+			})
+		}).catch((error) => {
+			console.log('Error.catch():')
+			console.log(error.response)
+			this.setState({
+				data: null,
+				error: {
+					status: error.response?.status ?? -1,
+					function: error.response?.data?.function ?? null,
+					message: error.response?.data?.message ?? null
+				}
+			})
+			// console.log(error.response ?? 'no repsonse')
+		});
+	}
 
 
 	handleChange(event) {
@@ -544,7 +591,7 @@ export default class Payment extends Component {
 		const paymentNumberSection = <div className="form-group">
 			<label>Payment Intent id</label><input style={{ width: 'unset' }} className="form-control" type="text" name="paymentIntentId" value={this.state.paymentIntentId} onChange={this.handleChange} />
 			<button type="submit" className="btn btn-primary" onClick={this.handleRefundPaymentSubmit} >Submit Refund Request</button></div>
-		const hideRefundBody = !(this.state.selectedButton === 3 || this.state.selectedButton === 4 || this.state.selectedButton === 5) ? {display: "none"} : {display: "block"}
+		const hideRefundBody = !(this.state.selectedButton >= 3 && this.state.selectedButton <= 5) ? {display: "none"} : {display: "block"}
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">Refunding Payments</div>
@@ -579,6 +626,7 @@ export default class Payment extends Component {
 		const paymentsButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetPaymentsSection} >Get Payments For Account</button>
 		const paidButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetPaidSection} >Get Paid/Partial Paid For Account</button>
 		const refundsButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetRefundsSection} >Get Refunds For Account</button>
+		const allRefundsButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetAllRefundsSection} >Get Refunds For All Accounts</button>
 
 		const accountNumberSection = <div className="form-group">
 			<label>Account Number</label><input style={{ width: 'unset' }} className="form-control" type="number" name="getNumber" value={this.state.getNumber} onChange={this.handleChange} />
@@ -597,7 +645,7 @@ export default class Payment extends Component {
 				/>
 		</ButtonGroup>*/
 
-		const hideGettingBody = !(this.state.selectedButton === 6 || this.state.selectedButton === 7 || this.state.selectedButton === 8) ? {display: "none"} : {display: "block"}
+		const hideGettingBody = !(this.state.selectedButton >= 6 && this.state.selectedButton <= 9) ? {display: "none"} : {display: "block"}
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">Getting Payment Details</div>
@@ -605,6 +653,7 @@ export default class Payment extends Component {
 					{paymentsButton}
 					{paidButton}
 					{refundsButton}
+					{allRefundsButton}
 					<br/>
 					{accountNumberSection}
 				</div>
