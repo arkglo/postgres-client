@@ -31,6 +31,9 @@ function initialState() {
 		orderNumber: '',
 		paymentIntentId: '',
 		getNumber: -1,
+		guestName: '',
+		guestEmail: '',
+		guestMessage: ''
 	};
 }
 
@@ -121,6 +124,7 @@ export default class Payment extends Component {
 	};
 
 	sendGiftPayment(gifts) {
+		debugger
 		console.log(`Payment.sendGiftPayment(${this.props.accountId})`)
 		if (this.props.accountId === null) {
 			console.log("  accountId not set - skip sendGiftPayment")
@@ -129,7 +133,10 @@ export default class Payment extends Component {
 
 		axios.post(apiPath('POST','/payment/gifts/'), {
 			accountID: this.props.accountId,
-			items: gifts
+			items: gifts,
+			guestName: this.state.guestName,
+			guestEmail: this.state.guestEmail,
+			message: this.state.guestMessage
 		}).then((response) => {
 			if (response.status !== 200) {
 				this.purchaseError("Failed to create purchase");
@@ -554,11 +561,39 @@ export default class Payment extends Component {
 		const paySection = <div className="form-group">
 			<label>Gift id</label><input style={{ width: 'unset' }} className="form-control" type="number" name="giftId" value={this.state.giftId} onChange={this.handleChange} />
 			<label>Gift value</label><input style={{ width: 'unset' }} className="form-control" type="number" name="giftValue" value={this.state.giftValue} onChange={this.handleChange} />
+			<div style={{display: 'flex'}}>
+				<div style={{ 'marginRight': '15px', 'width': 'unset'}} className="form-group">
+					<label>Guest Name</label>
+					<input className="form-control" type="text" name="guestName" value={this.state.guestName} onChange={this.handleChange} />
+				</div>
+				<div style={{ 'width': '100%'}} className="form-group">
+					<label>Guest Email</label>
+					<input className="form-control" type="text" name="guestEmail" value={this.state.guestEmail} onChange={this.handleChange} />
+				</div>
+			</div>
+			<div style={{ 'width': '100%'}} className="form-group">
+				<label>Message to couple</label>
+				<input className="form-control" type="text" name="guestMessage" value={this.state.guestMessage} onChange={this.handleChange} />
+			</div>
 			<button type="submit" className="btn btn-primary" onClick={this.handlePaymentSubmit} >Submit Payment</button></div>
 		const partPayButton = <button type="submit" className="btn btn-primary" onClick={this.handlePartPaymentSection} >Make Partial Payment</button>
 		const partPaySection = <div className="form-group">
 			<label>Gift id</label><input style={{ width: 'unset' }} className="form-control" type="number" name="giftId" value={this.state.giftId} onChange={this.handleChange} />
 			<label>Gift value</label><input style={{ width: 'unset' }} className="form-control" type="number" name="giftValue" value={this.state.giftValue} onChange={this.handleChange} />
+			<div style={{display: 'flex'}}>
+				<div style={{ 'marginRight': '15px', 'width': 'unset'}} className="form-group">
+					<label>Guest Name</label>
+					<input className="form-control" type="text" name="guestName" value={this.state.guestName} onChange={this.handleChange} />
+				</div>
+				<div style={{ 'width': '100%'}} className="form-group">
+					<label>Guest Email</label>
+					<input className="form-control" type="text" name="guestEmail" value={this.state.guestEmail} onChange={this.handleChange} />
+				</div>
+			</div>
+			<div style={{ 'width': '100%'}} className="form-group">
+				<label>Message to couple</label>
+				<input className="form-control" type="text" name="guestMessage" value={this.state.guestMessage} onChange={this.handleChange} />
+			</div>
 			<button type="submit" className="btn btn-primary" onClick={this.handlePartPaymentSubmit} >Submit Partial Payment</button></div>
 		const hidePaymentBody = !(this.state.selectedButton === 1 || this.state.selectedButton === 2) ? {display: "none"} : {display: "block"}
 		return (
@@ -626,7 +661,7 @@ export default class Payment extends Component {
 		const paymentsButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetPaymentsSection} >Get Payments For Account</button>
 		const paidButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetPaidSection} >Get Paid/Partial Paid For Account</button>
 		const refundsButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetRefundsSection} >Get Refunds For Account</button>
-		const allRefundsButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetAllRefundsSection} >Get Refunds For All Accounts</button>
+		// const allRefundsButton = <button type="submit" className="btn btn-primary" onClick={this.handleGetAllRefundsSection} >Get Refunds For All Accounts</button>
 
 		const accountNumberSection = <div className="form-group">
 			<label>Account Number</label><input style={{ width: 'unset' }} className="form-control" type="number" name="getNumber" value={this.state.getNumber} onChange={this.handleChange} />
@@ -653,7 +688,7 @@ export default class Payment extends Component {
 					{paymentsButton}
 					{paidButton}
 					{refundsButton}
-					{allRefundsButton}
+					{/*allRefundsButton*/}
 					<br/>
 					{accountNumberSection}
 				</div>
@@ -671,9 +706,16 @@ export default class Payment extends Component {
 		console.log("%cPayment - render()", 'color: blue')
 
 		const paySection = this.renderPaymentSection()
-		const refundSection = this.renderRefundSection();
+		//const refundSection = this.renderRefundSection();
 		const querySection = this.renderQuerySection();
 		return (
+			<div className="panel panel-default">
+				{paySection}
+				<br />
+				{querySection}
+			</div>
+		);
+		/*return (
 			<div className="panel panel-default">
 				{paySection}
 				<br />
@@ -681,6 +723,6 @@ export default class Payment extends Component {
 				<br />
 				{querySection}
 			</div>
-		);
+		);*/
 	}
 }

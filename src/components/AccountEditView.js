@@ -107,7 +107,7 @@ export default class AccountEditView extends Component {
 	}
 
 	updateReq(req, key) {
-		if(this.state[key] !== this.state.account[key] && this.state[key].length > 0) {
+		if( (this.state.account == null || this.state[key] !== this.state.account[key]) && this.state[key].length > 0) {
 			req[key] = this.state[key]
 		}
 	}
