@@ -10,6 +10,9 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import Dropdown from 'react-dropdown';
+import "react-dropdown/style.css";
+
 import Error from './error';
 
 export default class AccountEditView extends Component {
@@ -66,9 +69,11 @@ export default class AccountEditView extends Component {
 				const dateArray = account.dob.split("/");
 				DOB = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]);
 			}
-			console.log("the account data is"+JSON.stringify(account))
+			console.log("the account data is:")
+			console.log(account)
 			this.setState({
 				role: account.role,
+				state: account.state,
 				firstName: account.firstName,
 				lastName: account.lastName,
 				dob: account.dob,
@@ -304,6 +309,10 @@ export default class AccountEditView extends Component {
 			</div>
 	</div>: <div></div>;
 
+	//state Drop down
+	const dropDownOptions = ['intial', 'ready', 'live', 'complete', 'closed']
+	const defaultOption = dropDownOptions[0]
+
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br/>
@@ -317,6 +326,14 @@ export default class AccountEditView extends Component {
 							<label>Role</label>
 							<input className="form-control" type="text" name="role" value={this.state.role} onChange={this.handleChange} />
 						</div>
+
+						<div className="form-group">
+							<div title={'state: [ ' + dropDownOptions.toString() + ' ]'}>
+								<label>State</label>
+								<Dropdown options={dropDownOptions} onChange={(e) => this.setState({state:e.value})} value={defaultOption} placeholder="Select an option" />
+							</div>
+						</div>
+
 
 						<div className="form-group">
 							<label>First Name</label> (User field)
