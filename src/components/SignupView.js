@@ -168,6 +168,20 @@ export default class SignupView extends Component {
 
 	//------------------------------------------------------------
 	render() {
+
+		let params = <></>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;firstName: {'\''}{this.state.firstName}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;lastName: {'\''}{this.state.lastName}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;dob: {'\''}{this.state.dob}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;addressLine1:{'\''}{this.state.addressLine1}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;addressPostCode: {'\''}{this.state.addressPostCode}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;addressCity: {'\''}{this.state.addressCity}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;partnerFirstName: {'\''}{this.state.partnerFirstName}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;partnerLastName: {'\''}{this.state.partnerLastName}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;email: {'\''}{this.state.email}{'\''}<br /></div>
+		params = <div>{params}&nbsp;&nbsp;&nbsp;password: {'\''}{this.state.password}{'\''}<br /></div>
+		params = <code>{'{'}<br />{params}{'}'}</code>
+
 		return (
 			<>
 				<div className="panel panel-default">
@@ -175,6 +189,7 @@ export default class SignupView extends Component {
 					<div className="panel-body">
 						<form className="form">
 
+							<h4>Required for Account setup</h4>
 							<div className="form-group">
 								<label>First Name</label>
 								<input className="form-control" type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
@@ -185,15 +200,6 @@ export default class SignupView extends Component {
 								<input className="form-control" type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
 							</div>
 
-							<div className="form-group">
-								<label>Date Of Birth</label>
-								<DatePicker
-									dateFormat="dd/MM/yyyy"
-									selected={this.state.dobObject}
-									onSelect={this.handleDateChange} //when day is clicked
-									onChange={this.handleDateChange} //only when value has changed
-								/>
-							</div>
 
 							<div className="form-group">
 								<label>Partner First Name</label>
@@ -203,6 +209,32 @@ export default class SignupView extends Component {
 							<div className="form-group">
 								<label>Partner Last Name</label>
 								<input className="form-control" type="text" name="partnerLastName" value={this.state.partnerLastName} onChange={this.handleChange} />
+							</div>
+
+							<div className="form-group">
+								<label>Email</label>
+								<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
+							</div>
+
+							<div className="form-group">
+								<label>Password</label>
+								<input className="form-control" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+							</div>
+
+							<div className="form-group">
+								<label>Confirm password</label>
+								<input className="form-control" type="password" name="password2" value={this.state.password2} onChange={this.handleChange} />
+							</div>
+
+							<h4>Additional fields required for Stripe Custom Account setup</h4>
+							<div className="form-group">
+								<label>Date Of Birth</label>
+								<DatePicker
+									dateFormat="dd/MM/yyyy"
+									selected={this.state.dobObject}
+									onSelect={this.handleDateChange} //when day is clicked
+									onChange={this.handleDateChange} //only when value has changed
+								/>
 							</div>
 
 							<div className="form-group">
@@ -222,21 +254,7 @@ export default class SignupView extends Component {
 								</div>
 							</div>
 
-							<div className="form-group">
-								<label>Email</label>
-								<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
-							</div>
-
-							<div className="form-group">
-								<label>Password</label>
-								<input className="form-control" type="password" name="password" value={this.state.password} onChange={this.handleChange} />
-							</div>
-
-							<div className="form-group">
-								<label>Confirm password</label>
-								<input className="form-control" type="password" name="password2" value={this.state.password2} onChange={this.handleChange} />
-							</div>
-
+							<code>POST {apiPath('POST', 'user')}<br/></code>{params}<br/>
 							<button type="submit" className="btn btn-success" onClick={this.handleSubmit} >Sign up</button>
 						</form>
 					</div>
