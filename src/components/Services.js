@@ -1,35 +1,18 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 
 import { apiPath } from '../lib/apiPath'
 
-import Error from './error';
-
-//------------------------------------------------------------
-function initialState() {
-	return {
-		services: null,
-	};
-}
+import Error from './error'
 
 //============================================================
-export default class Services extends Component {
-	constructor(props) {
-		super(props);
-		this.state = initialState();
-		this.handleSubmit = this.handleSubmit.bind(this);
-		// this.handleChange = this.handleChange.bind(this);
-	}
+const Services = (props) => {
+	const [services, setServices ] = useState(null)
 
-	componentDidMount() {
-		console.log("Services.componentDidMount()")
-		this.getServices()
-	}
-
-	getServices() {
+	const getServices = async () => {
 		console.log("Services.getServices()")
 
-		axios.get(apiPath('GET','services')).then((response) => {
+		await axios.get(apiPath('GET','services')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get user details.');
 			}
@@ -37,15 +20,13 @@ export default class Services extends Component {
 			// console.log(response.data)
 			const services = response.data.data
 			console.log(services)
-			this.setState({
-				services: services
-			});
+			setServices(services)
 		}).catch((error) => {
 			Error.message(error)
 		});
 	}
 
-	async createService(title, price) {
+	const createService = async (title, price) => {
 		await axios.post(apiPath('POST','services'), {
 			title: title,
 			price: price
@@ -66,33 +47,34 @@ export default class Services extends Component {
 	}
 
 	//------------------------------------------------------------
-	handleSubmit(event) {
+	const handleSubmit = (event) => {
 		//Setup some initial data
 		event.preventDefault();  // IMPORTANT.
-		this.createService("Website", 0.00)
-		this.createService("Gift Registry", 10.00)
-		this.createService("RSVP", 15.20)
-		setTimeout(() => { this.getServices() }, 500)
+		createService("Website", 0.00)
+		createService("Gift Registry", 10.00)
+		createService("RSVP", 15.20)
+		setTimeout(() => { getServices() }, 500)
 	}
 
 
-	//------------------------------------------------------------
-	render() {
+	//===========================================================================
+	//Render functions
+	const render = () => {
 		console.log("%cServices - render()", 'color: yellow')
 
 		//AllThemes
 		let allServicesLength = 0
 		let servicesList = null
-		if (this.state.services != null) {
-			allServicesLength = this.state.services.length
-			servicesList = this.state.services.map((data, idx) =>
+		if (services != null) {
+			allServicesLength = services.length
+			servicesList = services.map((data, idx) =>
 				<li key={idx}>{data.id} - {data.title} - ${data.price}</li>
 			)
 		}
 
 		let testInitialise = null
 		if (allServicesLength === 0) {
-			testInitialise = <button type="submit" className="btn btn-primary" onClick={this.handleSubmit} >Initialise with Test Data</button>
+			testInitialise = <button type="submit" className="btn btn-primary" onClick={handleSubmit} >Initialise with Test Data</button>
 		}
 
 		return (
@@ -105,6 +87,28 @@ export default class Services extends Component {
 					{testInitialise}
 				</div>
 			</div>
-		);
+		)
 	}
+
+	//===========================================================================
+	//REACT Effects
+
+	// OnMount
+	useEffect(() => {
+		console.log('***Services MOUNT ***')
+		//console.log(props)
+		getServices()
+	},[props])
+
+	//per Render
+	// useEffect(() => { console.log("%cServices - render()", 'color: blue') })
+
+	//===========================================================================
+	//Start the actual Render....
+	const view = render()
+	return (
+		<div>{view}</div>
+	)
 }
+
+export default Services

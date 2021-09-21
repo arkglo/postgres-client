@@ -360,7 +360,7 @@ class App extends Component {
 
 	showServices() {
 		this.setState({
-			mainView: (<Services />),
+			mainView: <Services />,
 			viewType: 'Services',
 		})
 	}
