@@ -80,7 +80,6 @@ const BadPayment = (props) => {
         return console.warn('Failed to cancel Payment.')
       }
       console.log('Payment Canceled!')
-debugger
       //response.data
       const billy = JSON.stringify(response.data.data) || null;
       console.log(billy)

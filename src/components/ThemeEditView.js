@@ -7,6 +7,8 @@ import styles from '../css/mystyles.module.css'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import Error from './error';
 
@@ -19,7 +21,8 @@ export default class ThemeEditView extends Component {
 			"colour1": '',
 			"colour2": '',
 			"font": '',
-			"imageUrl": '',
+			"heroImageUrl": '',
+			"secondImageUrl": '',
 			"names": null,
 			"byLine": null,
 			"message": null,
@@ -30,7 +33,9 @@ export default class ThemeEditView extends Component {
 			"receptionMessage": null,
 			"receptionDateTime": null,
 			theme: null,
-			allThemes: null
+			allThemes: null,
+			ceremonyObject: null,
+			receptionObject: null
 		};
 
 		// console.log("Props:")
@@ -40,6 +45,8 @@ export default class ThemeEditView extends Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.handleRemove = this.handleRemove.bind(this);
 		this.handleCreateTheme = this.handleCreateTheme.bind(this);
+		this.handleCeremonyDateChange = this.handleCeremonyDateChange.bind(this);
+		this.handleReceptionDateChange = this.handleReceptionDateChange.bind(this);
 	}
 
 	componentDidMount() {
@@ -67,12 +74,25 @@ export default class ThemeEditView extends Component {
 			}
 
 			const theme = response.data.data
+			let CDT, RDT = null
+			if ( theme.ceremonyDateTime != null && theme.ceremonyDateTime !== "" ) {
+				debugger
+				const dateTimeArray = theme.ceremonyDateTime.split(" ");
+				const dateArray = dateTimeArray[0].split("/");
+				CDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+			}
+			if ( theme.receptionDateTime != null && theme.receptionDateTime !== "" ) {
+				const dateTimeArray = theme.receptionDateTime.split(" ");
+				const dateArray = dateTimeArray[0].split("/");
+				RDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+			}
 			this.setState({
 				id: theme.id,
 				colour1: theme.colour1,
 				colour2: theme.colour2,
 				font: theme.font,
-				imageUrl: theme.imageUrl,
+				heroImageUrl: theme.heroImageUrl,
+				secondImageUrl: theme.secondImageUrl,
 				names: theme.names,
 				byLine: theme.byLine,
 				message: theme.message,
@@ -81,7 +101,9 @@ export default class ThemeEditView extends Component {
 				ceremonyDateTime: theme.ceremonyDateTime,
 				receptionEnabled: theme.receptionEnabled,
 				receptionMessage: theme.receptionMessage,
-				receptionDateTime: theme.receptionDateTime
+				receptionDateTime: theme.receptionDateTime,
+				ceremonyObject: CDT,
+				receptionObject: RDT
 			})
 			this.setState({ theme: theme })
 			if (config.debugLevel > 1) console.log(theme)
@@ -119,7 +141,8 @@ export default class ThemeEditView extends Component {
 		this.check("colour1", req, oldTheme)
 		this.check("colour2", req, oldTheme)
 		this.check("font", req, oldTheme)
-		this.check("imageUrl", req, oldTheme)
+		this.check("heroImageUrl", req, oldTheme)
+		this.check("secondImageUrl", req, oldTheme)
 		this.check("names", req, oldTheme)
 		this.check("byLine", req, oldTheme)
 		this.check("message", req, oldTheme)
@@ -152,12 +175,24 @@ export default class ThemeEditView extends Component {
 			console.log(newTheme)
 
 			// console.log(`this.state.accountId ${this.props.accountId}`)
+			let CDT, RDT = null;
+			if ( newTheme.ceremonyDateTime != null && newTheme.ceremonyDateTime !== "" ) {
+				const dateTimeArray = newTheme.ceremonyDateTime.split(" ");
+				const dateArray = dateTimeArray[0].split("/");
+				CDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+			}
+			if ( newTheme.receptionDateTime != null && newTheme.receptionDateTime !== "" ) {
+				const dateTimeArray = newTheme.receptionDateTime.split(" ");
+				const dateArray = dateTimeArray[0].split("/");
+				RDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+			}
 			this.setState({
 				id: newTheme.id,
 				colour1: newTheme.colour1,
 				colour2: newTheme.colour2,
 				font: newTheme.font,
-				imageUrl: newTheme.imageUrl,
+				heroImageUrl: newTheme.heroImageUrl,
+				secondImageUrl: newTheme.secondImageUrl,
 				names: newTheme.names,
 				byLine: newTheme.byLine,
 				message: newTheme.message,
@@ -167,6 +202,8 @@ export default class ThemeEditView extends Component {
 				receptionEnabled: newTheme.receptionEnabled,
 				receptionMessage: newTheme.receptionMessage,
 				receptionDateTime: newTheme.receptionDateTime,
+				ceremonyObject: CDT,
+				receptionObject: RDT
 			})
 			this.props.updateToThisThemeId(newTheme.id)
 		}
@@ -282,6 +319,18 @@ export default class ThemeEditView extends Component {
 			}
 		})
 	}
+	handleCeremonyDateChange(newDate) {
+		const DateString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(newDate)
+		const TimeString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false}).format(newDate)
+		const ceremonyString = DateString +" "+ TimeString;
+		this.setState({ ceremonyDateTime: ceremonyString, ceremonyObject: newDate});
+	}
+	handleReceptionDateChange(newDate) {
+		const DateString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(newDate)
+		const TimeString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false}).format(newDate)
+		const receptionString = DateString +" "+ TimeString;
+		this.setState({ receptionDateTime: receptionString, receptionObject: newDate});
+	}
 
 	//------------------------------------------------------------
 	//Allow basic creation of some test content
@@ -297,7 +346,8 @@ export default class ThemeEditView extends Component {
 					colour1: "#5678D4",
 					colour2: "#D4B256",
 					font: this.state.font || "TestFont",
-					imageUrl: this.state.imageUrl || "test_image.jpg",
+					heroImageUrl: this.state.heroImageUrl || "test_image.jpg",
+					secondImageUrl: this.state.secondImageUrl || "test2_image.jpg",
 					names: this.state.names || "TestNames",
 					byLine: this.state.byLine || "TestByLine",
 					message: this.state.message || "TestMessage"
@@ -309,7 +359,8 @@ export default class ThemeEditView extends Component {
 					colour1: "#f6ae13",
 					colour2: "#2e3484",
 					font: this.state.font || "TestFont2",
-					imageUrl: this.state.imageUrl || "test_image2.jpg",
+					heroImageUrl: this.state.heroImageUrl || "test_image2.jpg",
+					secondImageUrl: this.state.secondImageUrl || "test2_image2.jpg",
 					names: this.state.names || "TestNames2",
 					byLine: this.state.byLine || "TestByLine2",
 					message: this.state.message || "TestMessage2"
@@ -321,7 +372,8 @@ export default class ThemeEditView extends Component {
 					colour1: "#646464",
 					colour2: "#000000",
 					font: this.state.font || "TestFont3",
-					imageUrl: this.state.imageUrl || "test_image3.jpg",
+					heroImageUrl: this.state.heroImageUrl || "test_image3.jpg",
+					secondImageUrl: this.state.secondImageUrl || "test2_image3.jpg",
 					names: this.state.names || "TestNames3",
 					byLine: this.state.byLine || "TestByLine3",
 					message: this.state.message || "TestMessage3",
@@ -348,7 +400,7 @@ export default class ThemeEditView extends Component {
 		return s.charAt(0).toUpperCase() + s.slice(1)
 	}
 
-	addDiv = (divType, field, state = undefined) => {
+	addDiv = (divType, field, state = undefined, extraState = undefined, extraCallback = undefined) => {
 		let thisValue = this.state[field]
 		if (divType === "text" && thisValue === null) thisValue = ""
 		//console.log(`${divType} ${field}: [${thisValue}]`)
@@ -376,6 +428,24 @@ export default class ThemeEditView extends Component {
 						<input style={{ display: 'inline-block', width: "auto" }} className="form-control" type='text' name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
 					</div>
 				break
+			case "datepicker":
+				typeField = <DatePicker style={{ width: 'unset' }} type={divType} name={field} disabled={disabledState}
+																dateFormat="dd/MM/yyyy"
+																selected={extraState}
+																onSelect={extraCallback} //when day is clicked
+																onChange={extraCallback} //only when value has changed
+															/>
+				break
+			case "datetimepicker":
+				typeField = <DatePicker style={{ width: 'unset' }} type={divType} name={field} disabled={disabledState}
+																dateFormat="dd/MM/yyyy hh:mm:ss"
+																showTimeSelect
+																timeIntervals={5}
+																selected={extraState}
+																onSelect={extraCallback} //when day is clicked
+																onChange={extraCallback} //only when value has changed
+															/>
+				break 
 			default:
 				typeField = <input className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
 				break
@@ -432,7 +502,8 @@ export default class ThemeEditView extends Component {
 			<div>
 				<h4 className='text-primary'> Preview:</h4>
 				<div className="panel-body" style={{ margin: '10px 50px', width: '80%', border: '1px solid #6c757d', borderRadius: '20px', backgroundColor: this.state.colour2 }} >
-					<img style={{ maxWidth: '80%', objectFit: 'contain', display: 'block', margin: 'auto' }} src={this.state?.imageUrl} alt='Theme URL' />
+					<img style={{ maxWidth: '80%', objectFit: 'contain', display: 'block', margin: 'auto' }} src={this.state?.heroImageUrl} alt='Hero Theme URL' />
+					<img style={{ maxWidth: '80%', objectFit: 'contain', display: 'block', margin: 'auto' }} src={this.state?.secondImageUrl} alt='Second Theme URL' />
 					<h1 style={h1Overide}>{this.state.names}</h1>
 					<div style={h2Overide}>{this.state.byLine}</div>
 					<div style={messageOveride}>{this.state.message}</div><p />
@@ -516,7 +587,6 @@ export default class ThemeEditView extends Component {
 
 		let createTheme = this.renderCreateThemes()
 
-
 		//Now render
 		return (
 			<>
@@ -532,16 +602,17 @@ export default class ThemeEditView extends Component {
 							{this.addDiv("color", "colour1")}
 							{this.addDiv("color", "colour2")}
 							{this.addDiv("text", "font")}
-							{this.addDiv("text", "imageUrl")}
+							{this.addDiv("text", "heroImageUrl")}
+							{this.addDiv("text", "secondImageUrl")}
 							{this.addDiv("text", "names")}
 							{this.addDiv("text", "byLine")}
 							{this.addDiv("text", "message")}
 							{this.addDiv("checkbox", "ceremonyEnabled")}
 							{this.addDiv("text", "ceremonyMessage", this.state.ceremonyEnabled)}
-							{this.addDiv("text", "ceremonyDateTime", this.state.ceremonyEnabled)}
+							{this.addDiv("datetimepicker", "ceremonyDateTime", this.state.ceremonyEnabled, this.state.ceremonyObject, this.handleCeremonyDateChange)}
 							{this.addDiv("checkbox", "receptionEnabled")}
 							{this.addDiv("text", "receptionMessage", this.state.receptionEnabled)}
-							{this.addDiv("text", "receptionDateTime", this.state.receptionEnabled)}
+							{this.addDiv("datetimepicker", "receptionDateTime", this.state.receptionEnabled, this.state.receptionObject, this.handleReceptionDateChange)}
 
 							{buttons}
 							<div className="btn-group">

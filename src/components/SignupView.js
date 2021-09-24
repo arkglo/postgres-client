@@ -2,24 +2,17 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import { apiPath } from '../lib/apiPath'
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 //------------------------------------------------------------
 function initialState() {
 	return {
 		firstName: '',
 		lastName: '',
-		dob: '',
-		addressLine1: '',
-		addressPostCode: '',
-		addressCity: '',
 		partnerFirstName: '',
 		partnerLastName: '',
 		email: '',
 		password: '',
-		password2: '',
-		dobObject: null
+		password2: ''
 	};
 }
 
@@ -31,7 +24,6 @@ export default class SignupView extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleCreateTestUser = this.handleCreateTestUser.bind(this);
-		this.handleDateChange = this.handleDateChange.bind(this);
 	}
 
 	//------------------------------------------------------------
@@ -61,10 +53,6 @@ export default class SignupView extends Component {
 			axios.post(apiPath('POST','account'), {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
-			dob: this.state.dob,
-			addressLine1: this.state.addressLine1,
-			addressPostCode: this.state.addressPostCode,
-			addressCity: this.state.addressCity,
 			partnerFirstName: this.state.partnerFirstName,
 			partnerLastName: this.state.partnerLastName,
 			email: this.state.email,
@@ -113,10 +101,6 @@ export default class SignupView extends Component {
 				this.createAccount({
 					firstName: "John",
 					lastName: "Smith",
-					dob: "13/09/1938",
-					addressLine1: "Palace of Westminster",
-					addressPostCode: "SW1A 0AA",
-					addressCity: "London",
 					partnerFirstName: "Jane",
 					partnerLastName: "Doe",
 					email: "test@email.com",
@@ -129,10 +113,6 @@ export default class SignupView extends Component {
 				this.createAccount({
 					firstName: "Arthur",
 					lastName: "Pendragon",
-					dob: "05/04/1954",
-					addressLine1: "Stonehenge",
-					addressPostCode: "SP4 7DE",
-					addressCity: "Salisbury ",
 					partnerFirstName: "Guinevere",
 					partnerLastName: "Pendragon",
 					email: "arthur@email.com",
@@ -144,10 +124,6 @@ export default class SignupView extends Component {
 				this.createAccount({
 					firstName: "Lewis",
 					lastName: "Hamilton",
-					dob: "07/01/1985",
-					addressLine1: "32 St James’s Street",
-					addressPostCode: "SW1A 1HD",
-					addressCity: "London",
 					partnerFirstName: "Valtteri",
 					partnerLastName: "Bottas",
 					email: "f1@email.com",
@@ -160,10 +136,6 @@ export default class SignupView extends Component {
 		}
 		// const that = this.props.
 		setTimeout(() => { this.props.handleReset() }, 1000)
-	}
-	handleDateChange(newDate) {
-		const dobString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(newDate)
-		this.setState({ dob: dobString, dobObject: newDate});
 	}
 
 	//------------------------------------------------------------
@@ -186,16 +158,6 @@ export default class SignupView extends Component {
 							</div>
 
 							<div className="form-group">
-								<label>Date Of Birth</label>
-								<DatePicker
-									dateFormat="dd/MM/yyyy"
-									selected={this.state.dobObject}
-									onSelect={this.handleDateChange} //when day is clicked
-									onChange={this.handleDateChange} //only when value has changed
-								/>
-							</div>
-
-							<div className="form-group">
 								<label>Partner First Name</label>
 								<input className="form-control" type="text" name="partnerFirstName" value={this.state.partnerFirstName} onChange={this.handleChange} />
 							</div>
@@ -203,23 +165,6 @@ export default class SignupView extends Component {
 							<div className="form-group">
 								<label>Partner Last Name</label>
 								<input className="form-control" type="text" name="partnerLastName" value={this.state.partnerLastName} onChange={this.handleChange} />
-							</div>
-
-							<div className="form-group">
-								<label>Address Line 1</label>
-								<input className="form-control" type="text" name="addressLine1" value={this.state.addressLine1} onChange={this.handleChange} />
-							</div>
-
-							<div style={{display: 'flex'}}>
-								<div className="form-group">
-									<label>Address Postal Code</label>
-									<input style={{ width: 'unset' }} className="form-control" type="text" name="addressPostCode" value={this.state.addressPostCode} onChange={this.handleChange} />
-								</div>
-
-								<div style={{ 'marginLeft': '15px', 'width': '100%'}} className="form-group">
-									<label>Address City</label>
-									<input className="form-control" type="text" name="addressCity" value={this.state.addressCity} onChange={this.handleChange} />
-								</div>
 							</div>
 
 							<div className="form-group">

@@ -21,11 +21,7 @@ export default class AccountEditView extends Component {
 			role: '',
 			firstName: '',
 			lastName: '',
-			dob: '',
 			email: '',
-			addressLine1: '',
-			addressPostCode: '',
-			addressCity: '',
 			partnerFirstName: '',
 			partnerLastName: '',
 			eventDate: '',
@@ -33,7 +29,12 @@ export default class AccountEditView extends Component {
 			themeID: '',
 			gifts: '',
 			showStripe: false,
-			stripeBankHolderName: '',
+			dob: '',
+			addressLine1: '',
+			addressPostCode: '',
+			addressCity: '',
+			stripeBankHolderFirstName: '',
+			stripeBankHolderLastName: '',
 			stripeRoute: '110000000',
 			stripeBankNumber: '000123456789',
 			dobObject: null
@@ -61,31 +62,27 @@ export default class AccountEditView extends Component {
 
 			const account = response.data.data
 			// console.log(response.data)
-			let DOB = null
-			if ( account.dob !== "" ) {
-				const dateArray = account.dob.split("/");
-				DOB = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]);
-			}
 			console.log("the account data is"+JSON.stringify(account))
 			this.setState({
 				role: account.role,
 				firstName: account.firstName,
 				lastName: account.lastName,
-				dob: account.dob,
 				email: account.email,
-				addressLine1: account.addressLine1,
-				addressPostCode: account.addressPostCode,
-				addressCity: account.addressCity,
 				partnerFirstName: account.partnerFirstName,
 				partnerLastName: account.partnerLastName,
 				eventDate: account.eventDate,
 				websiteLink: account.websiteLink,
 				id: account.id,
 				userID: account.userID,
-				stripeBankHolderName: account.firstName + " " + account.lastName,
+				stripeBankHolderFirstName: account.firstName,
+				stripeBankHolderLastName: account.lastName,
+				dob: '21/11/1973',
+				addressLine1: '260 Tinakori Road',
+				addressPostCode: '6011',
+				addressCity: 'Wellington',
 				stripeRoute: '110000000',
 				stripeBankNumber: '000123456789',
-				dobObject: DOB
+				dobObject: new Date( "1973-11-21" )
 			})
 			this.setState({account: account})
 			this.props.setThemeID(account.themeID)
@@ -134,10 +131,6 @@ export default class AccountEditView extends Component {
 		this.updateReq(req, 'email')
 		this.updateReq(req, 'firstName')
 		this.updateReq(req, 'lastName')
-		this.updateReq(req, 'dob')
-		this.updateReq(req, 'addressLine1')
-		this.updateReq(req, 'addressPostCode')
-		this.updateReq(req, 'addressCity')
 		this.updateReq(req, 'partnerFirstName')
 		this.updateReq(req, 'partnerLastName')
 		this.updateReq(req, 'eventDate')
@@ -204,11 +197,18 @@ export default class AccountEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						if( this.state.stripeBankHolderName !== "" &&	this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" ) {
+						if( this.state.stripeBankHolderFirstName !== "" &&	this.state.stripeBankHolderLastName !== "" &&	this.state.dob !== "" &&	
+								this.state.addressLine1 !== "" &&	this.state.addressPostCode !== "" &&	this.state.addressCity !== "" &&	
+								this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" ) {
 							axios.post(apiPath('POST','/accounts/stripe', this.props.accountId), {
 								country: "US",
 								currency: "usd",
-								name: this.state.stripeBankHolderName,
+								firstName: this.state.stripeBankHolderFirstName,
+								lastName: this.state.stripeBankHolderLastName,
+								dob: this.state.dob,
+								addressLine1: this.state.addressLine1,
+								addressPostCode: this.state.addressPostCode,
+								addressCity: this.state.addressCity,
 								routing: this.state.stripeRoute,
 								account: this.state.stripeBankNumber,
 							}).then((response) => {
@@ -241,11 +241,20 @@ export default class AccountEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						if( this.state.stripeBankHolderName !== "" && this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" ) {
+						if( this.state.stripeBankHolderFirstName !== "" &&	this.state.stripeBankHolderLastName !== "" &&	this.state.dob !== "" &&	
+								this.state.addressLine1 !== "" &&	this.state.addressPostCode !== "" &&	this.state.addressCity !== "" &&	
+								this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" ) {
+							// country: "NZ",
+							// currency: "nzd",
 							axios.put(apiPath('PUT','/accounts/stripe', this.props.accountId), {
-								country: "NZ",
-								currency: "nzd",
-								name: this.state.stripeBankHolderName,
+								country: "US",
+								currency: "usd",
+								firstName: this.state.stripeBankHolderFirstName,
+								lastName: this.state.stripeBankHolderLastName,
+								dob: this.state.dob,
+								addressLine1: this.state.addressLine1,
+								addressPostCode: this.state.addressPostCode,
+								addressCity: this.state.addressCity,
 								routing: this.state.stripeRoute,
 								account: this.state.stripeBankNumber,
 							}).then((response) => {
@@ -276,11 +285,46 @@ export default class AccountEditView extends Component {
 		const stripeText = this.state.showStripe ? "Hide Stripe Account" :	"Show Stripe Account";
 		const stripeFields = this.state.showStripe ? <div className="panel-body">
 
+		<div><span style={{'color':'darkmagenta', 'font-size': 'x-large'}}><b>Bank Account Details</b></span></div>
 		<form className="form">
 
+			<div style={{display: 'flex'}}>
+				<div className="form-group" style={{ 'marginRight': '15px'}} >
+					<label>Account Holder's First Name</label>
+					<input className="form-control" type="text" name="stripeBankHolderFirstName" value={this.state.stripeBankHolderFirstName} onChange={this.handleChange} />
+				</div>
+
+				<div className="form-group" style={{ 'marginRight': '15px'}} >
+					<label>Account Holder's Last Name</label>
+					<input className="form-control" type="text" name="stripeBankHolderLastName" value={this.state.stripeBankHolderLastName} onChange={this.handleChange} />
+				</div>
+
+				<div className="form-group">
+					<label>Date of Birth</label>
+					<DatePicker
+						dateFormat="dd/MM/yyyy"
+						selected={this.state.dobObject}
+						onSelect={this.handleDateChange} //when day is clicked
+						onChange={this.handleDateChange} //only when value has changed
+					/>
+				</div>
+			</div>
+
 			<div className="form-group">
-				<label>Name</label>
-				<input className="form-control" type="text" name="stripeBankHolderName" value={this.state.stripeBankHolderName} onChange={this.handleChange} />
+				<label>Address Line 1</label>
+				<input className="form-control" type="text" name="addressLine1" value={this.state.addressLine1} onChange={this.handleChange} />
+			</div>
+
+			<div style={{display: 'flex'}}>
+				<div className="form-group">
+					<label>Address Postal Code</label>
+					<input style={{ width: 'unset' }} className="form-control" type="text" name="addressPostCode" value={this.state.addressPostCode} onChange={this.handleChange} />
+				</div>
+
+				<div style={{ 'marginLeft': '15px', 'width': '100%'}} className="form-group">
+					<label>Address City</label>
+					<input className="form-control" type="text" name="addressCity" value={this.state.addressCity} onChange={this.handleChange} />
+				</div>
 			</div>
 
 			<div style={{display: 'flex'}}>
@@ -328,21 +372,9 @@ export default class AccountEditView extends Component {
 							<input className="form-control" type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
 						</div>
 
-						<div style={{display: 'flex'}}>
-							<div style={{ 'marginRight': '15px'}} className="form-group">
-								<label>Date of Birth</label> (User field)
-								<DatePicker
-									dateFormat="dd/MM/yyyy"
-									selected={this.state.dobObject}
-									onSelect={this.handleDateChange} //when day is clicked
-									onChange={this.handleDateChange} //only when value has changed
-								/>
-							</div>
-
-							<div style={{ 'width': '100%'}} className="form-group">
-								<label>Email</label> (User field)
-								<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
-							</div>
+						<div style={{ 'width': '100%'}} className="form-group">
+							<label>Email</label> (User field)
+							<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
 						</div>
 
 						<div className="form-group">
@@ -353,23 +385,6 @@ export default class AccountEditView extends Component {
 						<div className="form-group">
 							<label>Partner LastName</label> (Account field)
 							<input className="form-control" type="text" name="partnerLastName" value={this.state.partnerLastName} onChange={this.handleChange} />
-						</div>
-
-						<div className="form-group">
-							<label>Address Line 1</label>
-							<input className="form-control" type="text" name="addressLine1" value={this.state.addressLine1} onChange={this.handleChange} />
-						</div>
-
-						<div style={{display: 'flex'}}>
-							<div className="form-group">
-								<label>Address Postal Code</label>
-								<input style={{ width: 'unset' }} className="form-control" type="text" name="addressPostCode" value={this.state.addressPostCode} onChange={this.handleChange} />
-							</div>
-
-							<div style={{ 'marginLeft': '15px', 'width': '100%'}} className="form-group">
-								<label>Address City</label>
-								<input className="form-control" type="text" name="addressCity" value={this.state.addressCity} onChange={this.handleChange} />
-							</div>
 						</div>
 
 						<div className="btn-group">

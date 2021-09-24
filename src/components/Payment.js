@@ -92,6 +92,7 @@ export default class Payment extends Component {
 
 		axios.post(apiPath('POST','/payment/service/'), {
 			accountID: this.props.accountId,
+			currency: "usd",
 			items: service
 		}).then((response) => {
 			if (response.status !== 200) {
@@ -124,7 +125,6 @@ export default class Payment extends Component {
 	};
 
 	sendGiftPayment(gifts) {
-		debugger
 		console.log(`Payment.sendGiftPayment(${this.props.accountId})`)
 		if (this.props.accountId === null) {
 			console.log("  accountId not set - skip sendGiftPayment")
@@ -133,6 +133,7 @@ export default class Payment extends Component {
 
 		axios.post(apiPath('POST','/payment/gifts/'), {
 			accountID: this.props.accountId,
+			currency: "usd",
 			items: gifts,
 			guestName: this.state.guestName,
 			guestEmail: this.state.guestEmail,
