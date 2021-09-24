@@ -10,6 +10,9 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import Dropdown from 'react-dropdown';
+import "react-dropdown/style.css";
+
 import Error from './error';
 
 export default class AccountEditView extends Component {
@@ -62,9 +65,11 @@ export default class AccountEditView extends Component {
 
 			const account = response.data.data
 			// console.log(response.data)
-			console.log("the account data is"+JSON.stringify(account))
+			console.log("the account data is:")
+			console.log(account)
 			this.setState({
 				role: account.role,
+				state: account.state,
 				firstName: account.firstName,
 				lastName: account.lastName,
 				email: account.email,
@@ -285,7 +290,7 @@ export default class AccountEditView extends Component {
 		const stripeText = this.state.showStripe ? "Hide Stripe Account" :	"Show Stripe Account";
 		const stripeFields = this.state.showStripe ? <div className="panel-body">
 
-		<div><span style={{'color':'darkmagenta', 'font-size': 'x-large'}}><b>Bank Account Details</b></span></div>
+		<div><span style={{'color':'darkmagenta', 'fontSize': 'x-large'}}><b>Bank Account Details</b></span></div>
 		<form className="form">
 
 			<div style={{display: 'flex'}}>
@@ -348,6 +353,10 @@ export default class AccountEditView extends Component {
 			</div>
 	</div>: <div></div>;
 
+	//state Drop down
+	const dropDownOptions = ['intial', 'ready', 'live', 'complete', 'closed']
+	const defaultOption = dropDownOptions[0]
+
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br/>
@@ -361,6 +370,14 @@ export default class AccountEditView extends Component {
 							<label>Role</label>
 							<input className="form-control" type="text" name="role" value={this.state.role} onChange={this.handleChange} />
 						</div>
+
+						<div className="form-group">
+							<div title={'state: [ ' + dropDownOptions.toString() + ' ]'}>
+								<label>State</label>
+								<Dropdown options={dropDownOptions} onChange={(e) => this.setState({state:e.value})} value={defaultOption} placeholder="Select an option" />
+							</div>
+						</div>
+
 
 						<div className="form-group">
 							<label>First Name</label> (User field)

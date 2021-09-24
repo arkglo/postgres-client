@@ -141,7 +141,7 @@ export default class SignupView extends Component {
 	//------------------------------------------------------------
 	render() {
 		return (
-			<>
+			<div>
 				<div className="panel panel-default">
 					<div className="panel-heading">Signup</div>
 					<div className="panel-body">
@@ -194,7 +194,7 @@ export default class SignupView extends Component {
 						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTestUser} id="TestAccount-3" >Create 'Lewis Hamilton'</button></li>
 					</div>
 				</div>
-			</>
+			</div>
 		);
 	}
 }
