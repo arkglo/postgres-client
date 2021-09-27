@@ -74,38 +74,39 @@ export default class ThemeEditView extends Component {
 			}
 
 			const theme = response.data.data
-			let CDT, RDT = null
-			if ( theme.ceremonyDateTime != null && theme.ceremonyDateTime !== "" ) {
-				debugger
-				const dateTimeArray = theme.ceremonyDateTime.split(" ");
-				const dateArray = dateTimeArray[0].split("/");
-				CDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+			if( theme != null ) {
+				let CDT, RDT = null
+				if ( theme.ceremonyDateTime != null && theme.ceremonyDateTime !== "" ) {
+					const dateTimeArray = theme.ceremonyDateTime.split(" ");
+					const dateArray = dateTimeArray[0].split("/");
+					CDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+				}
+				if ( theme.receptionDateTime != null && theme.receptionDateTime !== "" ) {
+					const dateTimeArray = theme.receptionDateTime.split(" ");
+					const dateArray = dateTimeArray[0].split("/");
+					RDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+				}
+				this.setState({
+					id: theme.id,
+					colour1: theme.colour1,
+					colour2: theme.colour2,
+					font: theme.font,
+					heroImageUrl: theme.heroImageUrl,
+					secondImageUrl: theme.secondImageUrl,
+					names: theme.names,
+					byLine: theme.byLine,
+					message: theme.message,
+					ceremonyEnabled: theme.ceremonyEnabled,
+					ceremonyMessage: theme.ceremonyMessage,
+					ceremonyDateTime: theme.ceremonyDateTime,
+					receptionEnabled: theme.receptionEnabled,
+					receptionMessage: theme.receptionMessage,
+					receptionDateTime: theme.receptionDateTime,
+					ceremonyObject: CDT,
+					receptionObject: RDT
+				})
+				this.setState({ theme: theme })
 			}
-			if ( theme.receptionDateTime != null && theme.receptionDateTime !== "" ) {
-				const dateTimeArray = theme.receptionDateTime.split(" ");
-				const dateArray = dateTimeArray[0].split("/");
-				RDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
-			}
-			this.setState({
-				id: theme.id,
-				colour1: theme.colour1,
-				colour2: theme.colour2,
-				font: theme.font,
-				heroImageUrl: theme.heroImageUrl,
-				secondImageUrl: theme.secondImageUrl,
-				names: theme.names,
-				byLine: theme.byLine,
-				message: theme.message,
-				ceremonyEnabled: theme.ceremonyEnabled,
-				ceremonyMessage: theme.ceremonyMessage,
-				ceremonyDateTime: theme.ceremonyDateTime,
-				receptionEnabled: theme.receptionEnabled,
-				receptionMessage: theme.receptionMessage,
-				receptionDateTime: theme.receptionDateTime,
-				ceremonyObject: CDT,
-				receptionObject: RDT
-			})
-			this.setState({ theme: theme })
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
 			Error.message(error.response)

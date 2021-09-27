@@ -80,7 +80,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="account_edit"
 						//className="btn btn-default navbar-btn"
-						// disabled={this.props.accountId === -1}
+						disabled={this.props.accountId === -1}
 						onClick={this.props.showAccountEdit}
 						title={this.props.accountId === -1 ? accountSelectText : 'Account Edit'}
 						active={vt === 'AccountEditView'}>
@@ -88,6 +88,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="theme_edit"
 						//className="btn btn-default navbar-btn"
+						// disabled={this.props.themeId === -1}
 						disabled={this.props.accountId === -1}
 						onClick={this.props.showThemeEdit}
 						title={this.props.themeId === -1 ? accountEditSelectText : 'Theme Edit'}
