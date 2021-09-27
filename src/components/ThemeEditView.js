@@ -77,12 +77,18 @@ export default class ThemeEditView extends Component {
 			if( theme != null ) {
 				let CDT, RDT = null
 				if ( theme.ceremonyDateTime != null && theme.ceremonyDateTime !== "" ) {
-					const dateTimeArray = theme.ceremonyDateTime.split(" ");
+					let dateTimeArray = theme.ceremonyDateTime.split(" ");
+					if( dateTimeArray.length === 1 && theme.ceremonyDateTime.endsWith("Z") && theme.ceremonyDateTime.includes("T")) {
+						dateTimeArray = theme.ceremonyDateTime.split("T");
+					}
 					const dateArray = dateTimeArray[0].split("/");
 					CDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
 				}
 				if ( theme.receptionDateTime != null && theme.receptionDateTime !== "" ) {
-					const dateTimeArray = theme.receptionDateTime.split(" ");
+					let dateTimeArray = theme.receptionDateTime.split(" ");
+					if( dateTimeArray.length === 1 && theme.ceremonyDateTime.endsWith("Z") && theme.ceremonyDateTime.includes("T")) {
+						dateTimeArray = theme.ceremonyDateTime.split("T");
+					}
 					const dateArray = dateTimeArray[0].split("/");
 					RDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
 				}
