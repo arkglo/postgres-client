@@ -1,18 +1,18 @@
 // For editing one user's details. Can edit password as well.
-import React, { Component } from 'react';
-import axios from 'axios';
-import * as config from '../config/config';
+import React, { Component } from 'react'
+import axios from 'axios'
+import * as config from '../config/config'
 import { apiPath } from '../lib/apiPath'
 import styles from '../css/mystyles.module.css'
 
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
-import Error from './error';
+import Error from './error'
 
 export default class MyGiftsView extends Component {
 	constructor(props) {
-		super(props);
+		super(props)
 		console.log(`MyGiftsView.constructor()`)
 		this.state = {
 			"id": 1,
@@ -24,14 +24,14 @@ export default class MyGiftsView extends Component {
 			"font": '',
 			"colour1": '',
 			"colour2": '',
-		};
+		}
 
 		// console.log("Props:")
 		// console.log(props)
-		this.handleCreate = this.handleCreate.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleChange = this.handleChange.bind(this);
-		this.handleRemove = this.handleRemove.bind(this);
+		this.handleCreate = this.handleCreate.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleChange = this.handleChange.bind(this)
+		this.handleRemove = this.handleRemove.bind(this)
 	}
 
 	componentDidMount() {
@@ -42,8 +42,8 @@ export default class MyGiftsView extends Component {
 
 	getMyGifts() {
 		console.log(`MyGiftsView.getMyGifts(${this.props.myGiftsId})`)
-		if(this.props.myGiftsId === null) {
-			console.log("  No myGifts - skip GET - ste Default test data")
+		if(this.props.myGiftsId === null || this.props.myGiftsId === -1) {
+			console.log("  No myGifts - skip GET - set Default test data")
 
 			//Set test data
 			this.setState({
@@ -58,7 +58,7 @@ export default class MyGiftsView extends Component {
 		axios.get(apiPath('GET','myGifts', this.props.myGiftsId)).then((response) => {
 
 			if (response.status !== 200) {
-				return console.warn('Failed to get myGifts details.');
+				return console.warn('Failed to get myGifts details.')
 			}
 
 			const myGifts = response.data.data
@@ -72,7 +72,7 @@ export default class MyGiftsView extends Component {
 			if (config.debugLevel > 1) console.log(myGifts)
 		}).catch((error) => {
 			Error.message(error.response)
-		});
+		})
 	}
 
 	
@@ -82,7 +82,7 @@ export default class MyGiftsView extends Component {
 		//Get this Theme
 		axios.get(apiPath('GET','theme', this.props.themeId)).then((response) => {
 			if (response.status !== 200) {
-				return console.warn('Failed to get theme details.');
+				return console.warn('Failed to get theme details.')
 			}
 
 			const theme = response.data.data
@@ -97,21 +97,21 @@ export default class MyGiftsView extends Component {
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
 			Error.message(error.response)
-		});
+		})
 	}
 
 	handleChange(event) {
-		const target = event.target;
-		const value = target.type === 'checkbox' ? target.checked : target.value;
-		const name = target.type === 'color' ? target.name.split('-')[1] : target.name;
+		const target = event.target
+		const value = target.type === 'checkbox' ? target.checked : target.value
+		const name = target.type === 'color' ? target.name.split('-')[1] : target.name
 		// console.log("Change: " + name + ", new Value: " + value)
 		this.setState({
 			[name]: value
-		});
+		})
 	}
 
 	check(key, req, oldData) {
-		const value = this.state[key];
+		const value = this.state[key]
 		let length = typeof (value === 'boolean') ? 1 : value.length
 		//const previous = oldData == null ? "null" : oldData[key]
 		//console.log(`check: ${key}, this.state: ${value}, ${typeof (value)}:${length}, oldData: ${previous}`)
@@ -136,12 +136,12 @@ export default class MyGiftsView extends Component {
 	}// createChangeReqObject
 
 	handleCreate(event) {
-		event.preventDefault();  // IMPORTANT.
+		event.preventDefault()  // IMPORTANT.
 		console.log("------------------- handleCreate()")
 		const req = this.createChangeReqObject()
 		req.accountID = this.props.accountId
 
-		const count = Object.keys(req).length;
+		const count = Object.keys(req).length
 		if (config.debugLevel > 1) {
 			console.log('Call myGifts POST')
 			console.log(`Number to update: ${count}`)
@@ -150,32 +150,35 @@ export default class MyGiftsView extends Component {
 
 		if (count <= 1) {
 			console.warn("Nothing to post, bail")
-			return;
+			return
 		}
 
 		axios.post(apiPath('POST','myGifts'), req).then((response) => {
 			if (response.status !== 201) {
-				return console.warn('Failed to create myGifts.');
+				return console.warn('Failed to create myGifts.')
 			}
-			console.log('Created a new myGifts');
+			console.log('Created a new myGifts')
+			const newID = response?.data?.data?.id ?? -1
+			// console.log(response)
+			this.props.setMyGiftsID(newID)
 		}).catch((error) => {
 			console.log(error)
 			Error.message(error.response)
-		});
+		})
 	}// handleCreate
 
 	handleSubmit(event) {
-		event.preventDefault();  // IMPORTANT.
+		event.preventDefault()  // IMPORTANT.
 		console.log("------------------- handleSubmit()")
 
 		if (this.props.myGiftsId == null) {
-			console.log("No myGifts to Update");
-			return;
+			console.log("No myGifts to Update")
+			return
 		}
 
 		const req = this.createChangeReqObject()
 
-		const count = Object.keys(req).length;
+		const count = Object.keys(req).length
 		if (config.debugLevel > 1) {
 			console.log('Call myGifts UPDATE')
 			console.log(`Number to update: ${count}`)
@@ -184,21 +187,21 @@ export default class MyGiftsView extends Component {
 
 		if (count <= 1) {
 			console.warn("Nothing to update, skip calling api")
-			return;
+			return
 		}
 
 		axios.put(apiPath('PUT','myGifts', this.props.myGiftsId), req).then((response) => {
 			if (response.status !== 200) {
-				return console.warn('Failed to update myGifts.');
+				return console.warn('Failed to update myGifts.')
 			}
-			console.log('Updated myGifts details!');
+			console.log('Updated myGifts details!')
 		}).catch((error) => {
 			Error.message(error.response)
-		});
+		})
 	}// handleSubmit
 
 	handleRemove(event, myGiftsId) {
-		event.preventDefault();
+		event.preventDefault()
 		console.log("------------------- handleRemove()")
 		confirmAlert({
 			title: 'Confirm',
@@ -209,19 +212,20 @@ export default class MyGiftsView extends Component {
 					onClick: () => {
 						axios.delete(apiPath('DELETE','myGifts', this.props.myGiftsId)).then((response) => {
 							if (response.status !== 200) {
-								return console.warn('Failed to remove myGifts.');
+								return console.warn('Failed to remove myGifts.')
 							}
-							console.log('Successfully deleted myGifts.');
+							console.log('Successfully deleted myGifts.')
+							this.props.setMyGiftsID(null)
 						}).catch((error) => {
 							Error.message(error.response)
-						});
+						})
 					}
 				},
 				{
 					label: "No",
 				}
 			]
-		});
+		})
 	}
 
 
@@ -230,7 +234,7 @@ export default class MyGiftsView extends Component {
 
 		axios.post(apiPath('POST','myGifts'), myGifts).then((response) => {
 			if (response.status !== 201) {
-				return console.warn('Failed to create myGifts.');
+				return console.warn('Failed to create myGifts.')
 			}
 			console.log(`Created account [${myGifts.title}]!`)
 		}).catch((error) => {
@@ -247,7 +251,7 @@ export default class MyGiftsView extends Component {
 	//------------------------------------------------------------
 	//Allow basic creation of some test content
 	handleCreateMyGifts(event) {
-		event.preventDefault();  // IMPORTANT.
+		event.preventDefault()  // IMPORTANT.
 		console.log(`handleCreateMyGifts: ${event.target.id}`)
 		// console.log(event)
 		let thisMyGifts = {}
@@ -259,10 +263,10 @@ export default class MyGiftsView extends Component {
 					message: "message1",
 					imageUrl: "test_image.jpg"
 				}
-				break;
+				break
 			default:
-				console.log("Unknown");
-				return;
+				console.log("Unknown")
+				return
 		}
 
 		this.createMyGift(thisMyGifts)
@@ -327,6 +331,7 @@ export default class MyGiftsView extends Component {
 		else {
 			buttons = <div className="btn-group">
 				<button className="btn btn-primary" onClick={this.handleSubmit} >Update</button>
+				<button className="btn btn-danger" onClick={this.handleRemove} >Remove</button>
 			</div>
 		}
 
@@ -362,9 +367,6 @@ export default class MyGiftsView extends Component {
 							{this.addDiv("text", "imageUrl")}
 
 							{buttons}
-							<div className="btn-group">
-								<button className="btn btn-danger" onClick={this.handleRemove} >Remove</button>
-							</div>
 						</form>
 					</div>
 					<div className="panel-body"  style={{border:'1px solid #6c757d', borderRadius: '20px', margin:'10px 50px'}}>
@@ -374,6 +376,6 @@ export default class MyGiftsView extends Component {
 					</div>
 				</div>
 			</>
-		);
+		)
 	}
 }

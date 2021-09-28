@@ -178,7 +178,11 @@ class App extends Component {
 		}
 	}
 	setThemeID(thisId) { this.setState({ themeId: thisId }) }
-	setMyGiftsID(thisId) { this.setState({ myGiftsId: thisId }) }
+	setMyGiftsID(thisId) { 
+		this.setState({ myGiftsId: thisId }) 
+		if(this.state.viewType === 'MyGiftsView')
+			this.showMyGiftsEdit()
+	}
 
 	updateToThisThemeId(thisId) {
 		console.log(`updateToThisThemeId - accountId: ${this.state.accountId}, theme: ${thisId})`)
@@ -305,6 +309,7 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
+				setMyGiftsID={this.setMyGiftsID}
 				admin={this.state.admin}
 			/>),
 			viewType: 'MyGiftsView',
