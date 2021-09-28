@@ -49,7 +49,6 @@ export default class NavBar extends Component {
 
 		const logoutView = !this.props.user ? null : <Button type="submit" variant='btn-secondary' onClick={this.handleLogout}>Logout</Button>
 
-		console.log(styles.sticky)
 		const vt = this.props.viewType
 		return (
 			<nav className={styles.sticky} >
