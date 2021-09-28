@@ -1,20 +1,20 @@
 // For editing one user's details. Can edit password as well.
-import React, { Component } from 'react';
-import axios from 'axios';
-import * as config from '../config/config';
+import React, { Component } from 'react'
+import axios from 'axios'
+import * as config from '../config/config'
 import { apiPath } from '../lib/apiPath'
 import styles from '../css/mystyles.module.css'
 
-import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 
-import Error from './error';
+import Error from './error'
 
 export default class ThemeEditView extends Component {
 	constructor(props) {
-		super(props);
+		super(props)
 		console.log(`ThemeEditView.constructor()`)
 		this.state = {
 			"id": 1,
@@ -36,17 +36,17 @@ export default class ThemeEditView extends Component {
 			allThemes: null,
 			ceremonyObject: null,
 			receptionObject: null
-		};
+		}
 
 		// console.log("Props:")
 		// console.log(props)
-		this.handleCreate = this.handleCreate.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleChange = this.handleChange.bind(this);
-		this.handleRemove = this.handleRemove.bind(this);
-		this.handleCreateTheme = this.handleCreateTheme.bind(this);
-		this.handleCeremonyDateChange = this.handleCeremonyDateChange.bind(this);
-		this.handleReceptionDateChange = this.handleReceptionDateChange.bind(this);
+		this.handleCreate = this.handleCreate.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+		this.handleChange = this.handleChange.bind(this)
+		this.handleRemove = this.handleRemove.bind(this)
+		this.handleCreateTheme = this.handleCreateTheme.bind(this)
+		this.handleCeremonyDateChange = this.handleCeremonyDateChange.bind(this)
+		this.handleReceptionDateChange = this.handleReceptionDateChange.bind(this)
 	}
 
 	componentDidMount() {
@@ -60,37 +60,37 @@ export default class ThemeEditView extends Component {
 		//Get All themes
 		axios.get(apiPath('GET', 'theme')).then((response) => {
 			if (response.status !== 200) {
-				return console.warn('Failed to get theme details.');
+				return console.warn('Failed to get theme details.')
 			}
 			this.setState({ allThemes: response.data.data })
 
 			//Get just the theme we want
-			if (this.props.themeId == null) return;
+			if (this.props.themeId == null) return
 
 			return axios.get(apiPath('GET', '/accounts/theme', this.props.accountId))
 		}).then((response) => {
 			if (response.status !== 200) {
-				return console.warn('Failed to get theme details.');
+				return console.warn('Failed to get theme details.')
 			}
 
 			const theme = response.data.data
-			if( theme != null ) {
+			if (theme != null) {
 				let CDT, RDT = null
-				if ( theme.ceremonyDateTime != null && theme.ceremonyDateTime !== "" ) {
-					let dateTimeArray = theme.ceremonyDateTime.split(" ");
-					if( dateTimeArray.length === 1 && theme.ceremonyDateTime.endsWith("Z") && theme.ceremonyDateTime.includes("T")) {
-						dateTimeArray = theme.ceremonyDateTime.split("T");
+				if (theme.ceremonyDateTime != null && theme.ceremonyDateTime !== "") {
+					let dateTimeArray = theme.ceremonyDateTime.split(" ")
+					if (dateTimeArray.length === 1 && theme.ceremonyDateTime.endsWith("Z") && theme.ceremonyDateTime.includes("T")) {
+						dateTimeArray = theme.ceremonyDateTime.split("T")
 					}
-					const dateArray = dateTimeArray[0].split("/");
-					CDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+					const dateArray = dateTimeArray[0].split("/")
+					CDT = new Date(dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0] + " " + dateTimeArray[1])
 				}
-				if ( theme.receptionDateTime != null && theme.receptionDateTime !== "" ) {
-					let dateTimeArray = theme.receptionDateTime.split(" ");
-					if( dateTimeArray.length === 1 && theme.ceremonyDateTime.endsWith("Z") && theme.ceremonyDateTime.includes("T")) {
-						dateTimeArray = theme.ceremonyDateTime.split("T");
+				if (theme.receptionDateTime != null && theme.receptionDateTime !== "") {
+					let dateTimeArray = theme.receptionDateTime.split(" ")
+					if (dateTimeArray.length === 1 && theme.ceremonyDateTime.endsWith("Z") && theme.ceremonyDateTime.includes("T")) {
+						dateTimeArray = theme.ceremonyDateTime.split("T")
 					}
-					const dateArray = dateTimeArray[0].split("/");
-					RDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+					const dateArray = dateTimeArray[0].split("/")
+					RDT = new Date(dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0] + " " + dateTimeArray[1])
 				}
 				this.setState({
 					id: theme.id,
@@ -116,21 +116,21 @@ export default class ThemeEditView extends Component {
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
 			Error.message(error.response)
-		});
+		})
 	}
 
 	handleChange(event) {
-		const target = event.target;
-		const value = target.type === 'checkbox' ? target.checked : target.value;
-		const name = target.type === 'color' ? target.name.split('-')[1] : target.name;
+		const target = event.target
+		const value = target.type === 'checkbox' ? target.checked : target.value
+		const name = target.type === 'color' ? target.name.split('-')[1] : target.name
 		// console.log("Change: " + name + ", new Value: " + value)
 		this.setState({
 			[name]: value
-		});
+		})
 	}
 
 	check(key, req, oldData) {
-		const value = this.state[key];
+		const value = this.state[key]
 		let length = typeof (value === 'boolean') ? 1 : value.length
 		//const previous = oldData == null ? "null" : oldData[key]
 		//console.log(`check: ${key}, this.state: ${value}, ${typeof (value)}:${length}, oldData: ${previous}`)
@@ -168,6 +168,9 @@ export default class ThemeEditView extends Component {
 	checkThemeExists(name) {
 		//checks if there is already a them with the same theme.names === name
 		// return -1 if not found, otherwise return the index
+		//console.log(this.state.allThemes)
+		// console.log(`name: ${name}`)
+		if (this.state.allThemes === null) return -1
 		return this.state.allThemes.findIndex(theme => theme.names === name)
 	}
 
@@ -182,16 +185,16 @@ export default class ThemeEditView extends Component {
 			console.log(newTheme)
 
 			// console.log(`this.state.accountId ${this.props.accountId}`)
-			let CDT, RDT = null;
-			if ( newTheme.ceremonyDateTime != null && newTheme.ceremonyDateTime !== "" ) {
-				const dateTimeArray = newTheme.ceremonyDateTime.split(" ");
-				const dateArray = dateTimeArray[0].split("/");
-				CDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+			let CDT, RDT = null
+			if (newTheme.ceremonyDateTime != null && newTheme.ceremonyDateTime !== "") {
+				const dateTimeArray = newTheme.ceremonyDateTime.split(" ")
+				const dateArray = dateTimeArray[0].split("/")
+				CDT = new Date(dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0] + " " + dateTimeArray[1])
 			}
-			if ( newTheme.receptionDateTime != null && newTheme.receptionDateTime !== "" ) {
-				const dateTimeArray = newTheme.receptionDateTime.split(" ");
-				const dateArray = dateTimeArray[0].split("/");
-				RDT = new Date( dateArray[2]+"-"+dateArray[1]+"-"+dateArray[0]+" "+dateTimeArray[1]);
+			if (newTheme.receptionDateTime != null && newTheme.receptionDateTime !== "") {
+				const dateTimeArray = newTheme.receptionDateTime.split(" ")
+				const dateArray = dateTimeArray[0].split("/")
+				RDT = new Date(dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0] + " " + dateTimeArray[1])
 			}
 			this.setState({
 				id: newTheme.id,
@@ -218,12 +221,12 @@ export default class ThemeEditView extends Component {
 
 
 	handleCreate(event) {
-		event.preventDefault();  // IMPORTANT.
+		event.preventDefault()  // IMPORTANT.
 		console.log("------------------- handleCreate()")
 		const req = this.createChangeReqObject()
 		req.accountID = this.props.accountId
 
-		const count = Object.keys(req).length;
+		const count = Object.keys(req).length
 		if (config.debugLevel > 1) {
 			console.log('Call Theme POST')
 			console.log(`Number to update: ${count}`)
@@ -232,32 +235,33 @@ export default class ThemeEditView extends Component {
 
 		if (count <= 1) {
 			console.warn("Nothing to post, bail")
-			return;
+			return
 		}
 
 		axios.post(apiPath('POST', 'theme'), req).then((response) => {
 			if (response.status !== 201) {
-				return console.warn('Failed to create theme.');
+				return console.warn('Failed to create theme.')
 			}
-			console.log('Created a new theme');
+			console.log('Created a new theme')
+			this.getThemes()
 		}).catch((error) => {
 			console.log(error)
 			Error.message(error.response)
-		});
+		})
 	}// handleCreate
 
 	handleSubmit(event) {
-		event.preventDefault();  // IMPORTANT.
+		event.preventDefault()  // IMPORTANT.
 		console.log("------------------- handleSubmit()")
 
 		if (this.props.themeId == null) {
-			console.log("No Theme to Update");
-			return;
+			console.log("No Theme to Update")
+			return
 		}
 
 		const req = this.createChangeReqObject()
 
-		const count = Object.keys(req).length;
+		const count = Object.keys(req).length
 		if (config.debugLevel > 1) {
 			console.log('Call Theme UPDATE')
 			console.log(`Number to update: ${count}`)
@@ -266,22 +270,22 @@ export default class ThemeEditView extends Component {
 
 		if (count <= 1) {
 			console.warn("Nothing to update, skip calling api")
-			return;
+			return
 		}
 
 		axios.put(apiPath('PUT', 'theme', this.props.themeId), req).then((response) => {
 			if (response.status !== 200) {
-				return console.warn('Failed to update theme.');
+				return console.warn('Failed to update theme.')
 			}
 			console.log('Updated theme details!')
 			this.getThemes()
 		}).catch((error) => {
 			Error.message(error.response)
-		});
+		})
 	}// handleSubmit
 
 	handleRemove(event, themeId) {
-		event.preventDefault();
+		event.preventDefault()
 		console.log("------------------- handleRemove()")
 		confirmAlert({
 			title: 'Confirm',
@@ -292,19 +296,21 @@ export default class ThemeEditView extends Component {
 					onClick: () => {
 						axios.delete(apiPath('DELETE', 'theme', this.props.themeId)).then((response) => {
 							if (response.status !== 200) {
-								return console.warn('Failed to remove theme.');
+								return console.warn('Failed to remove theme.')
 							}
-							console.log('Successfully deleted theme.');
+							console.log('Successfully deleted theme.')
+							this.getThemes()
+							this.props.setThemeID(-1) // Just removed so set to -1 
 						}).catch((error) => {
 							Error.message(error.response)
-						});
+						})
 					}
 				},
 				{
 					label: "No",
 				}
 			]
-		});
+		})
 	}
 
 
@@ -313,9 +319,10 @@ export default class ThemeEditView extends Component {
 
 		axios.post(apiPath('POST', 'theme'), theme).then((response) => {
 			if (response.status !== 201) {
-				return console.warn('Failed to create theme.');
+				return console.warn('Failed to create theme.')
 			}
-			console.log(`Created account [${theme.names}]!`)
+			console.log(`Created Theme [${theme.names}]!`)
+			this.getThemes()
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
 			if (data) {
@@ -327,22 +334,22 @@ export default class ThemeEditView extends Component {
 		})
 	}
 	handleCeremonyDateChange(newDate) {
-		const DateString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(newDate)
-		const TimeString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false}).format(newDate)
-		const ceremonyString = DateString +" "+ TimeString;
-		this.setState({ ceremonyDateTime: ceremonyString, ceremonyObject: newDate});
+		const DateString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(newDate)
+		const TimeString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false }).format(newDate)
+		const ceremonyString = DateString + " " + TimeString
+		this.setState({ ceremonyDateTime: ceremonyString, ceremonyObject: newDate })
 	}
 	handleReceptionDateChange(newDate) {
-		const DateString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(newDate)
-		const TimeString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false}).format(newDate)
-		const receptionString = DateString +" "+ TimeString;
-		this.setState({ receptionDateTime: receptionString, receptionObject: newDate});
+		const DateString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(newDate)
+		const TimeString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(newDate)
+		const receptionString = DateString + " " + TimeString
+		this.setState({ receptionDateTime: receptionString, receptionObject: newDate })
 	}
 
 	//------------------------------------------------------------
 	//Allow basic creation of some test content
 	handleCreateTheme(event) {
-		event.preventDefault();  // IMPORTANT.
+		event.preventDefault()  // IMPORTANT.
 		console.log(`handleCreateTheme: ${event.target.id}`)
 		// console.log(event)
 		let thisTheme = {}
@@ -350,48 +357,48 @@ export default class ThemeEditView extends Component {
 			case 'TestTheme-1':
 				thisTheme = {
 					accountID: this.props.accountId,
-					colour1: "#5678D4",
+					colour1: "#0c3197",
 					colour2: "#D4B256",
-					font: this.state.font || "TestFont",
-					heroImageUrl: this.state.heroImageUrl || "test_image.jpg",
-					secondImageUrl: this.state.secondImageUrl || "test2_image.jpg",
-					names: this.state.names || "TestNames",
-					byLine: this.state.byLine || "TestByLine",
-					message: this.state.message || "TestMessage"
+					font: "Helvetica",
+					heroImageUrl: "https://picsum.photos/800/300",
+					secondImageUrl: "https://picsum.photos/300/300",
+					names: "TestTheme-1",
+					byLine: "TestByLine",
+					message: "TestMessage"
 				}
-				break;
+				break
 			case 'TestTheme-2':
 				thisTheme = {
 					accountID: this.props.accountId,
 					colour1: "#f6ae13",
 					colour2: "#2e3484",
-					font: this.state.font || "TestFont2",
-					heroImageUrl: this.state.heroImageUrl || "test_image2.jpg",
-					secondImageUrl: this.state.secondImageUrl || "test2_image2.jpg",
-					names: this.state.names || "TestNames2",
-					byLine: this.state.byLine || "TestByLine2",
-					message: this.state.message || "TestMessage2"
+					font: "Roboto",
+					heroImageUrl: "https://picsum.photos/800/300",
+					secondImageUrl: "https://picsum.photos/300/300",
+					names: "TestTheme-2",
+					byLine: "TestByLine2",
+					message: "TestMessage2"
 				}
-				break;
+				break
 			case 'TestTheme-3':
 				thisTheme = {
 					accountID: this.props.accountId,
-					colour1: "#646464",
-					colour2: "#000000",
-					font: this.state.font || "TestFont3",
-					heroImageUrl: this.state.heroImageUrl || "test_image3.jpg",
-					secondImageUrl: this.state.secondImageUrl || "test2_image3.jpg",
-					names: this.state.names || "TestNames3",
-					byLine: this.state.byLine || "TestByLine3",
-					message: this.state.message || "TestMessage3",
+					colour1: "#E7B8B1",
+					colour2: "#C67771",
+					font: "Brush Script MT",
+					heroImageUrl: "https://picsum.photos/800/300",
+					secondImageUrl: "https://picsum.photos/300/300",
+					names: "TestTheme-3",
+					byLine: "TestByLine3",
+					message: "TestMessage3",
 					ceremonyEnabled: true,
 					ceremonyMessage: "ceremonyMessage3",
-					ceremonyDateTime: "2021-03-17T13:37:16.991Z"
+					ceremonyDateTime: "17/03/2022 02:00:00"
 				}
-				break;
+				break
 			default:
-				console.log("Unknown");
-				return;
+				console.log("Unknown")
+				return
 		}
 
 		if (this.checkThemeExists(thisTheme.names) === -1) {
@@ -410,7 +417,7 @@ export default class ThemeEditView extends Component {
 	addDiv = (divType, field, state = undefined, extraState = undefined, extraCallback = undefined) => {
 		let thisValue = this.state[field]
 		if (divType === "text" && thisValue === null) thisValue = ""
-		//console.log(`${divType} ${field}: [${thisValue}]`)
+		console.log(`${divType} ${field}: [${thisValue}]`)
 
 		let disabledState = false
 		if (state !== undefined) {
@@ -422,7 +429,7 @@ export default class ThemeEditView extends Component {
 
 		switch (divType) {
 			case "checkbox":
-				typeField = <input style={{ width: '34px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
+				typeField = <input style={{ width: '25px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
 				break
 			case "text":
 				typeField = <input className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
@@ -437,22 +444,22 @@ export default class ThemeEditView extends Component {
 				break
 			case "datepicker":
 				typeField = <DatePicker style={{ width: 'unset' }} type={divType} name={field} disabled={disabledState}
-																dateFormat="dd/MM/yyyy"
-																selected={extraState}
-																onSelect={extraCallback} //when day is clicked
-																onChange={extraCallback} //only when value has changed
-															/>
+					dateFormat="dd/MM/yyyy"
+					selected={extraState}
+					onSelect={extraCallback} //when day is clicked
+					onChange={extraCallback} //only when value has changed
+				/>
 				break
 			case "datetimepicker":
 				typeField = <DatePicker style={{ width: 'unset' }} type={divType} name={field} disabled={disabledState}
-																dateFormat="dd/MM/yyyy hh:mm:ss"
-																showTimeSelect
-																timeIntervals={5}
-																selected={extraState}
-																onSelect={extraCallback} //when day is clicked
-																onChange={extraCallback} //only when value has changed
-															/>
-				break 
+					dateFormat="dd/MM/yyyy hh:mm:ss"
+					showTimeSelect
+					timeIntervals={5}
+					selected={extraState}
+					onSelect={extraCallback} //when day is clicked
+					onChange={extraCallback} //only when value has changed
+				/>
+				break
 			default:
 				typeField = <input className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
 				break
@@ -475,14 +482,14 @@ export default class ThemeEditView extends Component {
 
 		const h1Overide = {
 			...font,
-			fontSize: '1.5em',
+			fontSize: '2em',
 			textAlign: 'left',
 			fontWeight: 'bold'
 		}
 
 		const h2Overide = {
 			...font,
-			fontSize: '0.9em',
+			fontSize: '1.5em',
 			textAlign: 'left',
 			fontWeight: 'lighter',
 			fontStyle: 'italic',
@@ -490,7 +497,7 @@ export default class ThemeEditView extends Component {
 
 		const messageOveride = {
 			...font,
-			fontSize: '1em',
+			fontSize: '1.5em',
 			width: '100%',
 		}
 
@@ -531,6 +538,20 @@ export default class ThemeEditView extends Component {
 		)
 	}
 
+
+
+	createThemeButton(theme) {
+		console.log(`CreateThemeButton - ${theme}`)
+		// console.log(this.state.publicGifts)
+		if (this.checkThemeExists(theme) === -1) {
+			// const giftId = `CreateGift-${gift.replace(/\s/g, '')}`
+			return (<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id={theme} >Create {theme}</button></li>)
+		}
+		else {
+			return ""
+		}
+	}
+
 	renderCreateThemes() {
 		//Create theme (admin only)
 		if (this.props.admin) {
@@ -538,9 +559,10 @@ export default class ThemeEditView extends Component {
 				<div className="panel panel-default">
 					<div className="panel-heading">PreConfigured Theme data</div>
 					<div className="panel-body">
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-1" >Create Theme-1</button></li>
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-2" >Create Theme-2</button></li>
-						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTheme} id="TestTheme-3" >Create Theme-3</button></li>
+						<i>If empty already, Test Themes already created</i><br />
+						{this.createThemeButton('TestTheme-1')}
+						{this.createThemeButton('TestTheme-2')}
+						{this.createThemeButton('TestTheme-3')}
 					</div>
 				</div>
 			)
@@ -553,7 +575,7 @@ export default class ThemeEditView extends Component {
 		console.log(`%cThemeEditView - render(themeId ${this.props.themeId})`, 'color: yellow')
 
 		var buttons
-		if (this.props.themeId == null) {
+		if (this.props.themeId === null || this.props.themeId === -1) {
 			buttons = <div className="btn-group">
 				<button className="btn btn-success" onClick={this.handleCreate} >Create</button>
 			</div>
@@ -584,7 +606,7 @@ export default class ThemeEditView extends Component {
 			allThemesLength = this.state.allThemes.length
 			themeList = this.state.allThemes.map((data, idx) =>
 				<li key={idx}>
-					<button onClick={this.setTheme.bind(this, data.id)}>Select Theme {data.id}</button> - '{data.names}' {' '}
+					<button onClick={this.setTheme.bind(this, data.id)}>Select Theme id:{data.id}</button> - '{data.names}' {' '}
 					<div style={{ ...colorBox, backgroundColor: data.colour1 }} />
 					<div style={{ ...colorBox, backgroundColor: data.colour2 }} />{' - '}
 					<div style={{ ...colorBoxExample, backgroundColor: data.colour2, color: data.colour1 }}>{data.names}</div>
@@ -593,6 +615,20 @@ export default class ThemeEditView extends Component {
 		}
 
 		let createTheme = this.renderCreateThemes()
+
+		let cMessage = ""
+		let cDateTime = ""
+		if (this.state.ceremonyEnabled) {
+			cMessage = this.addDiv("text", "ceremonyMessage", this.state.ceremonyEnabled)
+			cDateTime = this.addDiv("datetimepicker", "ceremonyDateTime", this.state.ceremonyEnabled, this.state.ceremonyObject, this.handleCeremonyDateChange)
+		}
+
+		let rMessage = ""
+		let rDateTime = ""
+		if (this.state.receptionEnabled) {
+			rMessage = this.addDiv("text", "receptionMessage", this.state.receptionEnabled)
+			rDateTime = this.addDiv("datetimepicker", "receptionDateTime", this.state.receptionEnabled, this.state.receptionObject, this.handleReceptionDateChange)
+		}
 
 		//Now render
 		return (
@@ -614,12 +650,13 @@ export default class ThemeEditView extends Component {
 							{this.addDiv("text", "names")}
 							{this.addDiv("text", "byLine")}
 							{this.addDiv("text", "message")}
+
 							{this.addDiv("checkbox", "ceremonyEnabled")}
-							{this.addDiv("text", "ceremonyMessage", this.state.ceremonyEnabled)}
-							{this.addDiv("datetimepicker", "ceremonyDateTime", this.state.ceremonyEnabled, this.state.ceremonyObject, this.handleCeremonyDateChange)}
+							{cMessage}
+							{cDateTime}
 							{this.addDiv("checkbox", "receptionEnabled")}
-							{this.addDiv("text", "receptionMessage", this.state.receptionEnabled)}
-							{this.addDiv("datetimepicker", "receptionDateTime", this.state.receptionEnabled, this.state.receptionObject, this.handleReceptionDateChange)}
+							{rMessage}
+							{rDateTime}
 
 							{buttons}
 							<div className="btn-group">
@@ -640,6 +677,6 @@ export default class ThemeEditView extends Component {
 				{createTheme}
 				{themePreview}
 			</>
-		);
+		)
 	}
 }

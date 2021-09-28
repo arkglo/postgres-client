@@ -125,7 +125,7 @@ class App extends Component {
 					AccountId: {this.state.accountId}
 				</div>
 
-				this.toastThis(message, 'info')
+				this.toastThis(message, 'info', 1000)
 			}
 			this.setState({ viewType: '' })
 		}).catch(error => {
@@ -186,9 +186,9 @@ class App extends Component {
 			if (response.status !== 200) {
 				return console.warn('Failed to update account.');
 			}
+			console.log('Updated account details!');
 			this.setThemeID(thisId)
 			this.showThemeEdit()
-			console.log('Updated account details!');
 		}).catch((error) => {
 			Error.message(error.response)
 		});
@@ -286,6 +286,7 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 				updateToThisThemeId={this.updateToThisThemeId}
+				setThemeID={this.setThemeID}
 				admin={this.state.admin}
 			/>),
 			viewType: 'ThemeEditView',
