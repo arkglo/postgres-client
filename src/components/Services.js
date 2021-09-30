@@ -8,14 +8,14 @@ import Error from './error'
 //============================================================
 const Services = (props) => {
 	//Declare our states
-	const [services, setServices ] = useState(null)
+	const [services, setServices] = useState(null)
 
 	//------------------------------------------------------------
 	// Functions
 	const getServices = async () => {
 		console.log("Services.getServices()")
 
-		await axios.get(apiPath('GET','services')).then((response) => {
+		await axios.get(apiPath('GET', 'services')).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get user details.');
 			}
@@ -30,7 +30,7 @@ const Services = (props) => {
 	}
 
 	const createService = async (title, price) => {
-		await axios.post(apiPath('POST','services'), {
+		await axios.post(apiPath('POST', 'services'), {
 			title: title,
 			price: price
 		}).then((response) => {
@@ -77,7 +77,15 @@ const Services = (props) => {
 
 		let testInitialise = null
 		if (allServicesLength === 0) {
-			testInitialise = <button type="submit" className="btn btn-primary" onClick={handleSubmit} >Initialise with Test Data</button>
+			testInitialise = <div>
+				<button type="submit" className="btn btn-primary" onClick={handleSubmit} >Initialise with Test Data</button><br />
+				e.g.<br />
+				<code>POST {apiPath('POST', 'services')}<br />
+					{"{"}<br />
+					··title: 'Website',<br />
+					··price: 10.00<br />
+					{"}"}</code><p />
+			</div>
 		}
 
 		return (
@@ -101,14 +109,14 @@ const Services = (props) => {
 		console.log('***Services MOUNT ***')
 		//console.log(props)
 		getServices()
-	},[props])
+	}, [props])
 
 	//per Render
 	// useEffect(() => { console.log("%cServices - render()", 'color: blue') })
 
 	//===========================================================================
 	//Start the actual Render....
-	return ( <div>{render()}</div>)
+	return (<div>{render()}</div>)
 }
 
 export default Services

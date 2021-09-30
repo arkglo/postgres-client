@@ -124,7 +124,7 @@ class App extends Component {
 				})
 
 				const message = <div>
-					Welcome back "{data.firstName} {data.lastName}"<br/>
+					Welcome back "{data.firstName} {data.lastName}"<br />
 					AccountId: {this.state.accountId}
 				</div>
 
@@ -141,16 +141,26 @@ class App extends Component {
 
 	toastThis(message, type, timeout = 2000, options) { //timeout= false no timeout
 		let theme = toast.TYPE.DEFAULT
-		switch(type) {
+		switch (type) {
 			case 'dark': theme = toast.TYPE.DARK; break
-			case 'error': theme = toast.TYPE.ERROR ; break
+			case 'error': theme = toast.TYPE.ERROR; break
 			case 'info': theme = toast.TYPE.INFO; break
-			case 'sucess': theme = toast.TYPE.SUCCESS ; break
+			case 'success': theme = toast.TYPE.SUCCESS; break
 			case 'warning': theme = toast.TYPE.WARNING; break
-			default : theme = toast.TYPE.DEFAULT
+			default: theme = toast.TYPE.DEFAULT
 		}
 		let toastOptions = { type: theme, autoClose: timeout };
-		toast(message, {...toastOptions, ...options});
+		toast(message, { ...toastOptions, ...options });
+	}
+
+	showError = (err) => {
+		console.warn('Error:')
+		console.log(err ?? 'no response')
+		const message = <>
+			<strong>{err.status ?? '404'}</strong> {err.function ?? 'Error'}<br />
+			<small>{err.message}</small>
+		</>
+		this.toastThis(message, err.type ??'error', err.timeout ?? false)
 	}
 
 	// Handler for LoginView.
@@ -181,9 +191,9 @@ class App extends Component {
 		}
 	}
 	setThemeID(thisId) { this.setState({ themeId: thisId }) }
-	setMyGiftsID(thisId) { 
-		this.setState({ myGiftsId: thisId }) 
-		if(this.state.viewType === 'MyGiftsView')
+	setMyGiftsID(thisId) {
+		this.setState({ myGiftsId: thisId })
+		if (this.state.viewType === 'MyGiftsView')
 			this.showMyGiftsEdit()
 	}
 
@@ -260,6 +270,8 @@ class App extends Component {
 				user={this.state.user}
 				themeId={this.state.themeId}
 				handleLogout={this.handleLogout}
+				showError={this.showError}
+				toastThis={this.toastThis}
 				admin={this.state.admin}
 			/>),
 			viewType: 'UserEditView',
@@ -361,6 +373,7 @@ class App extends Component {
 			handleLogout={this.handleLogout}
 			setAccountId={this.setAccountId}
 			user={this.state.user}
+			showError={this.showError}
 			toastThis={this.toastThis}
 			authenticated={this.state.authenticated}
 			viewType={this.state.viewType}
@@ -377,7 +390,7 @@ class App extends Component {
 
 	showPayment() {
 		this.setState({
-			mainView: (<Payment 
+			mainView: (<Payment
 				toastThis={this.toastThis}
 				accountId={this.state.accountId}
 			/>),
@@ -387,8 +400,9 @@ class App extends Component {
 
 	showAdmin() {
 		this.setState({
-			mainView: (<Admin 
+			mainView: (<Admin
 				toastThis={this.toastThis}
+				showError={this.showError}
 			/>),
 			viewType: 'Admin'
 		})

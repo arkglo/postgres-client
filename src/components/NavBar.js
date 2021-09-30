@@ -30,6 +30,8 @@ export default class NavBar extends Component {
 	}
 
 	render() {
+		const userId = this.props?.user?.id ?? -1
+		const userLabel = (userId === -1) ? "" : `(accountId:${this.props.user.id})`
 		const accountLabel = (this.props.accountId === -1) ? "" : `(accountId:${this.props.accountId})`
 		const themeLabel = (this.props.themeId === -1) ? "" : `(themeId:${this.props.themeId})`
 		const myGiftsLabel = (this.props.myGiftsId === -1) ? "" : (this.props.myGiftsId !== null) ? `(myGiftsId:${this.props.myGiftsId})` : `(No myGifts)`
@@ -75,7 +77,7 @@ export default class NavBar extends Component {
 						onClick={this.props.showUserEdit}
 						title='Available when logged in'
 						active={vt === 'UserEditView'}>
-						User edit
+						User edit {userLabel}
 					</Button>
 					<Button type="button" name="account_edit"
 						//className="btn btn-default navbar-btn"
@@ -120,6 +122,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="services_edit"
 						//className="btn btn-default navbar-btn"
+						disabled={this.props.accountId === -1}
 						onClick={this.props.showServices}
 						active={vt === 'Services'}>
 						Sevices

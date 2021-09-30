@@ -50,7 +50,7 @@ export default class SignupView extends Component {
 			return
 		}
 
-			axios.post(apiPath('POST','account'), {
+		axios.post(apiPath('POST', 'account'), {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
 			partnerFirstName: this.state.partnerFirstName,
@@ -75,7 +75,7 @@ export default class SignupView extends Component {
 	}
 
 	createAccount(account) {
-		axios.post(apiPath('POST','account'), account).then((response) => {
+		axios.post(apiPath('POST', 'account'), account).then((response) => {
 			if (response.status !== 201) {
 
 				const message = <div>Failed to create account.</div>
@@ -199,6 +199,16 @@ export default class SignupView extends Component {
 						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTestUser} id="TestAccount-1" >Create 'John Smith'</button></li>
 						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTestUser} id="TestAccount-2" >Create 'Arthur Pendragon'</button></li>
 						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTestUser} id="TestAccount-3" >Create 'Lewis Hamilton'</button></li>
+						e.g.<br />
+						<code>POST {apiPath('POST', 'account')}<br />
+							{"{"}<br />
+							··firstName: 'John',<br />
+							··lastName: 'Smith',<br />
+							··partnerFirstName: 'Jane',<br />
+							··partnerLastName: 'Doe',<br />
+							··email: 'test@email.com',<br />
+							··password: 'password'<br />
+							{"}"}</code><p />
 					</div>
 				</div>
 			</div>
