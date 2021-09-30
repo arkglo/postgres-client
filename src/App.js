@@ -37,7 +37,7 @@ axios.defaults.withCredentials = true;
 // console.log("APP")
 export const PrivateRoute = ({ component: Component, ...rest }) => (
 	<Route {...rest}
-	debugger
+		debugger
 		render={props =>
 			localStorage.getItem("authToken") ? (
 				<Component {...props} />
@@ -162,7 +162,7 @@ class App extends Component {
 			<strong>{err.status ?? '404'}</strong> {err.function ?? 'Error'}<br />
 			<small>{err.message}</small>
 		</>
-		this.toastThis(message, err.type ??'error', err.timeout ?? false)
+		this.toastThis(message, err.type ?? 'error', err.timeout ?? false)
 	}
 
 	// Handler for LoginView.
@@ -172,6 +172,7 @@ class App extends Component {
 			return console.warn('Login failed');
 		}
 		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
+
 		if (config.debugLevel > 1) console.log(response.data.data)
 		const admin = response.data.data?.role ? (response.data.data?.role === 'admin') : false
 		console.log(`  admin: ${admin}`)
@@ -180,7 +181,10 @@ class App extends Component {
 			mainView: null,
 			admin: admin,
 			authenticated: true
-		});
+		})
+		const message = <div>Logged in:  "{this.state.user.firstName} {this.state.user.lastName}"</div>
+		this.toastThis(message, 'info', 1000)
+
 		this.setState({ viewType: '' })
 	}
 
@@ -237,6 +241,10 @@ class App extends Component {
 		if ((response !== null && response !== undefined) && response.status !== 200) {
 			return console.warn('Logout failed');
 		}
+
+		const message = <div>Logged out:  "{this.state.user.firstName} {this.state.user.lastName}"</div>
+		this.toastThis(message, 'info', 1000)
+
 		console.log('Logged out')
 		this.resetState()
 		this.resetViewType()
