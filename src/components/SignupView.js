@@ -77,15 +77,22 @@ export default class SignupView extends Component {
 	createAccount(account) {
 		axios.post(apiPath('POST','account'), account).then((response) => {
 			if (response.status !== 201) {
+
+				const message = <div>Failed to create account.</div>
+				this.props.toastThis(message, 'warning', 1000)
 				return console.warn('Failed to create account.');
 			}
 			console.log(`Created account [${account.firstName} ${account.lastName}]!`)
 		}).catch((error) => {
 			var data = error?.response?.data ?? null
 			if (data) {
+				const message = <div>${data.function}() - ${data.message}</div>
+				this.props.toastThis(message, 'warning', 1000)
 				console.error(`${data.function}() - ${data.message}`)
 			}
 			else {
+				const message = <div>${error}</div>
+				this.props.toastThis(message, 'warning', 1000)
 				console.log(error)
 			}
 		})
