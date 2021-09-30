@@ -9,6 +9,9 @@ const LoginView = (props) => {
 	const [password, setPassword] = useState('password')
 	const [users, setUsers] = useState(null)
 	const [admin, setAdmin] = useState(props.admin)
+	const [resetPassword, setShowReset] = useState(false)
+	const [emailReset, setEmailReset ] = useState('test@email.com')
+	const [resetLink, setResetLink ] = useState('')
 
 
 	const getUsers = useCallback(() => {
@@ -44,6 +47,7 @@ const LoginView = (props) => {
 		const name = target.name;
 		switch (name) {
 			case 'email': setEmail(value); break
+			case 'emailReset': setEmailReset(value); break
 			case 'password': setPassword(value); break
 			default: console.log(`  handleChange() Unknown name: ${name}`); break
 		}
@@ -74,6 +78,31 @@ const LoginView = (props) => {
 				}
 			})
 	}
+	const handleResetRequest = (event) => {
+		event.preventDefault();  // IMPORTANT.
+		setResetLink("");
+
+		axios.post(apiPath('POST','user', 'resetRequest'), {
+			email: email,
+		}).then( (response) => {
+			if (config.debugLevel) console.log(response)
+			if (response.status !== 200) {
+				return console.warn('Reset Request failed');
+			}
+			console.log('Reset Request token for ' + response.data.data.email + ' is ' + response.data.data.resetToken);
+			if (config.debugLevel > 1) console.log(response.data.data)
+
+			setResetLink( response.data.data.resetToken );
+		}).catch((error) => {
+			var data = error?.response?.data ?? null
+			if (data) {
+				console.warn(`${data.function}() - ${data.message}`)
+			}
+			else {
+				console.log(error)
+			}
+		});
+	}
 
 	const handleLogout = (event) => {
 		event.preventDefault();
@@ -91,27 +120,73 @@ const LoginView = (props) => {
 			});
 	}
 
+	const handleToggleResetRequest = (event) => {
+		event.preventDefault();
+		setShowReset(!resetPassword)
+	}
+
 	//===========================================================================
 	//Render functions
 	const renderForm = () => {
 		if (config.debugLevel > 1) console.log("  renderForm()")
+
+		let upperSection = null
+		let resetPasswordSection = null
+		let resetLinkSection = null
+		if( !resetPassword ) {
+			upperSection = <div>
+												<form className="form-inline">
+													<div className="form-group">
+														<label>Email</label>
+														<input className="leftMargin form-control" type="text" name="email" value={email} onChange={handleChange} />
+													</div><p />
+													<div className="form-group">
+														<label>Password</label>
+														<input className="leftMargin form-control" type="password" name="password" autoComplete="off" value={password} onChange={handleChange} />
+													</div><p />
+													<code>POST {apiPath('POST', 'user', `login`, false)}<br/>
+													{"{"}<br/>
+													··email={email}<br/>
+													··password={password}<br/>
+													{"}"}</code><p/>
+													<button type="submit" className="btn btn-primary" onClick={handleLogin} >Login</button>
+												</form>
+												<p />
+												<div className="btn-group">
+													<button className="btn btn-warning" onClick={handleToggleResetRequest} >Forgot Password</button>
+												</div>
+											</div>
+		}
+		else {
+			resetPasswordSection = <div>
+																<div className="btn-group">
+																	<button className="btn btn-warning" onClick={handleToggleResetRequest} >Show Login</button>
+																</div>
+																<form className="form-inline">
+																	<p style={{'margin': '17px', 'fontWeight': '800'}} >Reset Password </p>
+																	<div className="form-group">
+																		<label>Email</label>
+																		<input className="leftMargin form-control" type="text" name="emailReset" value={emailReset} onChange={handleChange} />
+																	</div><p />
+																	<code>POST {apiPath('POST', 'user', `resetRequest`, false)}<br/>
+																	{"{"}<br/>
+																	··email={emailReset}<br/>
+																	{"}"}</code><p/>
+																	<button type="submit" className="btn btn-primary" onClick={handleResetRequest} >Request Password Reset</button>
+																</form>
+															</div>
+		}
+		if( resetLink != null && resetLink !== "" ) {
+			const resetLinkUrl = "/resetPassword?token="+encodeURIComponent(resetLink)+"&email="+emailReset;
+			resetLinkSection = <div><br/><p>The link that the client should send to the email address is:- <a href={resetLinkUrl}>{resetLink}</a></p></div>
+		}
+
 		return (
-			<form className="form-inline">
-				<div className="form-group">
-					<label>Email</label>
-					<input className="leftMargin form-control" type="text" name="email" value={email} onChange={handleChange} />
-				</div><p />
-				<div className="form-group">
-					<label>Password</label>
-					<input className="leftMargin form-control" type="password" name="password" autoComplete="off" value={password} onChange={handleChange} />
-				</div><p />
-				<code>POST {apiPath('POST', 'user', `login`, false)}<br />
-					{"{"}<br />
-					··email: {email},<br />
-					··password: {password}<br />
-					{"}"}</code><p />
-				<button type="submit" className="btn btn-primary" onClick={handleLogin} >Login</button>
-			</form>
+			<div>
+					{upperSection}
+					{resetPasswordSection}
+					{resetLinkSection}
+			</div>
 		);
 		//interpunt U+00B7
 	}

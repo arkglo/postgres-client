@@ -24,6 +24,7 @@ import Error from './components/error';
 import Wrapper from './components/wrapper';
 import GoodPayment from './components/GoodPayment';
 import BadPayment from './components/BadPayment';
+import ResetPassword from './components/ResetPassword';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -35,6 +36,7 @@ axios.defaults.withCredentials = true;
 // console.log("APP")
 export const PrivateRoute = ({ component: Component, ...rest }) => (
 	<Route {...rest}
+	debugger
 		render={props =>
 			localStorage.getItem("authToken") ? (
 				<Component {...props} />
@@ -64,6 +66,7 @@ class App extends Component {
 			viewType: 'checkAuth',
 			admin: false,
 			authenticated: false,
+			resetToken: null,
 		};
 
 		// Show functions. For navigation and setting state.mainView.
@@ -250,6 +253,7 @@ class App extends Component {
 			mainView: (<SignupView
 				handleLogout={this.handleLogout}
 				handleReset={this.handleReset}
+				toastThis={this.toastThis}
 			/>),
 			viewType: 'SignupView',
 		});
@@ -415,6 +419,7 @@ class App extends Component {
 		return (
 			<Router>
 				<Switch>
+					<Route exact path="/resetPassword" component={ResetPassword} />
 					<Route exact path="/success" component={GoodPayment} />
 					<Route exact path="/canceled" component={BadPayment} />
 					<Route path="/" >
