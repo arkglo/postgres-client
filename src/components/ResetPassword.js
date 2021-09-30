@@ -15,7 +15,7 @@ const drop = cssTransition({
 function passwordError(message, runOnClose) {
 	let toastOptions = {
 		position: "top-center",
-		autoClose: 5000,
+		autoClose: 10000,
 		hideProgressBar: false,
 		closeOnClick: true,
 		pauseOnHover: true,
@@ -26,8 +26,8 @@ function passwordError(message, runOnClose) {
 	if( runOnClose !== undefined || runOnClose !== null || runOnClose !== "" ) {
 		toastOptions.onClose = runOnClose
 	}
-	message += ".  The token has now become INVALID you must request a new one."
-	toast.error( message, toastOptions );
+	const niceMessage = <div>{message}<br/><br/>The token has now become INVALID you must request a new one.</div>
+	toast.error( niceMessage, toastOptions );
 }
 
 
@@ -41,6 +41,7 @@ export default class ResetPassword extends Component {
 		this.sendReset = this.sendReset.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.returnToNormal = this.returnToNormal.bind(this);
+		this.returnToNormalButton = this.returnToNormalButton.bind(this);
 	}
 
 	getQueryVariable(variable) {
@@ -82,7 +83,7 @@ export default class ResetPassword extends Component {
 			if (config.debugLevel) console.log(response)
 			if (response.status !== 200) {
 				console.warn('Reset Request failed');
-				passwordError('Reset Request failed', this.returnToNormal(event));
+				passwordError('Reset Request failed', this.returnToNormal);
 			}
 			else {
 				console.log('Password Reset');
@@ -92,19 +93,22 @@ export default class ResetPassword extends Component {
 			var data = error?.response?.data ?? null
 			if (data) {
 				console.warn(`${data.function}() - ${data.message}`)
-				passwordError(data.message, this.returnToNormal(event));
+				passwordError(data.message, this.returnToNormal);
 			}
 			else {
 				console.log(error)
-				passwordError(error, this.returnToNormal(event));
+				passwordError(error, this.returnToNormal);
 			}
 		});
 	}
 
-	returnToNormal(event)  {
+	returnToNormalButton(event)  {
 		//Setup some initial data
 		event.preventDefault();  // IMPORTANT.
+		this.returnToNormal();
+	}
 
+	returnToNormal()  {
 		const currentLocation = window.location.toString();
 		var point = currentLocation.indexOf("/resetPassword")
 		if( point !== -1 )
@@ -144,7 +148,7 @@ export default class ResetPassword extends Component {
 																	</form>
 																	<p />
 																	<div className="btn-group">
-																		<button className="btn btn-warning" onClick={this.returnToNormal} >Cancel</button>
+																		<button className="btn btn-warning" onClick={this.returnToNormalButton} >Cancel</button>
 																	</div>
 																</div>
 
