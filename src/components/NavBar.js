@@ -31,7 +31,7 @@ export default class NavBar extends Component {
 
 	render() {
 		const userId = this.props?.user?.id ?? -1
-		const userLabel = (userId === -1) ? "" : `(accountId:${this.props.user.id})`
+		const userLabel = (userId === -1) ? "" : `(userId:${this.props.user.id})`
 		const accountLabel = (this.props.accountId === -1) ? "" : `(accountId:${this.props.accountId})`
 		const themeLabel = (this.props.themeId === -1) ? "" : `(themeId:${this.props.themeId})`
 		const myGiftsLabel = (this.props.myGiftsId === -1) ? "" : (this.props.myGiftsId !== null) ? `(myGiftsId:${this.props.myGiftsId})` : `(No myGifts)`
