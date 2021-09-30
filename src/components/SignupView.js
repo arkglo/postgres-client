@@ -200,7 +200,7 @@ export default class SignupView extends Component {
 						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTestUser} id="TestAccount-2" >Create 'Arthur Pendragon'</button></li>
 						<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateTestUser} id="TestAccount-3" >Create 'Lewis Hamilton'</button></li>
 						e.g.<br />
-						<code>POST {apiPath('POST', 'account')}<br />
+						<code>POST {apiPath('POST', 'account', null, false)}<br />
 							{"{"}<br />
 							··firstName: 'John',<br />
 							··lastName: 'Smith',<br />

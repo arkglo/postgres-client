@@ -129,7 +129,7 @@ export default class ResetPassword extends Component {
 
 	//------------------------------------------------------------
 	render() {
-		console.log("%cPayment - render()", 'color: blue')
+		console.log("%cResetPassword - render()", 'color: yellow')
 		let summaryHeader = <div>Your token is <strong>{this.getToken()}</strong><br/>For the email address <strong>{this.getEmail()}</strong><br/></div>
 		let resetPasswordSection = <div>
 																	<form className="form-inline">

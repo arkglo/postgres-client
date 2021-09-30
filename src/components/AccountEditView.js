@@ -58,7 +58,7 @@ export default class AccountEditView extends Component {
 	componentDidMount() {
 		console.log(`AccountEditView.componentDidMount(${this.props.accountId})`)
 
-		axios.get(apiPath('GET','account',this.props.accountId)).then((response) => {
+		axios.get(apiPath('GET', 'account', this.props.accountId)).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get account details.');
 			}
@@ -87,12 +87,12 @@ export default class AccountEditView extends Component {
 				addressCity: 'Wellington',
 				stripeRoute: '110000000',
 				stripeBankNumber: '000123456789',
-				dobObject: new Date( "1973-11-21" )
+				dobObject: new Date("1973-11-21")
 			})
-			this.setState({account: account})
+			this.setState({ account: account })
 			this.props.setThemeID(account.themeID)
 			this.props.setMyGiftsID(account.myGiftsID)
-			if(config.debugLevel > 1) console.log(account)
+			if (config.debugLevel > 1) console.log(account)
 		}).catch((error) => {
 			console.log(error)
 			Error.message(error.response)
@@ -109,7 +109,7 @@ export default class AccountEditView extends Component {
 	}
 
 	updateReq(req, key) {
-		if( (this.state.account == null || this.state[key] !== this.state.account[key]) && this.state[key].length > 0) {
+		if ((this.state.account == null || this.state[key] !== this.state.account[key]) && this.state[key].length > 0) {
 			req[key] = this.state[key]
 		}
 	}
@@ -142,12 +142,12 @@ export default class AccountEditView extends Component {
 		this.updateReq(req, 'websiteLink')
 		req.userID = this.state.userID
 
-		if(config.debugLevel > 1) {
+		if (config.debugLevel > 1) {
 			console.log('Call Account UPDATE')
 			console.log(req)
 		}
 
-		axios.put(apiPath('PUT','account', this.props.accountId), req).then((response) => {
+		axios.put(apiPath('PUT', 'account', this.props.accountId), req).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to update account.');
 			}
@@ -167,7 +167,7 @@ export default class AccountEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						axios.delete(apiPath('DELETE','account', this.props.accountId)).then((response) => {
+						axios.delete(apiPath('DELETE', 'account', this.props.accountId)).then((response) => {
 							if (response.status !== 200) {
 								return console.warn('Failed to remove account.');
 							}
@@ -191,7 +191,7 @@ export default class AccountEditView extends Component {
 		console.log("------------------- handleToggleStripe()")
 		this.setState(({ showStripe }) => ({ showStripe: !showStripe }));
 	}
- 
+
 	handleStripeAccount(event, accountID) {
 		event.preventDefault();
 		console.log("------------------- handleStripeAccount()")
@@ -202,10 +202,10 @@ export default class AccountEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						if( this.state.stripeBankHolderFirstName !== "" &&	this.state.stripeBankHolderLastName !== "" &&	this.state.dob !== "" &&	
-								this.state.addressLine1 !== "" &&	this.state.addressPostCode !== "" &&	this.state.addressCity !== "" &&	
-								this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" ) {
-							axios.post(apiPath('POST','/accounts/stripe', this.props.accountId), {
+						if (this.state.stripeBankHolderFirstName !== "" && this.state.stripeBankHolderLastName !== "" && this.state.dob !== "" &&
+							this.state.addressLine1 !== "" && this.state.addressPostCode !== "" && this.state.addressCity !== "" &&
+							this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "") {
+							axios.post(apiPath('POST', '/accounts/stripe', this.props.accountId), {
 								country: "US",
 								currency: "usd",
 								firstName: this.state.stripeBankHolderFirstName,
@@ -246,12 +246,12 @@ export default class AccountEditView extends Component {
 				{
 					label: "Yes",
 					onClick: () => {
-						if( this.state.stripeBankHolderFirstName !== "" &&	this.state.stripeBankHolderLastName !== "" &&	this.state.dob !== "" &&	
-								this.state.addressLine1 !== "" &&	this.state.addressPostCode !== "" &&	this.state.addressCity !== "" &&	
-								this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "" ) {
+						if (this.state.stripeBankHolderFirstName !== "" && this.state.stripeBankHolderLastName !== "" && this.state.dob !== "" &&
+							this.state.addressLine1 !== "" && this.state.addressPostCode !== "" && this.state.addressCity !== "" &&
+							this.state.stripeRoute !== "" && this.state.stripeBankNumber !== "") {
 							// country: "NZ",
 							// currency: "nzd",
-							axios.put(apiPath('PUT','/accounts/stripe', this.props.accountId), {
+							axios.put(apiPath('PUT', '/accounts/stripe', this.props.accountId), {
 								country: "US",
 								currency: "usd",
 								firstName: this.state.stripeBankHolderFirstName,
@@ -282,85 +282,87 @@ export default class AccountEditView extends Component {
 		});
 	}
 	handleDateChange(newDate) {
-		const dobString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'}).format(newDate)
-		this.setState({ dob: dobString, dobObject: newDate});
+		const dobString = newDate === null ? '' : new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(newDate)
+		this.setState({ dob: dobString, dobObject: newDate });
 	}
 
 	render() {
-		const stripeText = this.state.showStripe ? "Hide Stripe Account" :	"Show Stripe Account";
-		const stripeFields = this.state.showStripe ? <div className="panel-body">
-
-		<div><span style={{'color':'darkmagenta', 'fontSize': 'x-large'}}><b>Bank Account Details</b></span></div>
-		<form className="form">
-
-			<div style={{display: 'flex'}}>
-				<div className="form-group" style={{ 'marginRight': '15px'}} >
-					<label>Account Holder's First Name</label>
-					<input className="form-control" type="text" name="stripeBankHolderFirstName" value={this.state.stripeBankHolderFirstName} onChange={this.handleChange} />
+		const stripeText = this.state.showStripe ? "Hide Stripe Account" : "Show Stripe Account";
+		const stripeFields = this.state.showStripe ? (
+			<div className="panel-body">
+				<div>
+					<span style={{ 'color': 'darkmagenta', 'fontSize': 'x-large' }}><b>Bank Account Details</b></span><br />
+					Required to setup a Stripe account, <b><i>Not Stored in Database</i></b><p />
 				</div>
+				<form className="form">
 
-				<div className="form-group" style={{ 'marginRight': '15px'}} >
-					<label>Account Holder's Last Name</label>
-					<input className="form-control" type="text" name="stripeBankHolderLastName" value={this.state.stripeBankHolderLastName} onChange={this.handleChange} />
-				</div>
+					<div style={{ display: 'flex' }}>
+						<div className="form-group" style={{ 'marginRight': '15px' }} >
+							<label>Account Holder's First Name</label>
+							<input className="form-control" type="text" name="stripeBankHolderFirstName" value={this.state.stripeBankHolderFirstName} onChange={this.handleChange} />
+						</div>
 
-				<div className="form-group">
-					<label>Date of Birth</label>
-					<DatePicker
-						dateFormat="dd/MM/yyyy"
-						selected={this.state.dobObject}
-						onSelect={this.handleDateChange} //when day is clicked
-						onChange={this.handleDateChange} //only when value has changed
-					/>
+						<div className="form-group" style={{ 'marginRight': '15px' }} >
+							<label>Account Holder's Last Name</label>
+							<input className="form-control" type="text" name="stripeBankHolderLastName" value={this.state.stripeBankHolderLastName} onChange={this.handleChange} />
+						</div>
+
+						<div className="form-group">
+							<label>Date of Birth</label>
+							<DatePicker
+								dateFormat="dd/MM/yyyy"
+								selected={this.state.dobObject}
+								onSelect={this.handleDateChange} //when day is clicked
+								onChange={this.handleDateChange} //only when value has changed
+							/>
+						</div>
+					</div>
+
+					<div className="form-group">
+						<label>Address Line 1</label>
+						<input className="form-control" type="text" name="addressLine1" value={this.state.addressLine1} onChange={this.handleChange} />
+					</div>
+
+					<div style={{ display: 'flex' }}>
+						<div className="form-group">
+							<label>Address Postal Code</label>
+							<input style={{ width: 'unset' }} className="form-control" type="text" name="addressPostCode" value={this.state.addressPostCode} onChange={this.handleChange} />
+						</div>
+
+						<div style={{ 'marginLeft': '15px', 'width': '100%' }} className="form-group">
+							<label>Address City</label>
+							<input className="form-control" type="text" name="addressCity" value={this.state.addressCity} onChange={this.handleChange} />
+						</div>
+					</div>
+
+					<div style={{ display: 'flex' }}>
+						<div className="form-group">
+							<label>Routing Number</label>
+							<input style={{ width: 'unset' }} className="form-control" type="text" name="stripeRoute" value={this.state.stripeRoute} onChange={this.handleChange} />
+						</div>
+
+						<div style={{ 'marginLeft': '15px', 'width': '100%' }} className="form-group">
+							<label>Bank Account Number</label>
+							<input className="form-control" type="text" name="stripeBankNumber" value={this.state.stripeBankNumber} onChange={this.handleChange} />
+						</div>
+					</div>
+
+				</form>
+				<div className="btn-group">
+					<button className="btn btn-primary" onClick={this.handleStripeAccount} >Create Stripe Account</button>
+					<button className="btn btn-primary" onClick={this.handleStripeUpdateAccount} >Update Stripe Account</button>
 				</div>
 			</div>
+		) : <div></div>;
 
-			<div className="form-group">
-				<label>Address Line 1</label>
-				<input className="form-control" type="text" name="addressLine1" value={this.state.addressLine1} onChange={this.handleChange} />
-			</div>
-
-			<div style={{display: 'flex'}}>
-				<div className="form-group">
-					<label>Address Postal Code</label>
-					<input style={{ width: 'unset' }} className="form-control" type="text" name="addressPostCode" value={this.state.addressPostCode} onChange={this.handleChange} />
-				</div>
-
-				<div style={{ 'marginLeft': '15px', 'width': '100%'}} className="form-group">
-					<label>Address City</label>
-					<input className="form-control" type="text" name="addressCity" value={this.state.addressCity} onChange={this.handleChange} />
-				</div>
-			</div>
-
-			<div style={{display: 'flex'}}>
-				<div className="form-group">
-					<label>Routing Number</label>
-					<input style={{ width: 'unset' }} className="form-control" type="text" name="stripeRoute" value={this.state.stripeRoute} onChange={this.handleChange} />
-				</div>
-
-				<div style={{ 'marginLeft': '15px', 'width': '100%'}} className="form-group">
-					<label>Bank Account Number</label>
-					<input className="form-control" type="text" name="stripeBankNumber" value={this.state.stripeBankNumber} onChange={this.handleChange} />
-				</div>
-			</div>
-
-		</form>
-		<div className="btn-group">
-				<button className="btn btn-primary" onClick={this.handleStripeAccount} >Create Stripe Account</button>
-			</div>
-			<div className="btn-group">
-				<button className="btn btn-primary" onClick={this.handleStripeUpdateAccount} >Update Stripe Account</button>
-			</div>
-	</div>: <div></div>;
-
-	//state Drop down
-	const dropDownOptions = ['intial', 'ready', 'live', 'complete', 'closed']
-	const defaultOption = dropDownOptions[0]
+		//state Drop down
+		const dropDownOptions = ['intial', 'ready', 'live', 'complete', 'closed']
+		const defaultOption = dropDownOptions[0]
 
 		return (
 			<div className="panel panel-default">
-				<div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br/>
-				<div className={styles.blue}>The Account View provides the Account Entry Fields<br/>Note: <i>these are combined with the User fields</i></div><p/>
+				<div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br />
+					<div className={styles.blue}>The Account View provides the Account Entry Fields<br />Note: <i>these are combined with the User fields</i></div><p />
 					<code>GET {apiPath('GET', 'account', this.props.accountId)}</code></div>
 				<div className="panel-body">
 
@@ -374,7 +376,7 @@ export default class AccountEditView extends Component {
 						<div className="form-group">
 							<div title={'state: [ ' + dropDownOptions.toString() + ' ]'}>
 								<label>State</label>
-								<Dropdown options={dropDownOptions} onChange={(e) => this.setState({state:e.value})} value={defaultOption} placeholder="Select an option" />
+								<Dropdown options={dropDownOptions} onChange={(e) => this.setState({ state: e.value })} value={defaultOption} placeholder="Select an option" />
 							</div>
 						</div>
 
@@ -389,7 +391,7 @@ export default class AccountEditView extends Component {
 							<input className="form-control" type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
 						</div>
 
-						<div style={{ 'width': '100%'}} className="form-group">
+						<div style={{ 'width': '100%' }} className="form-group">
 							<label>Email</label> (User field)
 							<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
 						</div>
@@ -406,13 +408,10 @@ export default class AccountEditView extends Component {
 
 						<div className="btn-group">
 							<button className="btn btn-primary" onClick={this.handleSubmit} >Update</button>
-						</div>
-						<div className="btn-group">
 							<button className="btn btn-danger" onClick={this.handleRemove} >Remove</button>
-						</div>
-						<div className="btn-group">
 							<button className="btn btn-warning" onClick={this.handleToggleStripe} >{stripeText}</button>
-						</div>
+						</div><br />
+						UPDATE: <code>PUT {apiPath('PUT', 'account', this.props.accountId, false)}</code>
 					</form>
 				</div>
 				<div>

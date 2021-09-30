@@ -273,7 +273,7 @@ const LoginView = (props) => {
 	// OneMount
 	useEffect(() => {
 		console.log('*** LoginView MOUNT ***')
-		console.log(props)
+		//console.log(props)
 	}, [props])
 
 	//per Render

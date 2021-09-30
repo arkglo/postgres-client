@@ -292,7 +292,7 @@ export default class MyGiftsView extends Component {
 
 		switch (divType) {
 			case "checkbox":
-				typeField = <input style={{ width: '34px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
+				typeField = <input style={{ width: '25px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
 				break
 			case "text":
 				typeField = <input className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
@@ -322,17 +322,20 @@ export default class MyGiftsView extends Component {
 	render() {
 		console.log(`%cMyGiftsView - render(myGiftsId ${this.props.myGiftsId})`, 'color: yellow')
 
-		var buttons
+		var buttons, helpText
 		if (this.props.myGiftsId == null) {
 			buttons = <div className="btn-group">
 				<button className="btn btn-success" onClick={this.handleCreate} >Create</button>
 			</div>
+			helpText = <div><br />CREATE: <code>POST {apiPath('POST', 'myGifts', null, false)}</code></div>
 		}
 		else {
 			buttons = <div className="btn-group">
 				<button className="btn btn-primary" onClick={this.handleSubmit} >Update</button>
 				<button className="btn btn-danger" onClick={this.handleRemove} >Remove</button>
 			</div>
+			helpText = <div><br />UPDATE: <code>PUT {apiPath('PUT', 'myGifts', this.props.myGiftsId, false)}</code></div>
+
 		}
 
 		const h1Overide = {
@@ -367,6 +370,7 @@ export default class MyGiftsView extends Component {
 							{this.addDiv("text", "imageUrl")}
 
 							{buttons}
+							{helpText}
 						</form>
 					</div>
 					<div className="panel-body"  style={{border:'1px solid #6c757d', borderRadius: '20px', margin:'10px 50px'}}>
