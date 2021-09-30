@@ -407,7 +407,7 @@ export default class GiftsView extends Component {
 		})
 	}// handleRemoveGDS
 
-	
+
 	createQuickGift(gift) {
 		console.log('createQuickGift');
 		console.log(gift)
@@ -512,7 +512,7 @@ export default class GiftsView extends Component {
 
 		switch (divType) {
 			case "checkbox":
-				typeField = <input style={{ width: '34px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
+				typeField = <input style={{ width: '25px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
 				break
 			case "text":
 				typeField = <input style={{ width: '92%', display: 'inline-block' }} className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
@@ -596,6 +596,11 @@ export default class GiftsView extends Component {
 			<button className="btn btn-success" onClick={this.handleCreateGDS} disabled={!this.state.createDS}>Create</button>
 			<button className="btn btn-primary" onClick={this.handleSubmitGDS} disabled={!allowToUpdate || this.state.createDS}>Update</button>
 			<button className="btn btn-danger" onClick={this.handleRemoveGDS} disabled={!allowToUpdate}>Remove</button>
+		</div>
+
+		var helpText = <div><br />
+			CREATE: <code>POST {apiPath('POST', 'giftDS', null, false)}</code><br />
+			UPDATE: <code>PUT {apiPath('PUT', 'giftDS', gift?.giftDataStore?.id ?? '<giftDataStore ID>', false)}</code>
 		</div>
 
 		// backgroundColor: this.state.colour2,
@@ -701,6 +706,18 @@ export default class GiftsView extends Component {
 		}
 
 		// Allows creation of pre-configured gifts
+		const helpCreateText = this.state?.publicGifts?.length ? "" : <div>e.g.<br />
+			<code>POST {apiPath('POST', 'giftDS', null, false)}<br />
+				{"{"}<br />
+				··access: 'public',<br />
+				··type: 'item',<br />
+				··title: 'Holiday',<br />
+				··image: 'https://picsum.photos/id/46/400/300',<br />
+				··message: 'Honeymoon Get-away in the dunes',<br />
+				··price: 7850,<br />
+				··from: 'Saharan Holidays'<br />
+				{"}"}</code><p /></div>
+
 		let createGifts = (
 			<div className="panel panel-default">
 				<h4 className="panel-heading">PreConfigured Test data</h4>
@@ -711,6 +728,7 @@ export default class GiftsView extends Component {
 					{this.publicGiftCreate('Holiday')}
 					{this.publicGiftCreate('TestTitle')}
 				</div>
+				{helpCreateText}
 			</div>
 		)
 
@@ -751,7 +769,7 @@ export default class GiftsView extends Component {
 							{this.addDiv("text", "image", allowToUpdate)}
 							{this.addDiv("text", "price", allowToUpdate)}
 							{giftDSButtons}
-
+							{helpText}
 						</form>
 					</div>
 					{giftView}

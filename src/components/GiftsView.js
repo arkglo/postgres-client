@@ -431,7 +431,7 @@ export default class GiftsView extends Component {
 
 		switch (divType) {
 			case "checkbox":
-				typeField = <input style={{ width: '34px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
+				typeField = <input style={{ width: '25px' }} className="form-control" type={divType} name={field} checked={thisValue} onChange={this.handleChange} />
 				break
 			case "text":
 				typeField = <input style={{ width: '92%', display: 'inline-block' }} className="form-control" type={divType} name={field} value={thisValue} disabled={disabledState} placeholder={placeHolder} onChange={this.handleChange} />
@@ -484,15 +484,22 @@ export default class GiftsView extends Component {
 		var giftButtons
 		console.log(gift)
 		if (gift?.id !== -1) {
-			giftButtons = <div className="btn-group">
-				<button className="btn btn-primary" onClick={this.handleSubmit}>Update</button>
-				<button className="btn btn-danger" onClick={this.handleRemove}>Remove</button>
-			</div>
+			giftButtons = <div>
+					<div className="btn-group">
+						<button className="btn btn-primary" onClick={this.handleSubmit}>Update</button>
+						<button className="btn btn-danger" onClick={this.handleRemove}>Remove</button><br />
+					</div><br />
+					UPDATE: <code>PUT {apiPath('PUT', 'gifts', this.state.gift?.id ?? '<gift ID>', false)}</code><br />
+					DELETE: <code>DELETE {apiPath('POST', 'gifts', this.state.gift?.id ?? '<gift ID>', false)}</code><br />
+				</div>
 		}
 		else {
-			giftButtons = <div className="btn-group">
-				<button className="btn btn-success" onClick={this.handleCreate} title='Add the chosen gift to the account'>Create</button>
-			</div>
+			giftButtons = <div>
+					<div className="btn-group">
+						<button className="btn btn-success" onClick={this.handleCreate} title='Add the chosen gift to the account'>Create</button><br />
+					</div><br />
+					CREATE: <code>POST {apiPath('POST', 'gifts', null, false)}</code>
+				</div>
 		}
 
 		// backgroundColor: this.state.colour2,

@@ -554,6 +554,21 @@ export default class ThemeEditView extends Component {
 
 	renderCreateThemes() {
 		//Create theme (admin only)
+		console.log(this.state?.allThemes?.length)
+		const helpText = this.state?.allThemes?.length ? "" : <div>e.g.<br />
+			<code>POST {apiPath('POST', 'theme', null, false)}<br />
+				{"{"}<br />
+				··accountID: {this.props.accountId},<br />
+				··colour1: "#0c3197",<br />
+				··colour2: "#D4B256",<br />
+				··font: "Helvetica",<br />
+				··heroImageUrl: "https://picsum.photos/800/300",<br />
+				··secondImageUrl: "https://picsum.photos/300/300",<br />
+				··names: "TestTheme-1",<br />
+				··byLine: "TestByLine",<br />
+				··message: "TestMessage"<br />
+				{"}"}</code><p /></div>
+
 		if (this.props.admin) {
 			return (
 				<div className="panel panel-default">
@@ -564,6 +579,7 @@ export default class ThemeEditView extends Component {
 						{this.createThemeButton('TestTheme-2')}
 						{this.createThemeButton('TestTheme-3')}
 					</div>
+					{helpText}
 				</div>
 			)
 		}
@@ -574,16 +590,18 @@ export default class ThemeEditView extends Component {
 	render() {
 		console.log(`%cThemeEditView - render(themeId ${this.props.themeId})`, 'color: yellow')
 
-		var buttons
+		var buttons, helpText
 		if (this.props.themeId === null || this.props.themeId === -1) {
 			buttons = <div className="btn-group">
 				<button className="btn btn-success" onClick={this.handleCreate} >Create</button>
 			</div>
+			helpText = <div><br />CREATE: <code>POST {apiPath('POST', 'theme', null, false)}</code></div>
 		}
 		else {
 			buttons = <div className="btn-group">
 				<button className="btn btn-primary" onClick={this.handleSubmit} >Update</button>
 			</div>
+			helpText = <div><br />UPDATE: <code>PUT {apiPath('PUT', 'theme', this.props.themeId, false)}</code></div>
 		}
 
 		const themePreview = this.renderPreview()
@@ -662,6 +680,7 @@ export default class ThemeEditView extends Component {
 							<div className="btn-group">
 								<button className="btn btn-danger" onClick={this.handleRemove} >Remove</button>
 							</div>
+							{helpText}
 						</form>
 					</div>
 				</div>

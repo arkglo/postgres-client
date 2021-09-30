@@ -182,7 +182,7 @@ export default class UserEditView extends Component {
 
 						<div className="form-group">
 							<label>Admin</label>
-							<input style={{ width: '34px' }} className="form-control" type="checkbox" name="role" checked={thisAdmin} onChange={this.handleChange} /><br/>
+							<input style={{ width: '25px' }} className="form-control" type="checkbox" name="role" checked={thisAdmin} onChange={this.handleChange} /><br/>
 						</div>
 
 						<div className="btn-group">
