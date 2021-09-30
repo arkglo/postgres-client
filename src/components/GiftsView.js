@@ -485,21 +485,21 @@ export default class GiftsView extends Component {
 		console.log(gift)
 		if (gift?.id !== -1) {
 			giftButtons = <div>
-					<div className="btn-group">
-						<button className="btn btn-primary" onClick={this.handleSubmit}>Update</button>
-						<button className="btn btn-danger" onClick={this.handleRemove}>Remove</button><br />
-					</div><br />
-					UPDATE: <code>PUT {apiPath('PUT', 'gifts', this.state.gift?.id ?? '<gift ID>', false)}</code><br />
-					DELETE: <code>DELETE {apiPath('POST', 'gifts', this.state.gift?.id ?? '<gift ID>', false)}</code><br />
-				</div>
+				<div className="btn-group">
+					<button className="btn btn-primary" onClick={this.handleSubmit}>Update</button>
+					<button className="btn btn-danger" onClick={this.handleRemove}>Remove</button><br />
+				</div><br />
+				UPDATE: <code>PUT {apiPath('PUT', 'gifts', this.state.gift?.id ?? '<gift ID>', false)}</code><br />
+				DELETE: <code>DELETE {apiPath('POST', 'gifts', this.state.gift?.id ?? '<gift ID>', false)}</code><br />
+			</div>
 		}
 		else {
 			giftButtons = <div>
-					<div className="btn-group">
-						<button className="btn btn-success" onClick={this.handleCreate} title='Add the chosen gift to the account'>Create</button><br />
-					</div><br />
-					CREATE: <code>POST {apiPath('POST', 'gifts', null, false)}</code>
-				</div>
+				<div className="btn-group">
+					<button className="btn btn-success" onClick={this.handleCreate} title='Add the chosen gift to the account'>Create</button><br />
+				</div><br />
+				CREATE: <code>POST {apiPath('POST', 'gifts', null, false)}</code>
+			</div>
 		}
 
 		// backgroundColor: this.state.colour2,
@@ -510,14 +510,14 @@ export default class GiftsView extends Component {
 		}
 		const h1Overide = {
 			...font,
-			fontSize: '1.2em',
+			fontSize: '2em',
 			textAlign: 'left',
 			fontWeight: 'bold'
 		}
 
 		const h2Overide = {
 			...font,
-			fontSize: '0.9em',
+			fontSize: '1.5em',
 			textAlign: 'left',
 			fontWeight: 'lighter',
 			fontStyle: 'italic',
@@ -526,19 +526,19 @@ export default class GiftsView extends Component {
 		const styleGroup = {
 			...font,
 			filter: 'brightness(150%)',
-			fontSize: '0.8em',
+			fontSize: '1.2em',
 			textAlign: 'left',
 			fontWeight: 'lighter',
 		}
 
 		const stylePrice = {
 			...font,
-			fontSize: '1em',
+			fontSize: '1.5em',
 		}
 
 		const messageOveride = {
 			...font,
-			fontSize: '1em',
+			fontSize: '1.5em',
 			width: '100%',
 		}
 
@@ -580,10 +580,12 @@ export default class GiftsView extends Component {
 				pbar = <ProgressBar style={{ height: '10px', marginBottom: 'unset' }} animated={true} now={gift.paid / gift.giftDataStore.price * 100} />
 				ctext = <div style={styleGroup}>Group Gift: ${gift.paid.toFixed()} gifted</div>
 			}
-
+			let imageBorder = '1px solid ' + this.state.colour1
+			// style={{ backgroundColor: this.state.colour2 }}
 			giftView = <div>
-				<h4 className='text-primary'> Gift Preview:</h4><div className="panel-body" style={{ margin: 'auto', width: '33%', border: '1px solid #6c757d', borderRadius: '20px' }}>
-					<img style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'contain', display: 'block', margin: 'auto' }} src={this.state?.gift?.giftDataStore?.image} alt='Gifts URL' />
+				<h4 className='text-primary'> Gift Preview:</h4>
+				<div className="panel-body" style={{ margin: 'auto', width: '33%', border: '1px solid #6c757d', borderRadius: '20px', backgroundColor: this.state.colour2 }}>
+					<img style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'contain', display: 'block', margin: 'auto', border: imageBorder }} src={this.state?.gift?.giftDataStore?.image} alt='Gifts URL' />
 					<table style={{ width: '100%' }}>
 						<tbody>
 							<tr>

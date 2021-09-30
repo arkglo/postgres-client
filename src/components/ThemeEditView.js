@@ -660,8 +660,19 @@ export default class ThemeEditView extends Component {
 					<div className="panel-body">
 
 						<form className="form">
-							{this.addDiv("color", "colour1")}
-							{this.addDiv("color", "colour2")}
+							<table style={{ width: '60%' }}>
+								<tbody>
+									<tr>
+										<td title='Colour1' style={{ width: '30%' }}>
+											{this.addDiv("color", "colour1")}
+										</td>
+										<td title='Colour2' style={{ width: '30%' }}>
+											{this.addDiv("color", "colour2")}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
 							{this.addDiv("text", "font")}
 							{this.addDiv("text", "heroImageUrl")}
 							{this.addDiv("text", "secondImageUrl")}
@@ -669,12 +680,22 @@ export default class ThemeEditView extends Component {
 							{this.addDiv("text", "byLine")}
 							{this.addDiv("text", "message")}
 
-							{this.addDiv("checkbox", "ceremonyEnabled")}
-							{cMessage}
-							{cDateTime}
-							{this.addDiv("checkbox", "receptionEnabled")}
-							{rMessage}
-							{rDateTime}
+							<table style={{ width: '80%' }}>
+								<tbody>
+									<tr>
+										<td title='Ceremony' style={{ width: '50%', verticalAlign: 'top' }}>
+											{this.addDiv("checkbox", "ceremonyEnabled")}
+											{cMessage}
+											{cDateTime}
+										</td>
+										<td title='Ceremony' style={{ width: '50%', verticalAlign: 'top', paddingLeft: '10px' }}>
+											{this.addDiv("checkbox", "receptionEnabled")}
+											{rMessage}
+											{rDateTime}
+										</td>
+									</tr>
+								</tbody>
+							</table>
 
 							{buttons}
 							<div className="btn-group">
