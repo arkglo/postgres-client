@@ -133,6 +133,12 @@ export default class NavBar extends Component {
 						active={vt === 'Payment'}>
 						Payment
 					</Button>
+					<Button type="button" name="message_edit"
+						//className="btn btn-default navbar-btn"
+						onClick={this.props.showMessage}
+						active={vt === 'Message'}>
+						Message
+					</Button>
 					{adminButton}
 
 					<Button type="button" name="help"
