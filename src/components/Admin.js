@@ -34,16 +34,6 @@ export default class Admin extends Component {
 		this.handleSchema = this.handleSchema.bind(this)
 	}
 
-	showError = (err) => {
-		console.warn('Error:')
-		console.log(err ?? 'no response')
-		const message = <>
-			<strong>{err.status ?? '404'}</strong> {err.function ?? 'Error'}<br />
-			<small>{err.message}</small>
-		</>
-		this.props.toastThis(message, 'error', false)
-	}
-
 	componentDidMount() {
 		console.log("Admin.componentDidMount()")
 		// this.getServices()
@@ -180,7 +170,7 @@ export default class Admin extends Component {
 						status: response.status,
 						data: data ?? null,
 					})
-					this.showError({
+					this.props.showError({
 						status: response.status,
 						function: response.data.function ?? null,
 						message: response.data.message ?? null
@@ -199,7 +189,7 @@ export default class Admin extends Component {
 				this.setState({
 					data: null,
 				})
-				this.showError({
+				this.props.showError({
 					status: error.response?.status ?? -1,
 					function: error.response?.data?.function ?? null,
 					message: error.response?.data?.message ?? null
@@ -212,7 +202,7 @@ export default class Admin extends Component {
 			axios.delete(apiPath('GET', this.state.endpoint, extra)).then((response) => {
 				console.log('API STATUS: ' + response.status)
 				if (response.status !== 200) {
-					this.showError({
+					this.props.showError({
 						status: response.status,
 						function: response.data.function ?? null,
 						message: response.data.message ?? null
@@ -230,7 +220,7 @@ export default class Admin extends Component {
 				this.setState({
 					data: null
 				})
-				this.showError({
+				this.props.showError({
 					status: error.response.status,
 					function: error.response.data.function ?? null,
 					message: error.response.data.message ?? null

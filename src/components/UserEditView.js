@@ -18,6 +18,7 @@ export default class UserEditView extends Component {
 			password: '',
 			password2: '',
 			role: '',
+			user: this.props.user,
 			dobObject: null
 		};
 
@@ -30,14 +31,17 @@ export default class UserEditView extends Component {
 
 	componentDidMount(){
 		console.log("UserEditView.componentDidMount()")
+		this.getUserDetails()
+	}
 
+	getUserDetails() {
 		axios.get(apiPath('GET','user', this.props.user.id)).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get user details.');
 			}
 			const user = response.data.data
 			console.log(user)
-
+			
 			this.setState({
 				email: user.email,
 				firstName: user.firstName,
@@ -78,27 +82,37 @@ export default class UserEditView extends Component {
 			req.password = this.state.password;
 		}
 
-		if(this.state.email !== this.props.user.email && this.state.email.length > 0) { 
+		if(this.state.email !== this.state.user.email && this.state.email.length > 0) { 
 			req.email = this.state.email
 		}
-		if(this.state.firstName !== this.props.user.firstName && this.state.firstName.length > 0) { 
+		if(this.state.firstName !== this.state.user.firstName && this.state.firstName.length > 0) { 
 			req.firstName = this.state.firstName
 		}
-		if(this.state.lastName !== this.props.user.lastName && this.state.lastName.length > 0) { 
+		if(this.state.lastName !== this.state.user.lastName && this.state.lastName.length > 0) { 
 			req.lastName = this.state.lastName
 		}
-		if(this.state.role !== this.props.user.role && this.state.role.length > 0) { 
+		if(this.state.role !== this.state.user.role && this.state.role.length > 0) { 
 			req.role = this.state.role
 		}
 
 		axios.put(apiPath('PUT','user', this.props.user.id), req).then((response) => {
 			if (response.status !== 200) {
-				return console.warn('Failed to update user.');
+				return console.warn('Failed to update user.')
 			}
-			console.log('Updated user details!');
+			console.log('Updated user details!')
+			this.props.toastThis(<div>Updated user details</div>, 'success', 1000)
+			this.setState({user: {...this.state.user, ...req}}) // update original structure, so if we change anything else it will be caught
+			console.log('state.user updated')
+			this.getUserDetails()
 		}).catch((error) => {
+			this.props.showError({
+				status: error.response.status ?? 404,
+				function: error.response.data.function ?? null,
+				message: error.response.data.message ?? null,
+				timeout: 2000,
+			})
 			Error.message(error.response)
-		});
+		})
 	}
 
 	handleRemove(event, userID) {
@@ -131,6 +145,7 @@ export default class UserEditView extends Component {
 	}
 
 	render() {
+		console.log(`%cApp - render('UserEditView: ${this.props?.user?.id}')`, 'color: yellow')
 		const thisAdmin = this.state.role === "admin"
 
 		return (
@@ -175,7 +190,8 @@ export default class UserEditView extends Component {
 						</div>
 						<div className="btn-group">
 							<button className="btn btn-danger" onClick={ this.handleRemove } >Remove</button>
-						</div>
+						</div><br />
+						<code>PUT {apiPath('PUT', 'user', null, false)}</code>
 					</form>
 				</div>
 			</div>
