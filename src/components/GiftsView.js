@@ -310,7 +310,6 @@ export default class GiftsView extends Component {
 		req.accountID = this.props.accountId
 		req.status = gift.status
 		req.giftID = gift.giftDataStore.id
-		debugger
 		if( gift.paid ) {
 			let tmp = parseFloat(gift.paid)
 			if( tmp !== req.paid ) {
@@ -416,6 +415,7 @@ export default class GiftsView extends Component {
 							}
 							console.log(`Successfully deleted Gift(${id})`)
 							this.refreshContent()
+							this.selectGift(null)
 						}).catch((error) => {
 							Error.message(error.response)
 						})

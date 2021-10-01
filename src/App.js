@@ -37,7 +37,6 @@ axios.defaults.withCredentials = true;
 // console.log("APP")
 export const PrivateRoute = ({ component: Component, ...rest }) => (
 	<Route {...rest}
-		debugger
 		render={props =>
 			localStorage.getItem("authToken") ? (
 				<Component {...props} />
@@ -299,6 +298,7 @@ class App extends Component {
 				accountId={this.state.accountId}
 				setThemeID={this.setThemeID}
 				setMyGiftsID={this.setMyGiftsID}
+				toastThis={this.toastThis}
 				handleLogout={this.handleLogout}
 			/>),
 			viewType: 'AccountEditView',
@@ -317,6 +317,7 @@ class App extends Component {
 				themeId={this.state.themeId}
 				updateToThisThemeId={this.updateToThisThemeId}
 				setThemeID={this.setThemeID}
+				toastThis={this.toastThis}
 				admin={this.state.admin}
 			/>),
 			viewType: 'ThemeEditView',
@@ -336,6 +337,7 @@ class App extends Component {
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
 				setMyGiftsID={this.setMyGiftsID}
+				toastThis={this.toastThis}
 				admin={this.state.admin}
 			/>),
 			viewType: 'MyGiftsView',
@@ -353,6 +355,7 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
+				toastThis={this.toastThis}
 				admin={this.state.admin}
 			/>),
 			viewType: 'GiftsView',
@@ -371,6 +374,7 @@ class App extends Component {
 				accountId={this.state.accountId}
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
+				toastThis={this.toastThis}
 				admin={this.state.admin}
 			/>),
 			viewType: 'GiftsAvailable',
@@ -384,16 +388,18 @@ class App extends Component {
 			setAccountId={this.setAccountId}
 			user={this.state.user}
 			showError={this.showError}
-			toastThis={this.toastThis}
 			authenticated={this.state.authenticated}
 			viewType={this.state.viewType}
+			toastThis={this.toastThis}
 			admin={this.state.admin}
 		/>)
 	}
 
 	showServices() {
 		this.setState({
-			mainView: <Services />,
+			mainView: <Services 
+			toastThis={this.toastThis}
+			/>,
 			viewType: 'Services',
 		})
 	}

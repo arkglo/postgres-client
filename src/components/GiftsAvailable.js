@@ -450,8 +450,12 @@ export default class GiftsView extends Component {
 							}
 							console.log(`Successfully deleted Gift(${id})`)
 							this.refreshContent()
+							this.handleNewGDS(event)
 						}).catch((error) => {
 							Error.message(error.response)
+							const thisMessage = error.response?.data?.message ? error.response.data.message : "ERROR"
+							const message = <div>{thisMessage}</div>
+							this.props.toastThis(message, 'error', 3000)
 						})
 					}
 				},
