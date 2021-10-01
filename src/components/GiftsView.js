@@ -575,7 +575,7 @@ export default class GiftsView extends Component {
 		let giftsCount = 'No Gifts'
 		if (gifts) {
 			renderGiftsData = gifts.map((data, idx) =>
-				<li key={idx}><Button style={darkerButton} variant='secondary' onClick={this.setGiftid.bind(this, data.id)}> {data.giftDataStore.title}</Button> - [{data.id}]:{data.access}</li>
+				<li key={idx}><Button style={darkerButton} variant='secondary' onClick={this.setGiftid.bind(this, data.id)}> {data.giftDataStore.title}</Button> - [{data.id}]:{data.giftDataStore.access}</li>
 			)
 			giftsCount = <><b>{gifts.length}</b> gifts</>
 		}

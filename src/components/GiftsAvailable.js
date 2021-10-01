@@ -324,7 +324,7 @@ export default class GiftsView extends Component {
 				if( tmp !== req.price ) {
 					req.giftDataStore.price = tmp;
 					let giftState = this.state.gift
-					giftState.giftDatStore.price = tmp
+					giftState.giftDataStore.price = tmp
 					this.setState({
 						gift : giftState
 					})
@@ -385,7 +385,7 @@ export default class GiftsView extends Component {
 		event.preventDefault();  // IMPORTANT.
 		console.log("------------------- handleSubmitGDS()")
 
-		if (!this.state?.gift?.giftDatStore?.id == null) {
+		if (!this.state?.gift?.giftDataStore?.id == null) {
 			console.log("No GiftDatStore Entry to Update")
 			return
 		}
@@ -431,7 +431,7 @@ export default class GiftsView extends Component {
 		event.preventDefault();
 		console.log("------------------- handleRemoveGDS()")
 
-		if (!this.state?.gift?.giftDatStore?.id) {
+		if (!this.state?.gift?.giftDataStore?.id) {
 			console.log("No GiftDataStore Entry to Delete")
 			return
 		}
