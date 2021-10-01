@@ -45,7 +45,8 @@ export default class GiftsView extends Component {
 
 		this.handleDropDownClick = this.handleDropDownClick.bind(this)
 
-		this.handleCreateGift = this.handleCreateGift.bind(this)
+		this.handleCreatePublicGift = this.handleCreatePublicGift.bind(this)
+		this.handleCreatePrivateGift = this.handleCreatePrivateGift.bind(this)
 	}
 
 	componentDidMount() {
@@ -177,7 +178,7 @@ export default class GiftsView extends Component {
 				gift.giftDataStore[name] = value
 				break
 			case 'price':
-				gift.giftDataStore[name] = (typeof (value) === 'string') ? parseInt(value) : value
+				gift.giftDataStore[name] = /*(typeof (value) === 'string') ? parseFloat(value) :*/ value
 				break
 			default:
 				gift[name] = value
@@ -210,7 +211,7 @@ export default class GiftsView extends Component {
 		this.check("openContributions", req, gift)
 		this.check("notes", req, gift)
 		this.check("paid", req, gift)
-		this.check("status", req, gift)
+		this.check("status", req, gift, true)
 
 		req.id = gift.id
 
@@ -306,14 +307,43 @@ export default class GiftsView extends Component {
 			return
 		}
 
-		const req = this.createGiftDSChangeReqObject()
-		req.access = giftDS?.access // ensure these are set
-		req.type = giftDS?.type // ensure these are set
-		req.accountID = this.props.accountId
+		const isPrivate = giftDS?.access === 'private'? true : false
+		let req = null
+		if( isPrivate ) {
+			req = this.createGiftChangeReqObject()
+			delete(req.id)
+			req.accountID = this.props.accountId;
+			req.giftID = -1;
+			req.giftDataStore = this.createGiftDSChangeReqObject()
+			if( req.giftDataStore != null )
+				delete(req.giftDataStore.id)
+			req.giftDataStore.access = giftDS?.access // ensure these are set
+			req.giftDataStore.type = giftDS?.type // ensure these are set
+			if( giftDS?.price ) {
+				let tmp = parseFloat(giftDS.price)
+				if( tmp !== req.price ) {
+					req.giftDataStore.price = tmp;
+					let giftState = this.state.gift
+					giftState.giftDatStore.price = tmp
+					this.setState({
+						gift : giftState
+					})
+				}
+			}
+		}
+		else {
+			req = this.createGiftDSChangeReqObject()
+			req.access = giftDS?.access // ensure these are set
+			req.type = giftDS?.type // ensure these are set
+			req.accountID = this.props.accountId
+		}
 
 		const count = Object.keys(req).length
 		if (config.debugLevel > 0) {
-			console.log('Call GiftDataStore POST')
+			if( isPrivate )
+				console.log('Call Gifts POST')
+			else
+				console.log('Call GiftDataStore POST')
 			console.log(`Number to update: ${count}`)
 			console.log(req)
 		}
@@ -323,16 +353,30 @@ export default class GiftsView extends Component {
 			return
 		}
 
-		axios.post(apiPath('POST', 'giftDS'), req).then((response) => {
-			if (response.status !== 201) {
-				return console.warn('Failed to create GiftDataStore Entry.')
-			}
-			console.log('Created a new GiftDataStore Entry')
-			this.refreshContent()
-		}).catch((error) => {
-			console.log(error)
-			Error.message(error.response)
-		})
+		if( isPrivate ) {
+			axios.post(apiPath('POST', 'gifts'), req).then((response) => {
+				if (response.status !== 201) {
+					return console.warn('Failed to create Gifts Entry.')
+				}
+				console.log('Created a new Gifts Entry')
+				this.refreshContent()
+			}).catch((error) => {
+				console.log(error)
+				Error.message(error.response)
+			});
+		}
+		else {
+			axios.post(apiPath('POST', 'giftDS'), req).then((response) => {
+				if (response.status !== 201) {
+					return console.warn('Failed to create GiftDataStore Entry.')
+				}
+				console.log('Created a new GiftDataStore Entry')
+				this.refreshContent()
+			}).catch((error) => {
+				console.log(error)
+				Error.message(error.response)
+			});
+		}
 	}// handleCreateGDS
 
 
@@ -347,6 +391,17 @@ export default class GiftsView extends Component {
 		}
 
 		const req = this.createGiftDSChangeReqObject()
+		if( req.price ) {
+			let tmp = parseFloat(req.price)
+			if( tmp !== req.price ) {
+				req.price = tmp;
+				let giftState = this.state.gift
+				giftState.giftDataStore.price = tmp
+				this.setState({
+					gift : giftState
+				})
+			}
+		}
 
 		const count = Object.keys(req).length;
 		if (config.debugLevel > 1) {
@@ -429,10 +484,31 @@ export default class GiftsView extends Component {
 		})
 	}
 
-	handleCreateGift(event) {
+	createQuickPrivateGift(gift) {
+		console.log('createQuickPrivateGift');
+		console.log(gift)
+
+		axios.post(apiPath('POST', 'gifts'), gift).then((response) => {
+			if (response.status !== 201) {
+				return console.warn('Failed to create account.');
+			}
+			console.log(`Created account [${gift.title}]!`)
+			this.getPrivateGifts();
+		}).catch((error) => {
+			var data = error?.response?.data ?? null
+			if (data) {
+				console.error(`${data.function}() - ${data.message}`)
+			}
+			else {
+				console.log(error)
+			}
+		})
+	}
+
+	handleCreatePublicGift(event) {
 		event.preventDefault();  // IMPORTANT.
-		console.log("------------------- handleCreateGift()")
-		console.log(`handleCreateGift: ${event.target.id}`)
+		console.log("------------------- handleCreatePublicGift()")
+		console.log(`handleCreatePublicGift: ${event.target.id}`)
 
 		// console.log(event)
 		switch (event.target.id) {
@@ -469,22 +545,55 @@ export default class GiftsView extends Component {
 					from: 'Saharan Holidays'
 				})
 				break;
-			case 'CreateGift-TestTitle':
-				this.createQuickGift({
-					access: 'public',
-					type: 'item',
-					title: 'TestTitle',
-					image: 'https://picsum.photos/150/150',
-					message: 'TestMessage',
-					price: 123,
-					from: 'TestFrom'
-				})
-				break;
+				case 'CreateGift-TestTitle':
+					this.createQuickGift({
+						access: 'public',
+						type: 'item',
+						title: 'TestTitle',
+						image: 'https://picsum.photos/150/150',
+						message: 'TestMessage',
+						price: 123,
+						from: 'TestFrom'
+					})
+					break;
 			default:
 				console.log("Unknown");
 				break;
 		}
-	}// handleCreateGift
+	}// handleCreatePublicGift
+	
+	handleCreatePrivateGift(event) {
+		event.preventDefault();  // IMPORTANT.
+		console.log("------------------- handleCreatePrivateGift()")
+		console.log(`handleCreatePrivateGift: ${event.target.id}`)
+
+		// console.log(event)
+		switch (event.target.id) {
+				case 'CreateGift-BedLinen':
+					this.createQuickPrivateGift({
+						accountID: this.props.accountId,
+						giftID: -1,
+						group: false,
+						main: false,
+						openContributions: false,
+						notes: "King-size if asked",
+						status: "available",
+						giftDataStore: {
+							access: 'private',
+							type: 'item',
+							title: 'Bed Linen',
+							image: 'https://cdn3.volusion.com/kafzx.asksr/v/vspfiles/photos/S320-2T.jpg?v-cache=1477919582',
+							message: 'We’re re-decorating our bedroom at the moment and and have been eyeing out this beautiful Linen.',
+							price: 120 ,
+							from: 'Insipred'
+						}
+					})
+					break;
+			default:
+				console.log("Unknown");
+				break;
+		}
+	}//handleCreatePrivateGift
 
 
 	//------------------------------------------------------------
@@ -570,13 +679,34 @@ export default class GiftsView extends Component {
 
 		if (!found) {
 			const giftId = `CreateGift-${gift.replace(/\s/g, '')}`
-			return (<li><button type="submit" className="btn btn-primary" onClick={this.handleCreateGift} id={giftId} >Create '{gift}'</button></li>)
+			return (<li><button type="submit" className="btn btn-primary" onClick={this.handleCreatePublicGift} id={giftId} >Create '{gift}'</button></li>)
 		}
 		else {
 			// console.log(found)
 			return ""
 		}
-	}
+	}//publicGiftCreate
+
+	privateGiftCreate(gift) {
+		// console.log(`privateGiftCreate - ${gift}`)
+		// console.log(this.state.gifts)
+		const gifts = this.state.gifts
+
+		let found = {};
+
+		if (gifts?.find) {
+			found = gifts.find(element => element.giftDataStore.title === gift)
+		}
+
+		if (!found) {
+			const giftId = `CreateGift-${gift.replace(/\s/g, '')}`
+			return (<li><button type="submit" className="btn btn-info" onClick={this.handleCreatePrivateGift} id={giftId} >Create '{gift}' (private)</button></li>)
+		}
+		else {
+			// console.log(found)
+			return ""
+		}
+	}//privateGiftCreate
 
 
 
@@ -588,19 +718,25 @@ export default class GiftsView extends Component {
 
 		const admin = this.props.admin ?? false
 		const allowToUpdate = admin || this.gifts?.giftDataStore?.access === 'private'
+		const giftIsPrivate = gift?.giftDataStore?.access === 'private' ? true : false
 		// console.log(`  admin: ${admin}`)
 		// console.log(`  allowToUpdate: ${allowToUpdate}`)
 		// console.log(`  createDS: ${this.state.createDS}`)
 		const giftDSButtons = <div className="btn-group">
-			<button className="btn btn-success" onClick={this.handleNewGDS} >New</button>
-			<button className="btn btn-success" onClick={this.handleCreateGDS} disabled={!this.state.createDS}>Create</button>
-			<button className="btn btn-primary" onClick={this.handleSubmitGDS} disabled={!allowToUpdate || this.state.createDS}>Update</button>
-			<button className="btn btn-danger" onClick={this.handleRemoveGDS} disabled={!allowToUpdate}>Remove</button>
-		</div>
+				<button className="btn btn-success" onClick={this.handleNewGDS} >New</button>
+				<button className="btn btn-success" onClick={this.handleCreateGDS} disabled={!this.state.createDS}>Create</button>
+				<button className="btn btn-primary" onClick={this.handleSubmitGDS} disabled={!allowToUpdate || this.state.createDS}>Update</button>
+				<button className="btn btn-danger" onClick={this.handleRemoveGDS} disabled={!allowToUpdate}>Remove</button>
+			</div>
 
-		var helpText = <div><br />
-			CREATE: <code>POST {apiPath('POST', 'giftDS', null, false)}</code><br />
-			UPDATE: <code>PUT {apiPath('PUT', 'giftDS', gift?.giftDataStore?.id ?? '<giftDataStore ID>', false)}</code>
+		var helpText1 = giftIsPrivate ? (<div><br />
+			CREATE: <code>POST {apiPath('POST', 'gifts', null, false)}</code>
+		</div>) : (<div><br />
+			CREATE: <code>POST {apiPath('POST', 'giftDS', null, false)}</code>
+		</div>)
+		var helpText2 = <div>
+			UPDATE: <code>PUT {apiPath('PUT', 'giftDS', gift?.giftDataStore?.id ?? '<giftDataStore ID>', false)}</code><br />
+			REMOVE: <code>DELETE {apiPath('DELETE', 'giftDS', gift?.giftDataStore?.id ?? '<giftDataStore ID>', false)}</code>
 		</div>
 
 		// backgroundColor: this.state.colour2,
@@ -693,7 +829,7 @@ export default class GiftsView extends Component {
 									<div style={h2Overide}>From: {gift.giftDataStore.from}</div>
 								</td>
 								<td>
-									<div style={stylePrice}>${gift.giftDataStore.price.toFixed(2)}</div>
+									<div style={stylePrice}>${parseFloat(gift.giftDataStore.price).toFixed(2)}</div>
 								</td>
 							</tr>
 						</tbody>
@@ -727,10 +863,12 @@ export default class GiftsView extends Component {
 					{this.publicGiftCreate('Amazon Voucher')}
 					{this.publicGiftCreate('Holiday')}
 					{this.publicGiftCreate('TestTitle')}
+					{this.privateGiftCreate('Bed Linen')}
 				</div>
 				{helpCreateText}
 			</div>
 		)
+
 
 		//Now render
 		return (
@@ -769,7 +907,8 @@ export default class GiftsView extends Component {
 							{this.addDiv("text", "image", allowToUpdate)}
 							{this.addDiv("text", "price", allowToUpdate)}
 							{giftDSButtons}
-							{helpText}
+							{helpText1}
+							{helpText2}
 						</form>
 					</div>
 					{giftView}

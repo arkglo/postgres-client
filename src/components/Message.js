@@ -1,23 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import ReactHtmlParser from 'react-html-parser';
 import ReactJson from 'react-json-view'
 import * as config from '../config/config'
 
 import { apiPath } from '../lib/apiPath'
-
-import { cssTransition } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import "animate.css/animate.min.css";
-
-const zoom = cssTransition({
-  enter: "animate__animated animate__zoomInDown",
-  exit: "animate__animated animate__zoomOutDown"
-});
-const drop = cssTransition({
-	enter: "animate__animated animate__slideInDown",
-	exit: "animate__animated animate__hinge"
-});
 
 
 //------------------------------------------------------------

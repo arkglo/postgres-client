@@ -170,10 +170,10 @@ export default class GiftsView extends Component {
 				gift.giftDataStore[name] = value
 				break
 			case 'price':
-				gift.giftDataStore[name] = (typeof (value) === 'string') ? parseInt(value) : value
+				gift.giftDataStore[name] = /*(typeof (value) === 'string') ? parseInt(value) :*/ value // Price is a float not an int and parsing a float stops you entering a . as you type
 				break
 			case 'paid':
-				gift[name] = (typeof (value) === 'string') ? parseInt(value) : value
+				gift[name] = /*(typeof (value) === 'string') ? parseInt(value) :*/ value // Paid is a float not an int and parsing a float stops you entering a . as you type
 				break
 			default:
 				gift[name] = value
@@ -310,6 +310,17 @@ export default class GiftsView extends Component {
 		req.accountID = this.props.accountId
 		req.status = gift.status
 		req.giftID = gift.giftDataStore.id
+		debugger
+		if( gift.paid ) {
+			let tmp = parseFloat(gift.paid)
+			if( tmp !== req.paid ) {
+				req.paid = tmp;
+				gift.paid = tmp
+				this.setState({
+					gift : gift
+				})
+			}
+		}
 
 		const count = Object.keys(req).length
 		if (config.debugLevel > 0) {
@@ -345,7 +356,18 @@ export default class GiftsView extends Component {
 			return
 		}
 
+		let gift = this.state.gift
 		const req = this.createGiftChangeReqObject()
+		if( gift.paid ) {
+			let tmp = parseFloat(gift.paid)
+			if( tmp !== req.paid ) {
+				req.paid = tmp;
+				gift.paid = tmp
+				this.setState({
+					gift : gift
+				})
+			}
+		}
 
 		const count = Object.keys(req).length;
 		if (config.debugLevel > 1) {
@@ -577,8 +599,8 @@ export default class GiftsView extends Component {
 			let ctext = ''
 			let pbar = ''
 			if (gift.group) {
-				pbar = <ProgressBar style={{ height: '10px', marginBottom: 'unset' }} animated={true} now={gift.paid / gift.giftDataStore.price * 100} />
-				ctext = <div style={styleGroup}>Group Gift: ${gift.paid.toFixed()} gifted</div>
+				pbar = <ProgressBar style={{ height: '10px', marginBottom: 'unset' }} animated={true} now={parseFloat(gift.paid) / parseFloat(gift.giftDataStore.price) * 100} />
+				ctext = <div style={styleGroup}>Group Gift: ${parseFloat(gift.paid).toFixed(2)} gifted</div>
 			}
 			let imageBorder = '1px solid ' + this.state.colour1
 			// style={{ backgroundColor: this.state.colour2 }}
@@ -595,7 +617,7 @@ export default class GiftsView extends Component {
 									<div style={h2Overide}>From: {gift.giftDataStore.from}</div>
 								</td>
 								<td>
-									<div style={stylePrice}>${gift.giftDataStore.price.toFixed(2)}</div>
+									<div style={stylePrice}>${parseFloat(gift.giftDataStore.price).toFixed(2)}</div>
 								</td>
 							</tr>
 						</tbody>
