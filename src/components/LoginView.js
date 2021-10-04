@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import * as config from '../config/config';
 import { apiPath } from '../lib/apiPath'
+import ReactJson from 'react-json-view'
 import Error from './error';
 
 const LoginView = (props) => {
@@ -12,6 +13,7 @@ const LoginView = (props) => {
 	const [resetPassword, setShowReset] = useState(false)
 	const [emailReset, setEmailReset ] = useState('test@email.com')
 	const [resetLink, setResetLink ] = useState('')
+	const [data, setData ] = useState(null)
 
 
 	const getUsers = useCallback(() => {
@@ -56,6 +58,7 @@ const LoginView = (props) => {
 
 	const handleLogin = (event) => {
 		event.preventDefault();  // IMPORTANT.
+		setData(null);
 
 		axios.post(apiPath('POST', 'user', 'login'), {
 			email: email,
@@ -81,6 +84,7 @@ const LoginView = (props) => {
 	const handleResetRequest = (event) => {
 		event.preventDefault();  // IMPORTANT.
 		setResetLink("");
+		setData(null);
 
 		axios.post(apiPath('POST','user', 'resetRequest'), {
 			email: email,
@@ -103,9 +107,34 @@ const LoginView = (props) => {
 			}
 		});
 	}
+	const handleListAccounts = (event) => {
+		event.preventDefault();  // IMPORTANT.
+		
+		setResetLink("");
+		setData(null);
+
+		axios.get(apiPath('GET','account', 'active')).then( (response) => {
+			if (config.debugLevel) console.log(response)
+			if (response.status !== 200) {
+				return console.warn('Reset Request failed');
+			}
+			if (config.debugLevel > 1) console.log(response.data.data)
+
+			setData( response.data.data );
+		}).catch((error) => {
+			var data = error?.response?.data ?? null
+			if (data) {
+				console.warn(`${data.function}() - ${data.message}`)
+			}
+			else {
+				console.log(error)
+			}
+		});
+	}
 
 	const handleLogout = (event) => {
 		event.preventDefault();
+		setData(null);
 
 		axios.post(apiPath('POST', 'user', 'logout'))
 			.then(props.handleLogout)
@@ -122,6 +151,7 @@ const LoginView = (props) => {
 
 	const handleToggleResetRequest = (event) => {
 		event.preventDefault();
+		setData(null);
 		setShowReset(!resetPassword)
 	}
 
@@ -180,12 +210,32 @@ const LoginView = (props) => {
 			const resetLinkUrl = "/resetPassword?token="+encodeURIComponent(resetLink)+"&email="+emailReset;
 			resetLinkSection = <div><br/><p>The link that the client should send to the email address is:- <a href={resetLinkUrl}>{resetLink}</a></p></div>
 		}
+		
+		const myJsonObject = data ?? {}
+		const hideGettingBody = data == null ? {display: "none"} : {display: "block"}
+		const jsonStyle = {
+			backgroundColor: '#f5f5f5',
+			border: '1px solid #ddd',
+			padding: '10px 15px',
+			borderRadius: '3px',
+		}
+		const listActiviveUsers = <div>
+																<form className="form-inline">
+																	<p/>
+																	<button type="submit" className="btn btn-primary" onClick={handleListAccounts} >List Active Accounts</button><br/>
+																	<code>GET {apiPath('GET', 'account', `active`, false)}</code><p/>
+																</form>
+																<div className="panel-body" style={hideGettingBody}>
+																	<ReactJson style={jsonStyle} src={myJsonObject} />
+																</div>
+															</div>
 
 		return (
 			<div>
 					{upperSection}
 					{resetPasswordSection}
 					{resetLinkSection}
+					{listActiviveUsers}
 			</div>
 		);
 		//interpunt U+00B7
