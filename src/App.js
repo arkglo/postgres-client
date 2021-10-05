@@ -432,6 +432,7 @@ class App extends Component {
 			mainView: (<Guest
 				setAccountId={this.setAccountId}
 				handleLogout={this.handleLogout}
+				handleReset={this.handleReset}
 				accountId={this.state.accountId}
 				toastThis={this.toastThis}
 			/>),
