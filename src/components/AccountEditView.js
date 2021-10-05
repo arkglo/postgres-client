@@ -140,6 +140,7 @@ export default class AccountEditView extends Component {
 		this.updateReq(req, 'partnerLastName')
 		this.updateReq(req, 'eventDate')
 		this.updateReq(req, 'websiteLink')
+		this.updateReq(req, 'state')
 		req.userID = this.state.userID
 
 		if (config.debugLevel > 1) {

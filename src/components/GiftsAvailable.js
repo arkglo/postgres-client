@@ -236,6 +236,8 @@ export default class GiftsView extends Component {
 	}// createGiftDSChangeReqObject
 
 	createDefaultEmptyGift() {
+		const admin = this.props.admin ?? false
+
 		return {
 			id: -1,
 			giftID: -1,
@@ -246,7 +248,7 @@ export default class GiftsView extends Component {
 			paid: 0,
 			status: 'available',
 			giftDataStore: {
-				access: 'public',
+				access: admin?'public':'private',
 				type: 'item',
 				id: -1,
 				title: null,
@@ -718,14 +720,15 @@ export default class GiftsView extends Component {
 	render() {
 		console.log(`%cGiftsView - render(myGiftsId ${this.props.myGiftsId})`, 'color: yellow')
 		const gift = this.state.gift
-		console.log(gift)
+		console.log(gift ?? 'No gift selected')
 
 		const admin = this.props.admin ?? false
-		const allowToUpdate = admin || this.gifts?.giftDataStore?.access === 'private'
 		const giftIsPrivate = gift?.giftDataStore?.access === 'private' ? true : false
+		const allowToUpdate = admin || giftIsPrivate
 		// console.log(`  admin: ${admin}`)
 		// console.log(`  allowToUpdate: ${allowToUpdate}`)
 		// console.log(`  createDS: ${this.state.createDS}`)
+
 		const giftDSButtons = <div className="btn-group">
 				<button className="btn btn-success" onClick={this.handleNewGDS} >New</button>
 				<button className="btn btn-success" onClick={this.handleCreateGDS} disabled={!this.state.createDS}>Create</button>
