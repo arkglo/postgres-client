@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar"
 // Main View Components
 import SignupView from "./components/SignupView";
 import LoginView from "./components/LoginView";
+import Guest from "./components/Guest";
 import UserEditView from "./components/UserEditView";
 import AccountEditView from "./components/AccountEditView";
 import ThemeEditView from "./components/ThemeEditView";
@@ -72,6 +73,7 @@ class App extends Component {
 		// Show functions. For navigation and setting state.mainView.
 		this.showSignup = this.showSignup.bind(this);
 		this.showUserEdit = this.showUserEdit.bind(this);
+		this.showGuest = this.showGuest.bind(this);
 		this.showAccountEdit = this.showAccountEdit.bind(this);
 		this.showThemeEdit = this.showThemeEdit.bind(this);
 		this.showMyGiftsEdit = this.showMyGiftsEdit.bind(this);
@@ -241,7 +243,8 @@ class App extends Component {
 			return console.warn('Logout failed');
 		}
 
-		const message = <div>Logged out:  "{this.state.user.firstName} {this.state.user.lastName}"</div>
+		const userName = this.state.user == null ? "Guest" : this.state.user.firstName + " " + this.state.user.lastName;
+		const message = <div>Logged out:  "{userName}"</div>
 		this.toastThis(message, 'info', 1000)
 
 		console.log('Logged out')
@@ -424,6 +427,18 @@ class App extends Component {
 		})
 	}
 
+	showGuest() {
+		this.setState({
+			mainView: (<Guest
+				setAccountId={this.setAccountId}
+				handleLogout={this.handleLogout}
+				accountId={this.state.accountId}
+				toastThis={this.toastThis}
+			/>),
+			viewType: 'Guest',
+		})
+	}
+
 	showAdmin() {
 		this.setState({
 			mainView: (<Admin
@@ -453,6 +468,7 @@ class App extends Component {
 							<NavBar
 								handleReset={this.handleReset}
 								showSignup={this.showSignup}
+								showGuest={this.showGuest}
 								showUserEdit={this.showUserEdit}
 								showAccountEdit={this.showAccountEdit}
 								showThemeEdit={this.showThemeEdit}

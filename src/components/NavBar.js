@@ -71,6 +71,12 @@ export default class NavBar extends Component {
 						active={vt === 'SignupView'}>
 						Signup
 					</Button>
+					<Button type="button" name="guest"
+						//className="btn btn-default navbar-btn"
+						onClick={this.props.showGuest}
+						active={vt === 'Guest'}>
+						Guest
+					</Button>
 					<Button type="button" name="user_edit"
 						//className="btn btn-default navbar-btn"
 						disabled={this.props.user === null}
