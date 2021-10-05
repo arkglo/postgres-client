@@ -99,7 +99,7 @@ export default class Guest extends Component {
 				data: data,
 				error: null,
 			})
-			this.props.setAccountId(response.data.data.id)
+			this.props.handleGuestLogin(data.id)
 		}).catch((error) => {
 			console.log('Error.catch():')
 			console.log(error.response)
@@ -156,7 +156,7 @@ export default class Guest extends Component {
 				data: data,
 				error: null,
 			})
-			this.props.setAccountId(response.data.data.id)
+			this.props.handleGuestLogin(data.id)
 		}).catch((error) => {
 			console.log('Error.catch():')
 			console.log(error.response)

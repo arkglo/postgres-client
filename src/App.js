@@ -59,6 +59,7 @@ class App extends Component {
 		super(props);
 		this.state = {
 			user: null,
+			role: null,
 			account: null,
 			mainView: null,
 			accountId: -1,
@@ -86,6 +87,7 @@ class App extends Component {
 
 		// Handlers for child components.
 		this.handleLogin = this.handleLogin.bind(this);
+		this.handleGuestLogin = this.handleGuestLogin.bind(this);
 		this.handleLogout = this.handleLogout.bind(this);
 		this.handleReset = this.handleReset.bind(this);
 
@@ -121,6 +123,7 @@ class App extends Component {
 				// console.log(`admin: ${admin}`)
 				this.setState({
 					user: data,
+					role: data.role,
 					admin: admin,
 					authenticated: true,
 					accountId: data?.activeAccountID ?? -1
@@ -172,18 +175,39 @@ class App extends Component {
 		if (response.status !== 200) {
 			return console.warn('Login failed');
 		}
-		console.log('Logged in as ' + response.data.data.firstName + ' ' + response.data.data.lastName);
+		const userName = this.state.user == null ? "Guest" : response.data.data.firstName + " " + response.data.data.lastName;
+		console.log('Logged in as ' + userName);
 
 		if (config.debugLevel > 1) console.log(response.data.data)
 		const admin = response.data.data?.role ? (response.data.data?.role === 'admin') : false
 		console.log(`  admin: ${admin}`)
 		this.setState({
 			user: response.data.data,
+			role: response.data.data.role,
 			mainView: null,
 			admin: admin,
 			authenticated: true
 		})
 		const message = <div>Logged in:  "{this.state.user.firstName} {this.state.user.lastName}"</div>
+		this.toastThis(message, 'info', 1000)
+
+		this.setState({ viewType: '' })
+	}
+
+	handleGuestLogin(thisId) {
+		if (config.debugLevel) console.log(thisId)
+		this.setAccountId(thisId)
+		const userName = "Guest";
+		console.log('Logged in as ' + userName);
+
+		this.setState({
+			user: null,
+			role: 'guest',
+			mainView: null,
+			admin: false,
+			authenticated: true
+		})
+		const message = <div>Logged in:  "{userName}"</div>
 		this.toastThis(message, 'info', 1000)
 
 		this.setState({ viewType: '' })
@@ -227,6 +251,7 @@ class App extends Component {
 	resetState() {
 		this.setState({
 			user: null,
+			role: null,
 			mainView: null,
 			accountId: -1,
 			themeId: -1,
@@ -310,7 +335,7 @@ class App extends Component {
 
 	// Theme Edit
 	showThemeEdit() {
-		if (!this.state.user) {
+		if (!this.state.user && this.state.role !== "guest") {
 			// return this.toast.error('Not logged in');
 			return console.warn('Not Logged in')
 		}
@@ -330,7 +355,7 @@ class App extends Component {
 
 	// myGifts Edit
 	showMyGiftsEdit() {
-		if (!this.state.user) {
+		if (!this.state.user && this.state.role !== "guest") {
 			// return this.toast.error('Not logged in');
 			return console.warn('Not Logged in')
 		}
@@ -349,7 +374,7 @@ class App extends Component {
 
 	// Gifts Edit
 	showGiftsEdit() {
-		if (!this.state.user) {
+		if (!this.state.user && this.state.role !== "guest") {
 			// return this.toast.error('Not logged in');
 			return console.warn('Not Logged in')
 		}
@@ -408,6 +433,10 @@ class App extends Component {
 	}
 
 	showPayment() {
+		if (!this.state.user && this.state.role !== "guest") {
+			// return this.toast.error('Not logged in');
+			return console.warn('Not Logged in')
+		}
 		this.setState({
 			mainView: (<Payment
 				toastThis={this.toastThis}
@@ -418,6 +447,10 @@ class App extends Component {
 	}
 
 	showMessage() {
+		if (!this.state.user && this.state.role !== "guest") {
+			// return this.toast.error('Not logged in');
+			return console.warn('Not Logged in')
+		}
 		this.setState({
 			mainView: (<Message
 				toastThis={this.toastThis}
@@ -430,7 +463,7 @@ class App extends Component {
 	showGuest() {
 		this.setState({
 			mainView: (<Guest
-				setAccountId={this.setAccountId}
+				handleGuestLogin={this.handleGuestLogin}
 				handleLogout={this.handleLogout}
 				handleReset={this.handleReset}
 				accountId={this.state.accountId}
@@ -486,6 +519,7 @@ class App extends Component {
 								myGiftsId={this.state.myGiftsId}
 								viewType={this.state.viewType}
 								admin={this.state.admin}
+								role={this.state.role}
 								user={this.state.user}>
 							</NavBar>
 

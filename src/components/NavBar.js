@@ -67,19 +67,21 @@ export default class NavBar extends Component {
 					<Button type="button" name="signup"
 						//className="btn btn-default navbar-btn"
 						variant='primary'
+						disabled={this.props.user === null && this.props.role === "guest"}
 						onClick={this.props.showSignup}
 						active={vt === 'SignupView'}>
 						Signup
 					</Button>
 					<Button type="button" name="guest"
 						//className="btn btn-default navbar-btn"
+						disabled={this.props.user != null && this.props.role !== "guest"}
 						onClick={this.props.showGuest}
 						active={vt === 'Guest'}>
 						Guest
 					</Button>
 					<Button type="button" name="user_edit"
 						//className="btn btn-default navbar-btn"
-						disabled={this.props.user === null}
+						disabled={this.props.user === null || this.props.role === "guest"}
 						onClick={this.props.showUserEdit}
 						title='Available when logged in'
 						active={vt === 'UserEditView'}>
@@ -87,7 +89,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="account_edit"
 						//className="btn btn-default navbar-btn"
-						disabled={this.props.accountId === -1}
+						disabled={this.props.accountId === -1 || this.props.role === "guest"}
 						onClick={this.props.showAccountEdit}
 						title={this.props.accountId === -1 ? accountSelectText : 'Account Edit'}
 						active={vt === 'AccountEditView'}>
@@ -95,8 +97,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="theme_edit"
 						//className="btn btn-default navbar-btn"
-						// disabled={this.props.themeId === -1}
-						disabled={this.props.accountId === -1}
+						disabled={ (this.props.themeId === -1 && this.props.role !== "guest") || this.props.accountId === -1}
 						onClick={this.props.showThemeEdit}
 						title={this.props.themeId === -1 ? accountEditSelectText : 'Theme Edit'}
 						active={vt === 'ThemeEditView'}>
@@ -104,7 +105,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="mygifts_edit"
 						//className="btn btn-default navbar-btn"
-						disabled={this.props.myGiftsId === -1}
+						disabled={ (this.props.myGiftsId === -1 && this.props.role !== "guest") || this.props.accountId === -1}
 						onClick={this.props.showMyGiftsEdit}
 						title={this.props.myGiftsId === -1 ? accountEditSelectText : 'MyGifts Edit'}
 						active={vt === 'MyGiftsView'}>
@@ -112,7 +113,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="gifts_available"
 						//className="btn btn-default navbar-btn"
-						disabled={this.props.accountId === -1}
+						disabled={this.props.accountId === -1 || this.props.role === "guest"}
 						onClick={this.props.showGiftsAvailable}
 						title={this.props.accountId === -1 ? accountSelectText : 'Gifts Edit'}
 						active={vt === 'GiftsAvailable'}>
@@ -128,19 +129,21 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="services_edit"
 						//className="btn btn-default navbar-btn"
-						disabled={this.props.accountId === -1}
+						disabled={this.props.accountId === -1 || this.props.role === "guest"}
 						onClick={this.props.showServices}
 						active={vt === 'Services'}>
 						Sevices
 					</Button>
 					<Button type="button" name="payment_edit"
 						//className="btn btn-default navbar-btn"
+						disabled={this.props.accountId === -1}
 						onClick={this.props.showPayment}
 						active={vt === 'Payment'}>
 						Payment
 					</Button>
 					<Button type="button" name="message_edit"
 						//className="btn btn-default navbar-btn"
+						disabled={this.props.accountId === -1 || this.props.role === "guest"}
 						onClick={this.props.showMessage}
 						active={vt === 'Message'}>
 						Message
