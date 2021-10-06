@@ -194,9 +194,11 @@ class App extends Component {
 		this.setState({ viewType: '' })
 	}
 
-	handleGuestLogin(thisId) {
-		if (config.debugLevel) console.log(thisId)
-		this.setAccountId(thisId)
+	handleGuestLogin(response) {
+		if (config.debugLevel) console.log(response)
+		this.setAccountId(response.id)
+		this.setThemeID(response.themeID)
+		this.setMyGiftsID(response.myGiftsID)
 		const userName = "Guest";
 		console.log('Logged in as ' + userName);
 

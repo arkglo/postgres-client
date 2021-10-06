@@ -25,7 +25,7 @@ function initialState() {
 		data: null,
 		status: 0,
 		websiteLink: '',
-		websitePassword: '',
+		websitePassword: 'testPassword',
 		loggedIn: false
 	};
 }
@@ -53,7 +53,7 @@ export default class Guest extends Component {
 	loginSuccess(message) {
 		this.props.toastThis(message, 'success', 3000, { transition: zoom })
 	}
-	
+
 	loginError(message) {
 		if( this.props.accountId !== -1) {
 			this.props.handleReset()
@@ -101,7 +101,7 @@ export default class Guest extends Component {
 				data: data,
 				error: null,
 			})
-			this.props.handleGuestLogin(data.id)
+			this.props.handleGuestLogin(data)
 		}).catch((error) => {
 			console.log('Error.catch():')
 			console.log(error.response)
@@ -158,7 +158,7 @@ export default class Guest extends Component {
 				data: data,
 				error: null,
 			})
-			this.props.handleGuestLogin(data.id)
+			this.props.handleGuestLogin(data)
 		}).catch((error) => {
 			console.log('Error.catch():')
 			console.log(error.response)
