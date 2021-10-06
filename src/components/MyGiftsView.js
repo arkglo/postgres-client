@@ -37,7 +37,7 @@ export default class MyGiftsView extends Component {
 	componentDidMount() {
 		console.log(`MyGiftsView.componentDidMount(${this.props.myGiftsId})`)
 		this.getMyGifts()
-		this.getThemes()
+		this.getTheme()
 	}
 
 	getMyGifts() {
@@ -76,8 +76,8 @@ export default class MyGiftsView extends Component {
 	}
 
 	
-	getThemes() {
-		console.log(`MyGiftsView.getThemes(${this.props.themeId})`)
+	getTheme() {
+		console.log(`MyGiftsView.getTheme(${this.props.themeId})`)
 
 		//Get this Theme
 		axios.get(apiPath('GET','theme', this.props.themeId)).then((response) => {

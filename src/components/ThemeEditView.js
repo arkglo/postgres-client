@@ -59,16 +59,16 @@ export default class ThemeEditView extends Component {
 
 		//Get All themes
 		axios.get(apiPath('GET', 'theme')).then((response) => {
-			if (response.status !== 200) {
-				return console.warn('Failed to get theme details.')
-			}
-			this.setState({ allThemes: response.data.data })
+			if (response.status !== 200)
+				console.warn('Failed to get theme details.')
+			else
+				this.setState({ allThemes: response.data.data })
+		}).catch((error) => {
+			Error.message(error.response)
+		});
 
-			//Get just the theme we want
-			if (this.props.themeId == null) return
-
-			return axios.get(apiPath('GET', '/accounts/theme', this.props.accountId))
-		}).then((response) => {
+		//Get THIS theme
+		axios.get(apiPath('GET', '/accounts/theme', this.props.accountId)).then((response) => {
 			if (response.status !== 200) {
 				return console.warn('Failed to get theme details.')
 			}
