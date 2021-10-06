@@ -55,7 +55,9 @@ export default class Guest extends Component {
 	}
 	
 	loginError(message) {
-		this.props.handleReset()
+		if( this.props.accountId !== -1) {
+			this.props.handleReset()
+		}
 		this.props.toastThis(message, 'error', 3000, { transition: drop })
 	}
 
