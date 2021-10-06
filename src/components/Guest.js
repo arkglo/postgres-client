@@ -51,14 +51,14 @@ export default class Guest extends Component {
 	}
 
 	loginSuccess(message) {
-		this.props.toastThis(message, 'success', 3000, { transition: zoom })
+		this.props.toastThis(message, 'success', 2000, { transition: zoom })
 	}
 
 	loginError(message) {
 		if( this.props.accountId !== -1) {
 			this.props.handleReset()
 		}
-		this.props.toastThis(message, 'error', 3000, { transition: drop })
+		this.props.toastThis(message, 'error', 2000, { transition: drop })
 	}
 
 	//------------------------------------------------------------

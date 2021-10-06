@@ -70,7 +70,7 @@ export default class Payment extends Component {
 	}
 
 	purchaseError(message) {
-		this.props.toastThis(message, 'error', 4000, { transition: drop })
+		this.props.toastThis(message, 'error', 3000, { transition: drop })
 	}
  
 	redirectingToPurchase(message, url) {
@@ -80,7 +80,7 @@ export default class Payment extends Component {
 		if( url !== undefined || url !== null || url !== "" ) {
 			toastOptions.onClose = () => {window.location = url;}
 		}
-		this.props.toastThis(message, 'success', 4000, toastOptions)
+		this.props.toastThis(message, 'success', 3000, toastOptions)
 	}
 
 	sendServicePayment(service) {
