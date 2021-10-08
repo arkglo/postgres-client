@@ -55,6 +55,7 @@ export default class Guest extends Component {
 	}
 
 	loginError(message) {
+		console.log(message)
 		if( this.props.accountId !== -1) {
 			this.props.handleReset()
 		}
@@ -103,8 +104,6 @@ export default class Guest extends Component {
 			})
 			this.props.handleGuestLogin(data)
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
 			this.loginError(error.response?.data?.message ?? "unknown")
 			this.setState({
 				loggedIn: false,
@@ -160,8 +159,6 @@ export default class Guest extends Component {
 			})
 			this.props.handleGuestLogin(data)
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
 			this.loginError(error.response?.data?.message ?? "unknown")
 			this.setState({
 				loggedIn: false,

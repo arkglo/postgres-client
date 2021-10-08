@@ -64,8 +64,7 @@ export default class Message extends Component {
 						message: response.data.message ?? null
 					}
 				})
-				console.log('Error:')
-				console.log(response)
+				this.props.toastError(false, null, response);
 				return console.warn('Failed to get data');
 			}
 
@@ -76,8 +75,7 @@ export default class Message extends Component {
 				error: null,
 			})
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
+			this.props.toastError(true, error, null);
 			this.setState({
 				data: null,
 				error: {
@@ -115,8 +113,7 @@ export default class Message extends Component {
 						message: response.data.message ?? null
 					}
 				})
-				console.log('Error:')
-				console.log(response)
+				this.props.toastError(false, null, response);
 				return console.warn('Failed to get data');
 			}
 
@@ -127,8 +124,7 @@ export default class Message extends Component {
 				error: null,
 			})
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
+			this.props.toastError(true, error, null);
 			this.setState({
 				data: null,
 				error: {

@@ -64,6 +64,7 @@ export default class ThemeEditView extends Component {
 			else
 				this.setState({ allThemes: response.data.data })
 		}).catch((error) => {
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		});
 
@@ -115,6 +116,7 @@ export default class ThemeEditView extends Component {
 			}
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}
@@ -245,7 +247,7 @@ export default class ThemeEditView extends Component {
 			console.log('Created a new theme')
 			this.getThemes()
 		}).catch((error) => {
-			console.log(error)
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}// handleCreate
@@ -280,6 +282,7 @@ export default class ThemeEditView extends Component {
 			console.log('Updated theme details!')
 			this.getThemes()
 		}).catch((error) => {
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}// handleSubmit
@@ -302,6 +305,7 @@ export default class ThemeEditView extends Component {
 							this.getThemes()
 							this.props.setThemeID(-1) // Just removed so set to -1 
 						}).catch((error) => {
+							this.props.toastError(true, error, null);
 							Error.message(error.response)
 						})
 					}
@@ -324,13 +328,8 @@ export default class ThemeEditView extends Component {
 			console.log(`Created Theme [${theme.names}]!`)
 			this.getThemes()
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
+			this.props.toastError(true, error, null);
+			Error.message(error.response)
 		})
 	}
 	handleCeremonyDateChange(newDate) {

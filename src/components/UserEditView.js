@@ -37,6 +37,7 @@ export default class UserEditView extends Component {
 	getUserDetails() {
 		axios.get(apiPath('GET','user', this.props.user.id)).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response);
 				return console.warn('Failed to get user details.');
 			}
 			const user = response.data.data
@@ -51,6 +52,7 @@ export default class UserEditView extends Component {
 				role: user.role
 			})
 		}).catch((error) => {
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}
@@ -97,6 +99,7 @@ export default class UserEditView extends Component {
 
 		axios.put(apiPath('PUT','user', this.props.user.id), req).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response);
 				return console.warn('Failed to update user.')
 			}
 			console.log('Updated user details!')
@@ -105,12 +108,7 @@ export default class UserEditView extends Component {
 			console.log('state.user updated')
 			this.getUserDetails()
 		}).catch((error) => {
-			this.props.showError({
-				status: error.response.status ?? 404,
-				function: error.response.data.function ?? null,
-				message: error.response.data.message ?? null,
-				timeout: 2000,
-			})
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}
@@ -127,11 +125,13 @@ export default class UserEditView extends Component {
 					onClick: () => {
 						axios.delete(apiPath('DELETE','user', this.props.user.id)).then((response) => {
 							if (response.status !== 200) {
+								this.props.toastError(false, null, response);
 								return console.warn('Failed to remove user.');
 							}
 							console.log('Successfully deleted user.');
 							this.props.handleLogout()
 						}).catch((error) => {
+							this.props.toastError(true, error, null);
 							Error.message(error.response)
 						});
 					}

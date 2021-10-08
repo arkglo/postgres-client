@@ -86,6 +86,7 @@ export default class BadPayment extends Component {
 			}
 			console.log('Payment Canceled!')
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		});
 	}
@@ -115,6 +116,7 @@ export default class BadPayment extends Component {
 		// What was it we were ordering that failed ?
 		axios.get(apiPath('GET', '/payment/items', this.getSessionId())).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get order details.')
 			}
 			const checkoutData = response.data.data;
@@ -128,6 +130,7 @@ export default class BadPayment extends Component {
 			}
 		
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		});
 	}

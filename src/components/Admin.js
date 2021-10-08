@@ -44,6 +44,7 @@ export default class Admin extends Component {
 
 		axios.get(apiPath('GET', 'services')).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get user details.');
 			}
 
@@ -54,6 +55,7 @@ export default class Admin extends Component {
 				services: services
 			});
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error)
 		})
 	}
@@ -73,6 +75,7 @@ export default class Admin extends Component {
 			console.log(response.data)
 
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get user details.');
 			}
 
@@ -84,6 +87,7 @@ export default class Admin extends Component {
 			})
 
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error)
 		})
 	}
@@ -166,14 +170,10 @@ export default class Admin extends Component {
 				// console.log(response.data)
 				const data = response.data.data
 				if (response.status !== 200) {
+					this.props.toastError(false, null, response)
 					this.setState({
 						status: response.status,
 						data: data ?? null,
-					})
-					this.props.showError({
-						status: response.status,
-						function: response.data.function ?? null,
-						message: response.data.message ?? null
 					})
 					return console.warn('Failed to get data');
 				}
@@ -184,15 +184,9 @@ export default class Admin extends Component {
 					data: data,
 				})
 			}).catch((error) => {
-				console.log('Error.catch():')
-				console.log(error.response)
+				this.props.toastError(true, error, null)
 				this.setState({
 					data: null,
-				})
-				this.props.showError({
-					status: error.response?.status ?? -1,
-					function: error.response?.data?.function ?? null,
-					message: error.response?.data?.message ?? null
 				})
 			})
 		}
@@ -202,11 +196,7 @@ export default class Admin extends Component {
 			axios.delete(apiPath('GET', this.state.endpoint, extra)).then((response) => {
 				console.log('API STATUS: ' + response.status)
 				if (response.status !== 200) {
-					this.props.showError({
-						status: response.status,
-						function: response.data.function ?? null,
-						message: response.data.message ?? null
-					})
+					this.props.toastError(false, null, response)
 					return
 				}
 
@@ -217,15 +207,10 @@ export default class Admin extends Component {
 					data: data
 				})
 			}).catch((error) => {
+				this.props.toastError(true, error, null)
 				this.setState({
 					data: null
 				})
-				this.props.showError({
-					status: error.response.status,
-					function: error.response.data.function ?? null,
-					message: error.response.data.message ?? null
-				})
-				// console.log(error.response ?? 'no repsonse')
 			})
 		}
 		else {

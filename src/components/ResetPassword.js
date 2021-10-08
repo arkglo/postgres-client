@@ -90,15 +90,7 @@ export default class ResetPassword extends Component {
 				this.returnToNormal(event);
 			}
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.warn(`${data.function}() - ${data.message}`)
-				passwordError(data.message, this.returnToNormal);
-			}
-			else {
-				console.log(error)
-				passwordError(error, this.returnToNormal);
-			}
+			this.props.toastError(true, error, null);
 		});
 	}
 

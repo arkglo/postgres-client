@@ -19,13 +19,7 @@ export default class NavBar extends Component {
 		axios.post(apiPath('POST', 'user', 'logout'))
 			.then(this.props.handleLogout)
 			.catch((error) => {
-				var data = error?.response?.data ?? null
-				if (data) {
-					console.error(`${data.function}() - ${data.message}`)
-				}
-				else {
-					console.log(error)
-				}
+				this.props.toastError(true, error, null);
 			})
 	}
 

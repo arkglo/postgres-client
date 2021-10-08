@@ -71,6 +71,7 @@ export default class MyGiftsView extends Component {
 			this.setState({ myGifts: myGifts })
 			if (config.debugLevel > 1) console.log(myGifts)
 		}).catch((error) => {
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}
@@ -96,6 +97,7 @@ export default class MyGiftsView extends Component {
 
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}
@@ -162,7 +164,7 @@ export default class MyGiftsView extends Component {
 			// console.log(response)
 			this.props.setMyGiftsID(newID)
 		}).catch((error) => {
-			console.log(error)
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}// handleCreate
@@ -196,6 +198,7 @@ export default class MyGiftsView extends Component {
 			}
 			console.log('Updated myGifts details!')
 		}).catch((error) => {
+			this.props.toastError(true, error, null);
 			Error.message(error.response)
 		})
 	}// handleSubmit
@@ -217,6 +220,7 @@ export default class MyGiftsView extends Component {
 							console.log('Successfully deleted myGifts.')
 							this.props.setMyGiftsID(null)
 						}).catch((error) => {
+							this.props.toastError(true, error, null);
 							Error.message(error.response)
 						})
 					}
@@ -238,13 +242,7 @@ export default class MyGiftsView extends Component {
 			}
 			console.log(`Created account [${myGifts.title}]!`)
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
+			this.props.toastError(true, error, null);
 		})
 	}
 

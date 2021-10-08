@@ -60,6 +60,7 @@ export default class AccountEditView extends Component {
 
 		axios.get(apiPath('GET', 'account', this.props.accountId)).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get account details.');
 			}
 
@@ -94,7 +95,7 @@ export default class AccountEditView extends Component {
 			this.props.setMyGiftsID(account.myGiftsID)
 			if (config.debugLevel > 1) console.log(account)
 		}).catch((error) => {
-			console.log(error)
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		});
 	}
@@ -150,10 +151,12 @@ export default class AccountEditView extends Component {
 
 		axios.put(apiPath('PUT', 'account', this.props.accountId), req).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to update account.');
 			}
 			console.log('Updated account details!');
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		});
 	}
@@ -170,11 +173,13 @@ export default class AccountEditView extends Component {
 					onClick: () => {
 						axios.delete(apiPath('DELETE', 'account', this.props.accountId)).then((response) => {
 							if (response.status !== 200) {
+								this.props.toastError(false, null, response)
 								return console.warn('Failed to remove account.');
 							}
 							console.log('Successfully deleted account.');
 							this.props.handleLogout()
 						}).catch((error) => {
+							this.props.toastError(true, error, null)
 							Error.message(error.response)
 						});
 					}
@@ -219,11 +224,13 @@ export default class AccountEditView extends Component {
 								account: this.state.stripeBankNumber,
 							}).then((response) => {
 								if (response.status !== 200) {
+									this.props.toastError(false, null, response)
 									return console.warn('Failed to create stripe account.');
 								}
 								console.log('Successfully created stripe account.');
 								this.props.handleLogout()
 							}).catch((error) => {
+								this.props.toastError(true, error, null)
 								Error.message(error.response)
 							});
 						}
@@ -265,11 +272,13 @@ export default class AccountEditView extends Component {
 								account: this.state.stripeBankNumber,
 							}).then((response) => {
 								if (response.status !== 200) {
+									this.props.toastError(false, null, response)
 									return console.warn('Failed to create stripe account.');
 								}
 								console.log('Successfully created stripe account.');
 								this.props.handleLogout()
 							}).catch((error) => {
+								this.props.toastError(true, error, null)
 								Error.message(error.response)
 							});
 						}

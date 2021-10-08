@@ -17,6 +17,7 @@ const Services = (props) => {
 
 		await axios.get(apiPath('GET', 'services')).then((response) => {
 			if (response.status !== 200) {
+				props.toastError(false, null, response)
 				return console.warn('Failed to get user details.');
 			}
 
@@ -26,6 +27,7 @@ const Services = (props) => {
 			setServices(services)
 		}).catch((error) => {
 			Error.message(error)
+			props.toastError(true, error, null)
 		});
 	}
 
@@ -35,17 +37,13 @@ const Services = (props) => {
 			price: price
 		}).then((response) => {
 			if (response.status !== 201) {
+				props.toastError(false, null, response)
 				return console.warn('Failed to create service.');
 			}
 			console.log(`Created service [${title}]!`)
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
+			Error.message(error)
+			props.toastError(true, error, null)
 		})
 	}
 
@@ -109,7 +107,8 @@ const Services = (props) => {
 		console.log('***Services MOUNT ***')
 		//console.log(props)
 		getServices()
-	}, [props])
+		// eslint-disable-next-line
+	}, [])
 
 	//per Render
 	// useEffect(() => { console.log("%cServices - render()", 'color: blue') })

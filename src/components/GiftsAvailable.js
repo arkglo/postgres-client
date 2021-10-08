@@ -76,6 +76,7 @@ export default class GiftsView extends Component {
 		//Get this myGifts
 		axios.get(apiPath('GET', '/accounts/gifts', this.props.accountId + '?details=true&access=private')).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get Account.gifts details.')
 			}
 
@@ -86,6 +87,7 @@ export default class GiftsView extends Component {
 			}
 
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}
@@ -96,6 +98,7 @@ export default class GiftsView extends Component {
 		//Get this myGifts
 		axios.get(apiPath('GET', 'giftDS', '?access=public')).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get gifts details.')
 			}
 
@@ -105,6 +108,7 @@ export default class GiftsView extends Component {
 				console.log(response.data.data)
 			}
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}
@@ -115,6 +119,7 @@ export default class GiftsView extends Component {
 		//Get this Theme
 		axios.get(apiPath('GET', 'theme', this.props.themeId)).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get theme details.')
 			}
 
@@ -129,6 +134,7 @@ export default class GiftsView extends Component {
 
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}
@@ -358,24 +364,26 @@ export default class GiftsView extends Component {
 		if( isPrivate ) {
 			axios.post(apiPath('POST', 'gifts'), req).then((response) => {
 				if (response.status !== 201) {
+					this.props.toastError(false, null, response)
 					return console.warn('Failed to create Gifts Entry.')
 				}
 				console.log('Created a new Gifts Entry')
 				this.refreshContent()
 			}).catch((error) => {
-				console.log(error)
+				this.props.toastError(true, error, null)
 				Error.message(error.response)
 			});
 		}
 		else {
 			axios.post(apiPath('POST', 'giftDS'), req).then((response) => {
 				if (response.status !== 201) {
+					this.props.toastError(false, null, response)
 					return console.warn('Failed to create GiftDataStore Entry.')
 				}
 				console.log('Created a new GiftDataStore Entry')
 				this.refreshContent()
 			}).catch((error) => {
-				console.log(error)
+				this.props.toastError(true, error, null)
 				Error.message(error.response)
 			});
 		}
@@ -419,11 +427,13 @@ export default class GiftsView extends Component {
 
 		axios.put(apiPath('PUT', 'giftDS', req.id), req).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to update Gift.')
 			}
 			console.log('Updated Gift details!')
 			this.forceUpdate()
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}// handleSubmitGDS
@@ -448,16 +458,15 @@ export default class GiftsView extends Component {
 					onClick: () => {
 						axios.delete(apiPath('DELETE', 'giftDS', id)).then((response) => {
 							if (response.status !== 200) {
+								this.props.toastError(false, null, response)
 								return console.warn('Failed to remove Gift.');
 							}
 							console.log(`Successfully deleted Gift(${id})`)
 							this.refreshContent()
 							this.handleNewGDS(event)
 						}).catch((error) => {
+							this.props.toastError(true, error, null)
 							Error.message(error.response)
-							const thisMessage = error.response?.data?.message ? error.response.data.message : "ERROR"
-							const message = <div>{thisMessage}</div>
-							this.props.toastThis(message, 'error', 3000)
 						})
 					}
 				},
@@ -475,18 +484,13 @@ export default class GiftsView extends Component {
 
 		axios.post(apiPath('POST', 'giftDS'), gift).then((response) => {
 			if (response.status !== 201) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to create account.');
 			}
 			console.log(`Created account [${gift.title}]!`)
 			this.getPublicGifts()
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
+			this.props.toastError(true, error, null)
 		})
 	}
 
@@ -496,18 +500,13 @@ export default class GiftsView extends Component {
 
 		axios.post(apiPath('POST', 'gifts'), gift).then((response) => {
 			if (response.status !== 201) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to create account.');
 			}
 			console.log(`Created account [${gift.title}]!`)
 			this.getPrivateGifts();
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
+			this.props.toastError(true, error, null)
 		})
 	}
 

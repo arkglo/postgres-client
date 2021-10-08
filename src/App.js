@@ -159,6 +159,23 @@ class App extends Component {
 		toast(message, { ...toastOptions, ...options });
 	}
 
+	toastError = (isCatch, error, response) => {
+		if( isCatch ) {
+			var data = error?.response?.data ?? null
+			const thisMessage = (data) ? `${data.function}() - ${data.message}` : error
+			if (data) 
+				console.error(thisMessage)
+			else 
+				console.log(thisMessage)
+			this.toastThis(<div>{thisMessage}</div>, 'error', 3000)
+		}
+		else {
+			const thisMessage = response.message
+			this.toastThis(<div>{thisMessage}</div>, 'warning', 3000)
+			return console.warn(thisMessage);
+		}
+	}
+
 	showError = (err) => {
 		console.warn('Error:')
 		console.log(err ?? 'no response')
@@ -293,6 +310,7 @@ class App extends Component {
 				handleLogout={this.handleLogout}
 				handleReset={this.handleReset}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 			/>),
 			viewType: 'SignupView',
 		});
@@ -309,8 +327,9 @@ class App extends Component {
 				user={this.state.user}
 				themeId={this.state.themeId}
 				handleLogout={this.handleLogout}
-				showError={this.showError}
+				// showError={this.showError}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				admin={this.state.admin}
 			/>),
 			viewType: 'UserEditView',
@@ -329,6 +348,7 @@ class App extends Component {
 				setThemeID={this.setThemeID}
 				setMyGiftsID={this.setMyGiftsID}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				handleLogout={this.handleLogout}
 			/>),
 			viewType: 'AccountEditView',
@@ -348,6 +368,7 @@ class App extends Component {
 				updateToThisThemeId={this.updateToThisThemeId}
 				setThemeID={this.setThemeID}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				admin={this.state.admin}
 			/>),
 			viewType: 'ThemeEditView',
@@ -368,6 +389,7 @@ class App extends Component {
 				myGiftsId={this.state.myGiftsId}
 				setMyGiftsID={this.setMyGiftsID}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				admin={this.state.admin}
 			/>),
 			viewType: 'MyGiftsView',
@@ -386,6 +408,7 @@ class App extends Component {
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				admin={this.state.admin}
 			/>),
 			viewType: 'GiftsView',
@@ -405,6 +428,7 @@ class App extends Component {
 				themeId={this.state.themeId}
 				myGiftsId={this.state.myGiftsId}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				admin={this.state.admin}
 			/>),
 			viewType: 'GiftsAvailable',
@@ -421,6 +445,7 @@ class App extends Component {
 			authenticated={this.state.authenticated}
 			viewType={this.state.viewType}
 			toastThis={this.toastThis}
+			toastError={this.toastError}
 			admin={this.state.admin}
 		/>)
 	}
@@ -429,6 +454,7 @@ class App extends Component {
 		this.setState({
 			mainView: <Services 
 			toastThis={this.toastThis}
+			toastError={this.toastError}
 			/>,
 			viewType: 'Services',
 		})
@@ -442,6 +468,7 @@ class App extends Component {
 		this.setState({
 			mainView: (<Payment
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				accountId={this.state.accountId}
 			/>),
 			viewType: 'Payment',
@@ -456,6 +483,7 @@ class App extends Component {
 		this.setState({
 			mainView: (<Message
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				accountId={this.state.accountId}
 			/>),
 			viewType: 'Message',
@@ -470,6 +498,7 @@ class App extends Component {
 				handleReset={this.handleReset}
 				accountId={this.state.accountId}
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 			/>),
 			viewType: 'Guest',
 		})
@@ -479,6 +508,7 @@ class App extends Component {
 		this.setState({
 			mainView: (<Admin
 				toastThis={this.toastThis}
+				toastError={this.toastError}
 				showError={this.showError}
 			/>),
 			viewType: 'Admin'

@@ -113,14 +113,7 @@ export default class Payment extends Component {
 			}
 
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
-			this.purchaseError("Purchase Failed");
+			this.props.toastError(true, error, null);
 		});
 	};
 
@@ -157,14 +150,7 @@ export default class Payment extends Component {
 			}
 
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
-			this.purchaseError("Purchase Failed");
+			this.props.toastError(true, error, null);
 		});
 	};
 
@@ -187,14 +173,7 @@ export default class Payment extends Component {
 			this.redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
-			this.purchaseError("Refund Failed");
+			this.props.toastError(true, error, null);
 		});
 	};
 
@@ -216,14 +195,7 @@ export default class Payment extends Component {
 			this.redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
-			this.purchaseError("Refund Failed");
+			this.props.toastError(true, error, null);
 		});
 	};
 
@@ -245,14 +217,7 @@ export default class Payment extends Component {
 			this.redirectingToPurchase("Refunded")
 
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.error(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
-			this.purchaseError("Refund Failed");
+			this.props.toastError(true, error, null);
 		});
 	};
 
@@ -379,8 +344,7 @@ export default class Payment extends Component {
 				error: null,
 			})
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
+			this.props.toastError(true, error, null);
 			this.setState({
 				data: null,
 				error: {
@@ -430,8 +394,7 @@ export default class Payment extends Component {
 				error: null,
 			})
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
+			this.props.toastError(true, error, null);
 			this.setState({
 				data: null,
 				error: {
@@ -481,8 +444,7 @@ export default class Payment extends Component {
 				error: null,
 			})
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
+			this.props.toastError(true, error, null);
 			this.setState({
 				data: null,
 				error: {
@@ -527,8 +489,7 @@ export default class Payment extends Component {
 				error: null,
 			})
 		}).catch((error) => {
-			console.log('Error.catch():')
-			console.log(error.response)
+			this.props.toastError(true, error, null);
 			this.setState({
 				data: null,
 				error: {

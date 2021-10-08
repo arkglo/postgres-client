@@ -72,6 +72,7 @@ export default class GiftsView extends Component {
 		//Get this myGifts
 		axios.get(apiPath('GET', '/accounts/gifts', this.props.accountId + '?details=true')).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get Account.gifts details.')
 			}
 
@@ -82,6 +83,7 @@ export default class GiftsView extends Component {
 			}
 
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}
@@ -92,6 +94,7 @@ export default class GiftsView extends Component {
 		//Get this myGifts
 		axios.get(apiPath('GET', 'giftDS', '?access=public')).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get gifts details.')
 			}
 
@@ -101,6 +104,7 @@ export default class GiftsView extends Component {
 				console.log(response.data.data)
 			}
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}
@@ -111,6 +115,7 @@ export default class GiftsView extends Component {
 		//Get this Theme
 		axios.get(apiPath('GET', 'theme', this.props.themeId)).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to get theme details.')
 			}
 
@@ -125,6 +130,7 @@ export default class GiftsView extends Component {
 
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}
@@ -335,12 +341,13 @@ export default class GiftsView extends Component {
 
 		axios.post(apiPath('POST', 'gifts'), req).then((response) => {
 			if (response.status !== 201) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to create Gift.');
 			}
 			console.log('Created a new Gift')
 			this.refreshContent()
 		}).catch((error) => {
-			console.log(error)
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}// handleCreate
@@ -382,11 +389,13 @@ export default class GiftsView extends Component {
 
 		axios.put(apiPath('PUT', 'gifts', req.id), req).then((response) => {
 			if (response.status !== 200) {
+				this.props.toastError(false, null, response)
 				return console.warn('Failed to update Gift.')
 			}
 			console.log('Updated Gift details!')
 			this.refreshContent()
 		}).catch((error) => {
+			this.props.toastError(true, error, null)
 			Error.message(error.response)
 		})
 	}// handleSubmit
@@ -411,12 +420,14 @@ export default class GiftsView extends Component {
 					onClick: () => {
 						axios.delete(apiPath('DELETE', 'gifts', id)).then((response) => {
 							if (response.status !== 200) {
+								this.props.toastError(false, null, response)
 								return console.warn('Failed to remove Gift.');
 							}
 							console.log(`Successfully deleted Gift(${id})`)
 							this.refreshContent()
 							this.selectGift(null)
 						}).catch((error) => {
+							this.props.toastError(true, error, null)
 							Error.message(error.response)
 						})
 					}

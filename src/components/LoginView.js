@@ -21,6 +21,7 @@ const LoginView = (props) => {
 
 		axios.get(apiPath('GET', 'user')).then((response) => {
 			if (response.status !== 200) {
+				props.toastError(false, null, response);
 				return console.warn('Failed to get user details.');
 			}
 
@@ -33,9 +34,11 @@ const LoginView = (props) => {
 			setUsers(users);
 			console.log("Query Running RESET 1")
 		}).catch((error) => {
+			props.toastError(true, error, null);
 			Error.message(error)
 			console.log("Query Running RESET 2")
 		});
+		// eslint-disable-next-line
 	}, [props.authenticated])
 
 	//===========================================================================
@@ -61,20 +64,7 @@ const LoginView = (props) => {
 			password: password,
 		}).then(props.handleLogin)
 			.catch((error) => {
-				props.showError({
-					status: error.response.status ?? 404,
-					function: error.response.data.function ?? null,
-					message: error.response.data.message ?? null,
-					timeout: 2000,
-				})
-
-				var data = error?.response?.data ?? null
-				if (data) {
-					console.warn(`${data.function}() - ${data.message}`)
-				}
-				else {
-					console.log(error)
-				}
+				props.toastError(true, error, null);
 			})
 	}
 	const handleResetRequest = (event) => {
@@ -86,6 +76,7 @@ const LoginView = (props) => {
 		}).then( (response) => {
 			if (config.debugLevel) console.log(response)
 			if (response.status !== 200) {
+				props.toastError(false, null, response);
 				return console.warn('Reset Request failed');
 			}
 			console.log('Reset Request token for ' + response.data.data.email + ' is ' + response.data.data.resetToken);
@@ -93,13 +84,7 @@ const LoginView = (props) => {
 
 			setResetLink( response.data.data.resetToken );
 		}).catch((error) => {
-			var data = error?.response?.data ?? null
-			if (data) {
-				console.warn(`${data.function}() - ${data.message}`)
-			}
-			else {
-				console.log(error)
-			}
+			props.toastError(true, error, null);
 		});
 	}
 
@@ -109,13 +94,7 @@ const LoginView = (props) => {
 		axios.post(apiPath('POST', 'user', 'logout'))
 			.then(props.handleLogout)
 			.catch((error) => {
-				var data = error?.response?.data ?? null
-				if (data) {
-					console.error(`${data.function}() - ${data.message}`)
-				}
-				else {
-					console.log(error)
-				}
+				props.toastError(true, error, null);
 			});
 	}
 
@@ -193,13 +172,7 @@ const LoginView = (props) => {
 	const setAccount = (id) => {
 		axios.post(apiPath('POST', '/accounts/set', id), {}).then(props.setAccountId(id))
 			.catch((error) => {
-				var data = error?.response?.data ?? null
-				if (data) {
-					console.warn(`${data.function}() - ${data.message}`)
-				}
-				else {
-					console.log(error)
-				}
+				props.toastError(true, error, null);
 			})
 	}
 
