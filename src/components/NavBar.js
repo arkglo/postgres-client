@@ -97,7 +97,7 @@ export default class NavBar extends Component {
 					</Button>
 					<Button type="button" name="theme_edit"
 						//className="btn btn-default navbar-btn"
-						disabled={ (this.props.themeId === -1 && this.props.role !== "guest") || this.props.accountId === -1}
+						disabled={ this.props.accountId === -1}
 						onClick={this.props.showThemeEdit}
 						title={this.props.themeId === -1 ? accountEditSelectText : 'Theme Edit'}
 						active={vt === 'ThemeEditView'}>
