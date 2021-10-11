@@ -23,15 +23,20 @@ export default class ThemeEditView extends Component {
 			"font": '',
 			"heroImageUrl": '',
 			"secondImageUrl": '',
-			"names": null,
-			"byLine": null,
-			"message": null,
+			"names": '',
+			"byLine": '',
+			"message": '',
 			"ceremonyEnabled": false,
 			"ceremonyMessage": null,
 			"ceremonyDateTime": null,
 			"receptionEnabled": false,
 			"receptionMessage": null,
 			"receptionDateTime": null,
+			"location": '',
+			"address": '',
+			"locationExtraInfo": '',
+			"giftRegistryText": '',
+			"rsvpText": '',
 			theme: null,
 			allThemes: null,
 			ceremonyObject: null,
@@ -110,7 +115,12 @@ export default class ThemeEditView extends Component {
 					receptionMessage: theme.receptionMessage,
 					receptionDateTime: theme.receptionDateTime,
 					ceremonyObject: CDT,
-					receptionObject: RDT
+					receptionObject: RDT,
+					location: theme.location,
+					address: theme.address,
+					locationExtraInfo: theme.locationExtraInfo,
+					giftRegistryText: theme.giftRegistryText,
+					rsvpText: theme.rsvpText
 				})
 				this.setState({ theme: theme })
 			}
@@ -161,6 +171,11 @@ export default class ThemeEditView extends Component {
 		this.check("receptionEnabled", req, oldTheme)
 		this.check("receptionMessage", req, oldTheme)
 		this.check("receptionDateTime", req, oldTheme)
+		this.check("location", req, oldTheme)
+		this.check("locationExtraInfo", req, oldTheme)
+		this.check("address", req, oldTheme)
+		this.check("giftRegistryText", req, oldTheme)
+		this.check("rsvpText", req, oldTheme)
 
 		req.id = this.state.id
 
@@ -215,7 +230,12 @@ export default class ThemeEditView extends Component {
 				receptionMessage: newTheme.receptionMessage,
 				receptionDateTime: newTheme.receptionDateTime,
 				ceremonyObject: CDT,
-				receptionObject: RDT
+				receptionObject: RDT,
+				location: newTheme.location,
+				locationExtraInfo: newTheme.locationExtraInfo,
+				address: newTheme.address,
+				giftRegistryText: newTheme.giftRegistryText,
+				rsvpText: newTheme.rsvpText
 			})
 			this.props.updateToThisThemeId(newTheme.id)
 		}
@@ -363,7 +383,11 @@ export default class ThemeEditView extends Component {
 					secondImageUrl: "https://picsum.photos/300/300",
 					names: "TestTheme-1",
 					byLine: "TestByLine",
-					message: "TestMessage"
+					message: "TestMessage",
+					giftRegistryText: "You don't need to bring a gift but if you want to, here are some ideas...",
+					location: "The Church",
+					locationExtraInfo: "It has a spire",
+					address: "Church Lane"
 				}
 				break
 			case 'TestTheme-2':
@@ -695,6 +719,11 @@ export default class ThemeEditView extends Component {
 									</tr>
 								</tbody>
 							</table>
+							{this.addDiv("text", "location")}
+							{this.addDiv("text", "address")}
+							{this.addDiv("text", "locationExtraInfo")}
+							{this.addDiv("text", "giftRegistryText")}
+							{this.addDiv("text", "rsvpText")}
 
 							{buttons}
 							<div className="btn-group">
