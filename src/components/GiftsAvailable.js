@@ -8,13 +8,14 @@ import styles from '../css/mystyles.module.css'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import GiftItem from './GiftItem'
 
 import Error from './error';
 
-export default class GiftsView extends Component {
+export default class GiftsAvailable extends Component {
 	constructor(props) {
 		super(props);
-		console.log(`GiftsView.constructor()`)
+		console.log(`GiftsAvailable.constructor()`)
 		this.state = {
 			"id": 1,
 			"title": '',
@@ -50,7 +51,7 @@ export default class GiftsView extends Component {
 	}
 
 	componentDidMount() {
-		console.log(`GiftsView.componentDidMount(${this.props.myGiftsId})`)
+		console.log(`GiftsAvailable.componentDidMount(${this.props.myGiftsId})`)
 		this.refreshContent()
 		this.getThemes()
 	}
@@ -62,7 +63,7 @@ export default class GiftsView extends Component {
 	}
 
 	getPrivateGifts() {
-		console.log(`GiftsView.getPrivateGifts(${this.props.accountId})`)
+		console.log(`GiftsAvailable.getPrivateGifts(${this.props.accountId})`)
 		if (this.props.accountId === null) {
 			console.log("  accountId not set - skip GET")
 
@@ -93,7 +94,7 @@ export default class GiftsView extends Component {
 	}
 
 	getPublicGifts() {
-		console.log(`GiftsView.getPublicGifts()`)
+		console.log(`GiftsAvailable.getPublicGifts()`)
 
 		//Get this myGifts
 		axios.get(apiPath('GET', 'giftDS', '?access=public')).then((response) => {
@@ -114,7 +115,7 @@ export default class GiftsView extends Component {
 	}
 
 	getThemes() {
-		console.log(`GiftsView.getThemes(${this.props.themeId})`)
+		console.log(`GiftsAvailable.getThemes(${this.props.themeId})`)
 
 		//Get this Theme
 		axios.get(apiPath('GET', 'theme', this.props.themeId)).then((response) => {
@@ -125,13 +126,11 @@ export default class GiftsView extends Component {
 
 			const theme = response.data.data
 			this.setState({
-				theme: theme,
+				theme: {...theme},
 				font: theme?.font ?? null,
 				colour1: theme?.colour1 ?? "#000000",
 				colour2: theme?.colour2 ?? "#00ff00",
 			})
-
-
 			if (config.debugLevel > 1) console.log(theme)
 		}).catch((error) => {
 			this.props.toastError(true, error, null)
@@ -141,7 +140,7 @@ export default class GiftsView extends Component {
 
 	handleDropDownClick(value, event) {
 		event.preventDefault();  // IMPORTANT.
-		console.log(`GiftsView.handleDropDownClick()`)
+		console.log(`GiftsAvailable.handleDropDownClick()`)
 		// console.log(event.target)
 
 		const field = event.target.name
@@ -267,7 +266,7 @@ export default class GiftsView extends Component {
 	}
 
 	selectGift(gift) {
-		if (config.debugLevel > 1) console.log(`GiftsView.selectGift: ${gift}`)
+		if (config.debugLevel > 1) console.log(`GiftsAvailable.selectGift: ${gift}`)
 		// this.setState({ gift: gift, oldGift: { ...gift } }) // spread operator doesn't work for the dub structure giftDataStore, that remains a pointer
 		this.setState({ gift: gift, oldGift: JSON.parse(JSON.stringify(gift)) }) // pare/stringify not elegant but it works
 	}
@@ -717,7 +716,7 @@ export default class GiftsView extends Component {
 
 	//=================================================================
 	render() {
-		console.log(`%cGiftsView - render(myGiftsId ${this.props.myGiftsId})`, 'color: yellow')
+		console.log(`%cGiftsAvailable - render(myGiftsId ${this.props.myGiftsId})`, 'color: yellow')
 		const gift = this.state.gift
 		console.log(gift ?? 'No gift selected')
 
@@ -746,44 +745,6 @@ export default class GiftsView extends Component {
 		</div>
 
 		// backgroundColor: this.state.colour2,
-		const font = {
-			fontFamily: this.state.font,
-			color: this.state.colour1,
-
-		}
-		const h1Overide = {
-			...font,
-			fontSize: '1.2em',
-			textAlign: 'left',
-			fontWeight: 'bold'
-		}
-
-		const h2Overide = {
-			...font,
-			fontSize: '0.9em',
-			textAlign: 'left',
-			fontWeight: 'lighter',
-			fontStyle: 'italic',
-		}
-
-		const styleGroup = {
-			...font,
-			filter: 'brightness(150%)',
-			fontSize: '0.8em',
-			textAlign: 'left',
-			fontWeight: 'lighter',
-		}
-
-		const stylePrice = {
-			...font,
-			fontSize: '1em',
-		}
-
-		const messageOveride = {
-			...font,
-			fontSize: '1em',
-			width: '100%',
-		}
 
 		const darkerButton = {
 			margin: '2px 0px',
@@ -816,35 +777,23 @@ export default class GiftsView extends Component {
 
 		let giftView = ''
 		if (gift) {
-			let ctext = ''
-			let pbar = ''
-			if (gift.group) {
-				pbar = <ProgressBar style={{ height: '10px', marginBottom: 'unset' }} animated={true} now={gift.paid / gift.giftDataStore.price * 100} />
-				ctext = <div style={styleGroup}>Group Gift: ${gift.paid.toFixed()} gifted</div>
-			}
-
-			giftView = <div>
-				<h4 className='text-primary'> Gift Preview:</h4><div className="panel-body" style={{ margin: 'auto', width: '33%', border: '1px solid #6c757d', borderRadius: '20px' }}>
-					<img style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'contain', display: 'block', margin: 'auto' }} src={this.state?.gift?.giftDataStore?.image} alt='Gifts URL' />
-					<table style={{ width: '100%' }}>
-						<tbody>
-							<tr>
-								<td>
-									<h1 style={h1Overide}>{gift.giftDataStore.title}</h1>
-									<div style={h2Overide}>{gift.giftDataStore.type}</div>
-									<div style={h2Overide}>From: {gift.giftDataStore.from}</div>
-								</td>
-								<td>
-									<div style={stylePrice}>${parseFloat(gift.giftDataStore.price).toFixed(2)}</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<span style={messageOveride}>{gift.giftDataStore.message}</span><br />
-					{pbar}
-					{ctext}
-				</div>
-			</div>
+			giftView = <GiftItem
+			gift={{
+				title: gift.giftDataStore.title,
+				type: gift.giftDataStore.type,
+				from: gift.giftDataStore.from,
+				price: gift.giftDataStore.price,
+				message: gift.giftDataStore.message,
+				image: gift.giftDataStore.image,
+				group: gift.group,
+				paid: gift.paid
+			}}
+			theme={{
+				colour1: this.state.colour1,
+				colour2: this.state.colour2,
+				font: this.state.font
+			}}
+		/>
 		}
 
 		// Allows creation of pre-configured gifts
@@ -881,7 +830,7 @@ export default class GiftsView extends Component {
 			<>
 				<div className="panel panel-default">
 					<div className="panel-heading"><h4 className='text-primary'>Gifts Available</h4> (<i>giftDataStore</i>)<p />
-						<div className={styles.blue}>The Gifts Availble View provides access to the aviailable gifts</div><p />
+						<div className={styles.blue}>The Gifts Available View provides access to the aviailable gifts</div><p />
 						These are the <b>Private</b> Gifts associated with this account:<br />
 						<code>GET {apiPath('GET', '/accounts/gifts', this.props.accountId + '?details=true&access=private', false)}</code> {'<'} <i>accountId</i><br />
 						Gifts assigned to Account ({this.props.accountId}): {giftsCount}

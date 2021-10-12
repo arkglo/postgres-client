@@ -5,6 +5,7 @@ import axios from 'axios';
 import * as config from '../config/config';
 import { apiPath } from '../lib/apiPath'
 import styles from '../css/mystyles.module.css'
+import GiftItem from './GiftItem'
 
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -316,13 +317,13 @@ export default class GiftsView extends Component {
 		req.accountID = this.props.accountId
 		req.status = gift.status
 		req.giftID = gift.giftDataStore.id
-		if( gift.paid ) {
+		if (gift.paid) {
 			let tmp = parseFloat(gift.paid)
-			if( tmp !== req.paid ) {
+			if (tmp !== req.paid) {
 				req.paid = tmp;
 				gift.paid = tmp
 				this.setState({
-					gift : gift
+					gift: gift
 				})
 			}
 		}
@@ -364,13 +365,13 @@ export default class GiftsView extends Component {
 
 		let gift = this.state.gift
 		const req = this.createGiftChangeReqObject()
-		if( gift.paid ) {
+		if (gift.paid) {
 			let tmp = parseFloat(gift.paid)
-			if( tmp !== req.paid ) {
+			if (tmp !== req.paid) {
 				req.paid = tmp;
 				gift.paid = tmp
 				this.setState({
-					gift : gift
+					gift: gift
 				})
 			}
 		}
@@ -607,37 +608,23 @@ export default class GiftsView extends Component {
 
 		let giftView = ''
 		if (gift) {
-			let ctext = ''
-			let pbar = ''
-			if (gift.group) {
-				pbar = <ProgressBar style={{ height: '10px', marginBottom: 'unset' }} animated={true} now={parseFloat(gift.paid) / parseFloat(gift.giftDataStore.price) * 100} />
-				ctext = <div style={styleGroup}>Group Gift: ${parseFloat(gift.paid).toFixed(2)} gifted</div>
-			}
-			let imageBorder = '1px solid ' + this.state.colour1
-			// style={{ backgroundColor: this.state.colour2 }}
-			giftView = <div>
-				<h4 className='text-primary'> Gift Preview:</h4>
-				<div className="panel-body" style={{ margin: 'auto', width: '33%', border: '1px solid #6c757d', borderRadius: '20px', backgroundColor: this.state.colour2 }}>
-					<img style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'contain', display: 'block', margin: 'auto', border: imageBorder }} src={this.state?.gift?.giftDataStore?.image} alt='Gifts URL' />
-					<table style={{ width: '100%' }}>
-						<tbody>
-							<tr>
-								<td>
-									<h1 style={h1Overide}>{gift.giftDataStore.title}</h1>
-									<div style={h2Overide}>{gift.giftDataStore.type}</div>
-									<div style={h2Overide}>From: {gift.giftDataStore.from}</div>
-								</td>
-								<td>
-									<div style={stylePrice}>${parseFloat(gift.giftDataStore.price).toFixed(2)}</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<span style={messageOveride}>{gift.giftDataStore.message}</span><br />
-					{pbar}
-					{ctext}
-				</div>
-			</div>
+			giftView = <GiftItem
+				gift={{
+					title: gift.giftDataStore.title,
+					type: gift.giftDataStore.type,
+					from: gift.giftDataStore.from,
+					price: gift.giftDataStore.price,
+					message: gift.giftDataStore.message,
+					image: gift.giftDataStore.image,
+					group: gift.group,
+					paid: gift.paid
+				}}
+				theme={{
+					colour1: this.state.colour1,
+					colour2: this.state.colour2,
+					font: this.state.font
+				}}
+			/>
 		}
 
 		//Now render
