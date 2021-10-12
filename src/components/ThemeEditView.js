@@ -460,7 +460,7 @@ export default class ThemeEditView extends Component {
 			case "color":
 				const fieldName = "color-" + field
 				typeField =
-					<div>
+					<div> 
 						<input style={{ display: 'inline-block', width: '42px', height: '34px' }} className="form-control" type={divType} name={fieldName} value={thisValue} onChange={this.handleChange} />
 						<input style={{ display: 'inline-block', width: "auto" }} className="form-control" type='text' name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
 					</div>
