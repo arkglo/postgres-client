@@ -464,7 +464,7 @@ export default class ThemeEditView extends Component {
 						<input style={{ display: 'inline-block', width: '42px', height: '34px' }} className="form-control" type={divType} name={fieldName} value={thisValue} onChange={this.handleChange} />
 						<input style={{ display: 'inline-block', width: "auto" }} className="form-control" type='text' name={field} value={thisValue} disabled={disabledState} onChange={this.handleChange} />
 					</div>
-				break 
+				break
 			case "datepicker":
 				typeField = <DatePicker style={{ width: 'unset' }} type={divType} name={field} disabled={disabledState}
 					dateFormat="dd/MM/yyyy"
