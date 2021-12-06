@@ -100,6 +100,7 @@ export default class Payment extends Component {
 				return console.warn('Failed to create payment.');
 			}
 			var serverResponce = response?.data?.data ?? null;
+			console.log("the serverResponce = "+ serverResponce)
 			
 			const url = serverResponce?.url ?? null
 			if( url !== null ) {

@@ -11,8 +11,10 @@ function initialState() {
 		partnerFirstName: '',
 		partnerLastName: '',
 		email: '',
+		websiteLink: '',
 		password: '',
-		password2: ''
+		password2: '',
+		linkColor: { color: 'black' },
 	};
 }
 
@@ -23,7 +25,19 @@ export default class SignupView extends Component {
 		this.state = initialState();
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.updateWeblinkState = this.updateWeblinkState.bind(this);
 		this.handleCreateTestUser = this.handleCreateTestUser.bind(this);
+	}
+
+	componentDidMount() {
+		axios.get(apiPath('GET', 'account', "generateLink")).then((response) => {
+			if (response.status === 200) {
+				if (response.data.data.websiteLink) {
+					// this.state.websiteLink = response.data.data.websiteLink
+					this.setState(() => ({ websiteLink: response.data.data.websiteLink }));
+				}
+			}
+		});
 	}
 
 	//------------------------------------------------------------
@@ -34,6 +48,25 @@ export default class SignupView extends Component {
 		this.setState({
 			[name]: value
 		});
+
+		if( name === "websiteLink" ) {
+			const urlExtra = 'checkLink/'+ value;
+			axios.get(apiPath('GET', 'account', urlExtra)).then((response) => {
+				if (response.status === 200) {
+					if (response.data.data.available) {
+						this.updateWeblinkState("green");
+					}
+					else {
+						this.updateWeblinkState("red");
+					}
+				}
+			}).catch((error) => {
+				this.updateWeblinkState("black");
+			});
+		}
+	}
+	updateWeblinkState(newColour) {
+		this.setState(() => ({ linkColor: { color: newColour } }));
 	}
 
 	//------------------------------------------------------------
@@ -56,6 +89,7 @@ export default class SignupView extends Component {
 			partnerFirstName: this.state.partnerFirstName,
 			partnerLastName: this.state.partnerLastName,
 			email: this.state.email,
+			websiteLink: this.state.websiteLink,
 			password: this.state.password,
 		}).then((response) => {
 			if (response.status !== 201) {
@@ -163,6 +197,11 @@ export default class SignupView extends Component {
 							<div className="form-group">
 								<label>Email</label>
 								<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
+							</div>
+
+							<div className="form-group" style={this.state.linkColor} >
+								<label>Website Link</label>
+								<input className="form-control" type="text" name="websiteLink" value={this.state.websiteLink} onChange={this.handleChange} />
 							</div>
 
 							<div className="form-group">

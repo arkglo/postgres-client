@@ -36,6 +36,7 @@ export default class Guest extends Component {
 		super(props);
 		this.state = initialState();
 
+		this.handleCheckLink = this.handleCheckLink.bind(this);
 		this.handleListAccounts = this.handleListAccounts.bind(this)
 		this.handleLoginWithoutPassword = this.handleLoginWithoutPassword.bind(this);
 		this.handleLoginWithPassword = this.handleLoginWithPassword.bind(this);
@@ -200,6 +201,36 @@ export default class Guest extends Component {
 		});
 	}
 
+	handleCheckLink(event) {
+		event.preventDefault();  // IMPORTANT.
+		this.setState({data: null})
+
+		//Setup some data
+		const websiteLink = this.state.websiteLink;
+		const urlExtra = 'checkLink/'+ websiteLink;
+
+		axios.get(apiPath('GET','account', urlExtra)).then( (response) => {
+			if (config.debugLevel) console.log(response)
+			this.setState({
+				status: response.status,
+				data: response.data.data,
+				error: null,
+			})
+			if (response.status !== 200) {
+				return console.warn('Reset Request failed');
+			}
+			if (config.debugLevel > 1) console.log(response.data.data)
+		}).catch((error) => {
+			var data = error?.response?.data ?? null
+			if (data) {
+				console.warn(`${data.function}() - ${data.message}`)
+			}
+			else {
+				console.log(error)
+			}
+		});
+	}
+
 	handleChange(event) {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -252,11 +283,19 @@ export default class Guest extends Component {
 																	{"}"}</code><p/>
 																</div>
 
-		const listActiviveUsers = <div style={{width:"100%", 'display': 'flex'}}>
+		const listActiviveUsers = <div style={{width:"45%", 'display': 'flex'}}>
 																<form className="form-inline">
 																	<p/>
 																	<button type="submit" className="btn btn-primary" onClick={this.handleListAccounts} >List Active Accounts</button><br/>
 																	<code>GET {apiPath('GET', 'account', `active`, false)}</code><p/>
+																</form>
+															</div>
+
+		const checkWebsiteLink = <div style={{width:"45%", 'display': 'flex'}}>
+																<form className="form-inline">
+																	<p/>
+																	<button type="submit" className="btn btn-primary" onClick={this.handleCheckLink} >Check If Website Link Available </button><br/>
+																	<code>GET {apiPath('GET', 'account', `checkLink`, false)}/{this.state.websiteLink} </code><p/>
 																</form>
 															</div>
 
@@ -276,7 +315,7 @@ export default class Guest extends Component {
 
 					<div style={{width:"100%", 'display': 'flex'}}>{loginWithoutPasswordButton}{loginWithPassword}</div>
 					<br/>
-					{listActiviveUsers}
+					<div style={{width:"100%", 'display': 'flex'}}>{listActiviveUsers}{checkWebsiteLink}</div>
 				</div>
 				<div className="panel-body" style={hideGettingBody}>
 					<p className='lead'>Status: <b>{this.state.status}</b></p>

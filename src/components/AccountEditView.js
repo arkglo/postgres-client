@@ -49,6 +49,7 @@ export default class AccountEditView extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleRemove = this.handleRemove.bind(this);
+		this.updateWeblinkState = this.updateWeblinkState.bind(this);
 		this.handleToggleStripe = this.handleToggleStripe.bind(this);
 		this.handleStripeAccount = this.handleStripeAccount.bind(this);
 		this.handleStripeUpdateAccount = this.handleStripeUpdateAccount.bind(this);
@@ -88,7 +89,8 @@ export default class AccountEditView extends Component {
 				addressCity: 'Wellington',
 				stripeRoute: '110000000',
 				stripeBankNumber: '000123456789',
-				dobObject: new Date("1973-11-21")
+				dobObject: new Date("1973-11-21"),
+				linkColor: { color: 'black' },
 			})
 			this.setState({ account: account })
 			this.props.setThemeID(account.themeID)
@@ -107,6 +109,25 @@ export default class AccountEditView extends Component {
 		this.setState({
 			[name]: value
 		});
+
+		if( name === "websiteLink" ) {
+			const urlExtra = 'checkLink/'+ value;
+			axios.get(apiPath('GET', 'account', urlExtra)).then((response) => {
+				if (response.status === 200) {
+					if (response.data.data.available) {
+						this.updateWeblinkState("green");
+					}
+					else {
+						this.updateWeblinkState("red");
+					}
+				}
+			}).catch((error) => {
+				this.updateWeblinkState("black");
+			});
+		}
+	}
+	updateWeblinkState(newColour) {
+		this.setState(() => ({ linkColor: { color: newColour } }));
 	}
 
 	updateReq(req, key) {
@@ -414,6 +435,11 @@ export default class AccountEditView extends Component {
 						<div className="form-group">
 							<label>Partner LastName</label> (Account field)
 							<input className="form-control" type="text" name="partnerLastName" value={this.state.partnerLastName} onChange={this.handleChange} />
+						</div>
+
+						<div className="form-group" style={this.state.linkColor} >
+							<label>Website Link</label>
+							<input className="form-control" type="text" name="websiteLink" value={this.state.websiteLink} onChange={this.handleChange} />
 						</div>
 
 						<div className="btn-group">
