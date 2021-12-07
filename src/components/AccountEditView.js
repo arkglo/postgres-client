@@ -91,6 +91,7 @@ export default class AccountEditView extends Component {
 				stripeBankNumber: '000123456789',
 				dobObject: new Date("1973-11-21"),
 				linkColor: { color: 'black' },
+				linkTooltip: "",
 			})
 			this.setState({ account: account })
 			this.props.setThemeID(account.themeID)
@@ -111,23 +112,35 @@ export default class AccountEditView extends Component {
 		});
 
 		if( name === "websiteLink" ) {
-			const urlExtra = 'checkLink/'+ value;
-			axios.get(apiPath('GET', 'account', urlExtra)).then((response) => {
-				if (response.status === 200) {
-					if (response.data.data.available) {
-						this.updateWeblinkState("green");
+			if (this.state.account !== null && this.state.account["websiteLink"] === value) {
+				this.updateWeblinkState(null);
+			}
+			else {
+				const urlExtra = 'checkLink/'+ value;
+				axios.get(apiPath('GET', 'account', urlExtra)).then((response) => {
+					if (response.status === 200) {
+						if (response.data.data.available) {
+							this.updateWeblinkState(true);
+						}
+						else {
+							this.updateWeblinkState(false);
+						}
 					}
-					else {
-						this.updateWeblinkState("red");
-					}
-				}
-			}).catch((error) => {
-				this.updateWeblinkState("black");
-			});
+				}).catch((error) => {
+					this.updateWeblinkState(null);
+				});
+			}
 		}
 	}
-	updateWeblinkState(newColour) {
-		this.setState(() => ({ linkColor: { color: newColour } }));
+	updateWeblinkState(state) {
+		if(state == null)
+			this.setState(() => ({ linkColor: { color: "black" }, linkTooltip: "" }));
+		else {
+			if( state )
+				this.setState(() => ({ linkColor: { color: "green" }, linkTooltip: "This link is allowed, it is not in current use." }));
+			else
+				this.setState(() => ({ linkColor: { color: "red" }, linkTooltip: "This link is NOT allowed, it is in current use." }));
+		}
 	}
 
 	updateReq(req, key) {
@@ -136,7 +149,7 @@ export default class AccountEditView extends Component {
 		}
 	}
 
-	handleSubmit(event) { //Perfomr Account Update
+	handleSubmit(event) { //Perform Account Update
 		event.preventDefault();	// IMPORTANT.
 		console.log("------------------- handleSubmit() Update")
 		var req = {}
@@ -437,7 +450,7 @@ export default class AccountEditView extends Component {
 							<input className="form-control" type="text" name="partnerLastName" value={this.state.partnerLastName} onChange={this.handleChange} />
 						</div>
 
-						<div className="form-group" style={this.state.linkColor} >
+						<div className="form-group" style={this.state.linkColor} title={this.state.linkTooltip}>
 							<label>Website Link</label>
 							<input className="form-control" type="text" name="websiteLink" value={this.state.websiteLink} onChange={this.handleChange} />
 						</div>

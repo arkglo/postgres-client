@@ -15,6 +15,7 @@ function initialState() {
 		password: '',
 		password2: '',
 		linkColor: { color: 'black' },
+		linkTooltip: "",
 	};
 }
 
@@ -54,19 +55,26 @@ export default class SignupView extends Component {
 			axios.get(apiPath('GET', 'account', urlExtra)).then((response) => {
 				if (response.status === 200) {
 					if (response.data.data.available) {
-						this.updateWeblinkState("green");
+						this.updateWeblinkState(true);
 					}
 					else {
-						this.updateWeblinkState("red");
+						this.updateWeblinkState(false);
 					}
 				}
 			}).catch((error) => {
-				this.updateWeblinkState("black");
+				this.updateWeblinkState(null);
 			});
 		}
 	}
-	updateWeblinkState(newColour) {
-		this.setState(() => ({ linkColor: { color: newColour } }));
+	updateWeblinkState(state) {
+		if( state == null )
+			this.setState(() => ({ linkColor: { color: "black" }, linkTooltip: "" }));
+		else {
+			if( state )
+				this.setState(() => ({ linkColor: { color: "green" }, linkTooltip: "This link is allowed, it is not in current use." }));
+			else
+				this.setState(() => ({ linkColor: { color: "red" }, linkTooltip: "This link is NOT allowed, it is in current use." }));
+		}
 	}
 
 	//------------------------------------------------------------
@@ -164,9 +172,8 @@ export default class SignupView extends Component {
 		// const that = this.props.
 		setTimeout(() => { this.props.handleReset() }, 1000)
 	}
-
 	//------------------------------------------------------------
-	render() {
+	render() { 
 		return (
 			<div>
 				<div className="panel panel-default">
@@ -199,7 +206,7 @@ export default class SignupView extends Component {
 								<input className="form-control" type="text" name="email" value={this.state.email} onChange={this.handleChange} />
 							</div>
 
-							<div className="form-group" style={this.state.linkColor} >
+							<div className="form-group" style={this.state.linkColor} title={this.state.linkTooltip}>
 								<label>Website Link</label>
 								<input className="form-control" type="text" name="websiteLink" value={this.state.websiteLink} onChange={this.handleChange} />
 							</div>
