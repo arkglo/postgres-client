@@ -29,6 +29,7 @@ export default class AccountEditView extends Component {
 			partnerLastName: '',
 			eventDate: '',
 			websiteLink: '',
+			requiresPassword: false,
 			websitePassword: '',
 			websitePassword2: '',
 			themeID: '',
@@ -84,6 +85,7 @@ export default class AccountEditView extends Component {
 				partnerLastName: account.partnerLastName,
 				eventDate: account.eventDate,
 				websiteLink: account.websiteLink,
+				requiresPassword: account.requiresPassword,
 				id: account.id,
 				userID: account.userID,
 				stripeBankHolderFirstName: account.firstName,
@@ -95,7 +97,13 @@ export default class AccountEditView extends Component {
 				stripeRoute: '110000000',
 				stripeBankNumber: '000123456789',
 				dobObject: new Date("1973-11-21")
-			})
+			});
+			if( account.requiresPassword ) {
+				this.setState({
+					websitePassword: "********************************",
+					websitePassword2: "",
+				});
+			}
 			this.setState({ account: account })
 			this.props.setThemeID(account.themeID)
 			this.props.setMyGiftsID(account.myGiftsID)
@@ -407,6 +415,7 @@ export default class AccountEditView extends Component {
 		const dropDownOptions = ['intial', 'ready', 'live', 'complete', 'closed']
 		const defaultOption = dropDownOptions[0]
 
+		const changePasswordLabel = this.state.requiresPassword ? "Change Website Password" : "Set Website Password"
 		const passwordFields = this.state.changePassword ? (
 			<div>
 				<div className="form-group">
@@ -474,7 +483,7 @@ export default class AccountEditView extends Component {
 						</div>
 
 						<div className="form-group">
-							<label>Change Website Password</label>
+							<label>{changePasswordLabel}</label>
 							<input style={{ width: '25px' }} className="form-control" type="checkbox" name="changePassword" checked={this.state.changePassword} onChange={this.handleChange} /><br/>
 						</div>
 						{passwordFields}
