@@ -29,6 +29,8 @@ export default class AccountEditView extends Component {
 			partnerLastName: '',
 			eventDate: '',
 			websiteLink: '',
+			websitePassword: '',
+			websitePassword2: '',
 			themeID: '',
 			gifts: '',
 			showStripe: false,
@@ -40,7 +42,10 @@ export default class AccountEditView extends Component {
 			stripeBankHolderLastName: '',
 			stripeRoute: '110000000',
 			stripeBankNumber: '000123456789',
-			dobObject: null
+			dobObject: null,
+			linkColor: { color: '#333333' },
+			linkTooltip: "",
+			changePassword: false
 		};
 
 		// console.log("Props:")
@@ -89,9 +94,7 @@ export default class AccountEditView extends Component {
 				addressCity: 'Wellington',
 				stripeRoute: '110000000',
 				stripeBankNumber: '000123456789',
-				dobObject: new Date("1973-11-21"),
-				linkColor: { color: 'black' },
-				linkTooltip: "",
+				dobObject: new Date("1973-11-21")
 			})
 			this.setState({ account: account })
 			this.props.setThemeID(account.themeID)
@@ -134,7 +137,7 @@ export default class AccountEditView extends Component {
 	}
 	updateWeblinkState(state) {
 		if(state == null)
-			this.setState(() => ({ linkColor: { color: "black" }, linkTooltip: "" }));
+			this.setState(() => ({ linkColor: { color: "#333333" }, linkTooltip: "" }));
 		else {
 			if( state )
 				this.setState(() => ({ linkColor: { color: "green" }, linkTooltip: "This link is allowed, it is not in current use." }));
@@ -155,14 +158,14 @@ export default class AccountEditView extends Component {
 		var req = {}
 
 		// only add new fields if changed and valid
-		if (this.state.password) {
-			if (this.state.password.length < 6) {
+		if (this.state.changePassword) {
+			if (this.state.websitePassword.length > 0 && this.state.websitePassword.length < 6) {
 				return console.error('Password is too short.');
 			}
-			if (this.state.password !== this.state.password2) {
+			if (this.state.websitePassword !== this.state.websitePassword2) {
 				return console.error('Passwords do not match.');
 			}
-			req.password = this.state.password;
+			req.websitePassword = this.state.websitePassword;
 		}
 
 		console.log(this.state) // new
@@ -188,6 +191,7 @@ export default class AccountEditView extends Component {
 				this.props.toastError(false, null, response)
 				return console.warn('Failed to update account.');
 			}
+			this.setState({ changePassword: false });
 			console.log('Updated account details!');
 		}).catch((error) => {
 			this.props.toastError(true, error, null)
@@ -403,6 +407,20 @@ export default class AccountEditView extends Component {
 		const dropDownOptions = ['intial', 'ready', 'live', 'complete', 'closed']
 		const defaultOption = dropDownOptions[0]
 
+		const passwordFields = this.state.changePassword ? (
+			<div>
+				<div className="form-group">
+				<label>Password</label>
+				<input className="form-control" type="password" name="websitePassword" value={this.state.websitePassword} onChange={this.handleChange} />
+			</div>
+
+			<div className="form-group">
+				<label>Confirm password</label>
+				<input className="form-control" type="password" name="websitePassword2" value={this.state.websitePassword2} onChange={this.handleChange} />
+			</div>
+		</div>
+		) : <div></div>;
+
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">Account Edit (<i>accountID: {this.props.accountId}</i>)<br />
@@ -454,6 +472,12 @@ export default class AccountEditView extends Component {
 							<label>Website Link</label>
 							<input className="form-control" type="text" name="websiteLink" value={this.state.websiteLink} onChange={this.handleChange} />
 						</div>
+
+						<div className="form-group">
+							<label>Change Website Password</label>
+							<input style={{ width: '25px' }} className="form-control" type="checkbox" name="changePassword" checked={this.state.changePassword} onChange={this.handleChange} /><br/>
+						</div>
+						{passwordFields}
 
 						<div className="btn-group">
 							<button className="btn btn-primary" onClick={this.handleSubmit} >Update</button>

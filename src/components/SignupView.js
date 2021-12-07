@@ -14,7 +14,7 @@ function initialState() {
 		websiteLink: '',
 		password: '',
 		password2: '',
-		linkColor: { color: 'black' },
+		linkColor: { color: '#333333' },
 		linkTooltip: "",
 	};
 }
@@ -68,7 +68,7 @@ export default class SignupView extends Component {
 	}
 	updateWeblinkState(state) {
 		if( state == null )
-			this.setState(() => ({ linkColor: { color: "black" }, linkTooltip: "" }));
+			this.setState(() => ({ linkColor: { color: "#333333" }, linkTooltip: "" }));
 		else {
 			if( state )
 				this.setState(() => ({ linkColor: { color: "green" }, linkTooltip: "This link is allowed, it is not in current use." }));
